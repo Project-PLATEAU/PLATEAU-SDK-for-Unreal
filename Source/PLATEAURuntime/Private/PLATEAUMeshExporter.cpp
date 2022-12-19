@@ -1,6 +1,7 @@
 #include "PLATEAUMeshExporter.h"
 #include "plateau/mesh_writer/gltf_writer.h"
 #include "plateau/mesh_writer/obj_writer.h"
+#include "plateau/mesh_writer/fbx_writer.h"
 #include "PLATEAUExportSettings.h"
 #include "PLATEAUInstancedCityModel.h"
 #include "PLATEAUEditor/Private/SPLATEAUExportPanel.h"
@@ -50,8 +51,21 @@ void FPLATEAUMeshExporter::ExportAsOBJ(const FString ExportPath, APLATEAUInstanc
 }
 
 void FPLATEAUMeshExporter::ExportAsFBX(const FString ExportPath, APLATEAUInstancedCityModel* ModelActor, const MeshExportOptions Option) {
-    //TODO : FBX対応
-    UE_LOG(LogTemp, Warning, TEXT("Export as FBX is temporarily unavailable"));
+    UE_LOG(LogTemp, Log, TEXT("Export as FBX"));
+    plateau::meshWriter::FbxWriter Writer;
+    if (Option.TransformType == EMeshTransformType::PlaneRect) {
+        ReferencePoint = ModelActor->GeoReference.ReferencePoint;
+    }
+    else {
+        ReferencePoint = FVector::ZeroVector;
+    }
+    const auto ModelDataArray = CreateModelFromActor(ModelActor, Option);
+    for (int i = 0; i < ModelDataArray.Num(); i++) {
+        if (ModelDataArray[i]->getRootNodeCount() != 0) {
+            const FString ExportPathWithName = ExportPath + "/" + ModelNames[i] + ".fbx";
+            Writer.write(TCHAR_TO_UTF8(*ExportPathWithName.Replace(TEXT("/"), TEXT("\\"))), *ModelDataArray[i], Option.FbxWriteOptions);
+        }
+    }
 }
 
 void FPLATEAUMeshExporter::ExportAsGLTF(const FString ExportPath, APLATEAUInstancedCityModel* ModelActor, const MeshExportOptions Option) {

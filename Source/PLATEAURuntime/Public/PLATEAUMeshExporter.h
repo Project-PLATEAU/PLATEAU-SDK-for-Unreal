@@ -3,6 +3,7 @@
 #include "CoreMinimal.h"
 
 #include "plateau/mesh_writer/gltf_writer.h"
+#include "plateau/mesh_writer/fbx_writer.h"
 
 enum class EMeshTransformType : uint8_t;
 enum class EMeshFileFormat : uint8_t;
@@ -17,6 +18,7 @@ struct MeshExportOptions {
     ECoordinateSystem CoordinateSystem;
     EMeshFileFormat FileFormat;
     plateau::meshWriter::GltfWriteOptions GltfWriteOptions;
+    plateau::meshWriter::FbxWriteOptions FbxWriteOptions;
 };
 
 namespace plateau {
