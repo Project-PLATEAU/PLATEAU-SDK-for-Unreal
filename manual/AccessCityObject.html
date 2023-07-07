@@ -79,15 +79,19 @@
             <article class="content wrap" id="_content" data-uid="">
 <h1 id="属性情報へのアクセス">属性情報へのアクセス</h1>
 
-<p>このページではブループリントを利用して都市モデルの属性情報にアクセスする方法を記載します。</p>
-<h2 id="都市モデルのロード">都市モデルのロード</h2>
+<p>このページではブループリントを利用して3D都市モデルの属性情報にアクセスする方法を記載します。</p>
+<h2 id="3d都市モデルのロード">3D都市モデルのロード</h2>
 <p>サンプルとしてマウスをクリックした際にカメラの中心に位置する都市オブジェクトの属性情報を画面に表示するスクリプトを紹介します。</p>
 <h3 id="ブループリントの利用">ブループリントの利用</h3>
 <p>SDKにはサンプルのブループリントが含まれています。<br>確認するには、コンテンツブラウザで <code>設定 → プラグインコンテンツを表示</code>　にチェックを入れ、次の場所にあるブループリントを開いてください：<br><code>Plugins/PLATEAU SDK for Unreal コンテンツ/Samples/AttributeLoadSample/ClickToGetAttribute</code>  </p>
 <p>このブループリントを利用するには次のようにします：</p>
 <ul>
 <li>都市モデルをインポートしたレベルに <code>ClickToGetAttribute</code> を配置します。  </li>
-<li>その詳細の CityModel 欄にインポートした都市モデルを割り当てます。</li>
+<li>配置した<code>ClickToGetAttribute</code>の詳細パネルから以下を設定します。<ul>
+<li>CityModel 欄にインポートした都市モデルを割り当て</li>
+<li><code>Auto Receive Input</code>を<code>Player 0</code>に設定</li>
+</ul>
+</li>
 <li><code>ウィンドウ/ワールドセッティング</code>の<code>GameMode/ゲームモードオーバーライド</code>を<code>ClickEventGameMode</code>に指定します。</li>
 <li>再生して都市オブジェクトをクリックすると属性情報が表示されます。</li>
 </ul>
@@ -126,8 +130,7 @@
     [ { (String) 浸水ランク =&gt; 2 }
     { (Measure) 浸水深 =&gt; 0.990 }
     { (Measure) 継続時間 =&gt; 0.68 }
-    { (String) 規模 =&gt; L2 }  
-]}
+    { (String) 規模 =&gt; L2 } ]
 </code></pre><p>上の例において、(括弧)内の文字は属性の型を示します。<br>属性値は次の型があります。:<br><code>AttributeSet, String, Double, Integer, Data, Uri, Measure</code><br>AttributeSet以外の型はすべて内部的には文字列型であり、<br><code>AttributeValue.AsString</code> で値を取得できます。<br>入れ子AttributeSetの値は <code>AsString</code> ではなく <code>AttributeValue.AsAttrSet</code>で取得できます。<br>属性値の型は <code>AttributeValue.Type</code> で取得でき、この値が <code>AttributeSet</code> である場合は　　
 <code>AttributeValue.AsAttrSet</code>で子の <code>AttributesMap</code> を取得できます。<br><code>AttributeValue.Type</code> がそれ以外 (String, Doubleなど) である場合は <code>AttributeValue.AsString</code> で文字列を取得できます。</p>
 </article>
