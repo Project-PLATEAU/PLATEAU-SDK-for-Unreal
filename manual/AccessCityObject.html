@@ -80,59 +80,64 @@
 <h1 id="属性情報へのアクセス">属性情報へのアクセス</h1>
 
 <p>このページではブループリントを利用して3D都市モデルの属性情報にアクセスする方法を記載します。</p>
-<h2 id="3d都市モデルのロード">3D都市モデルのロード</h2>
-<p>サンプルとしてマウスをクリックした際にカメラの中心に位置する都市オブジェクトの属性情報を画面に表示するスクリプトを紹介します。</p>
-<h3 id="ブループリントの利用">ブループリントの利用</h3>
+<h2 id="属性情報を確認するplateau-sdkのエディタ機能">属性情報を確認する(PLATEAU SDKのエディタ機能)</h2>
+<p>SDK画面から各地物の属性情報を確認いただけます。</p>
+<ol>
+<li>PLATEAU SDKウィンドウの「属性情報」タブを開きます。</li>
+<li><code>ウィンドウ/ワールドセッティング</code>の<code>GameMode/ゲームモードオーバーライド</code>を<code>ClickEventGameMode</code>に指定します。<ul>
+<li>PlayerControllerで左クリック入力を受け付けるように設定している場合はこの手順は行っていただく必要はありません。</li>
+</ul>
+</li>
+<li>レベルをプレイします。</li>
+<li>地物をクリックすると、その地物IDと属性情報が表示されます。</li>
+</ol>
+<p><img src="../resources/manual/accessCityObject/editor.png" alt=""></p>
+<ul>
+<li>ビュー上のピンク色の線は、選択中の主要地物の範囲を示します。</li>
+<li>ビュー上の緑色の線は、選択中の最小地物の範囲を示します。</li>
+<li>地物IDがビュー中の文字で表示され、属性情報は属性情報ウィンドウのテキストボックスに表示されます。</li>
+</ul>
+<h3 id="主要地物と最小地物について">主要地物と最小地物について</h3>
+<ul>
+<li>例えば、建物を主要地物単位でインポートした場合は、1つのComponentおよび1つのStaticMeshで1つの建物を表します。<br>その1つのメッシュを分解すると、「壁」「屋根」などのパーツになります。<br>この場合、建物全体が主要地物であり、壁、屋根などのパーツが最小地物に該当します。<br>ここで建物をクリックして属性情報を表示すると、主要地物（建物全体、1つのメッシュ）としての属性情報と、最小地物（壁や屋根など、メッシュの一部分）としての属性情報が両方表示されます。</li>
+<li>建物を最小地物単位でインポートした場合、壁や屋根ごとにゲームオブジェクトおよびメッシュが分かれます。<br>この場合、最小地物ゲームオブジェクトの親ゲームオブジェクトから主要地物の情報を取得します。</li>
+<li>建物を地域単位でインポートした場合、複数の主要地物が結合されます。<br>この場合、メッシュの一部分として主要地物および最小地物の情報を取得できます。</li>
+</ul>
+<h2 id="属性情報へアクセスするブループリント">属性情報へアクセスするブループリント</h2>
+<div class="CAUTION"><h5>Caution</h5><p>SDK画面を開いている状態では以下のスクリプトは動作しないため、SDK画面を閉じてから実行してください。</p>
+</div>
 <p>SDKにはサンプルのブループリントが含まれています。<br>確認するには、コンテンツブラウザで <code>設定 → プラグインコンテンツを表示</code>　にチェックを入れ、次の場所にあるブループリントを開いてください：<br><code>Plugins/PLATEAU SDK for Unreal コンテンツ/Samples/AttributeLoadSample/ClickToGetAttribute</code>  </p>
 <p>このブループリントを利用するには次のようにします：</p>
 <ul>
 <li>都市モデルをインポートしたレベルに <code>ClickToGetAttribute</code> を配置します。  </li>
-<li>配置した<code>ClickToGetAttribute</code>の詳細パネルから以下を設定します。<ul>
-<li>CityModel 欄にインポートした都市モデルを割り当て</li>
-<li><code>Auto Receive Input</code>を<code>Player 0</code>に設定</li>
-</ul>
-</li>
 <li><code>ウィンドウ/ワールドセッティング</code>の<code>GameMode/ゲームモードオーバーライド</code>を<code>ClickEventGameMode</code>に指定します。</li>
 <li>再生して都市オブジェクトをクリックすると属性情報が表示されます。</li>
 </ul>
 <p><img src="../resources/manual/accessCityObject/sample.png" alt=""></p>
 <h3 id="ブループリントの説明">ブループリントの説明</h3>
 <p><img src="../resources/manual/accessCityObject/blueprint.png" alt=""></p>
-<h4 id="マウスクリックに-linetrace-を飛ばす">マウスクリックに LineTrace を飛ばす</h4>
-<p><img src="../resources/manual/accessCityObject/blueprintSection1.png" alt=""></p>
-<h4 id="クリック位置の-cityobjectid-を取得する">クリック位置の CityObjectID を取得する</h4>
-<p><img src="../resources/manual/accessCityObject/blueprintSection2.png" alt=""></p>
+<h4 id="キー入力受付の有効化">キー入力受付の有効化</h4>
+<p><img src="../resources/manual/accessCityObject/blueprintSetup.png" alt=""></p>
 <ul>
-<li><code>CityModel</code>変数には属性情報を取得したい<code>PLATEAUInstancedCityModel</code>アクタを設定します。<ul>
-<li><code>PLATEAUInstancedCityModel</code>アクタは都市モデルをインポートすることによって生成されます。</li>
+<li>レベルの開始時に<code>EnableInput</code>関数を呼び出し、このBPがキー入力を受け取れるようにします。</li>
 </ul>
-</li>
-<li><code>GetCityObjectInfo</code>ノードは<code>Component</code>を受け取って都市オブジェクトにアクセスするために必要な情報 <code>PLATEAUCityObjectInfo</code> を出力します。</li>
-<li><code>PLATEAUCityObjectInfo</code> の <code>ID</code> から、個々の都市オブジェクトのIDを取得できます。</li>
-</ul>
-<h4 id="gmlファイルをパースしcityobjectidに対応する属性情報を取得する">GMLファイルをパースし、CityObjectIDに対応する属性情報を取得する</h4>
+<h4 id="クリックされた地物を取得する">クリックされた地物を取得する</h4>
+<p><img src="../resources/manual/accessCityObject/blueprintLineTrace.png" alt=""></p>
 <ul>
-<li><code>LoadAsync</code>ノードは非同期でCityGMLのパースを行い、<code>CityModel</code>インスタンスを出力します。</li>
-<li><code>GetCityObjectByID</code>ノードは<code>CityModel</code>インスタンスと<code>FeatureID</code>を受け取り、対応する<code>CityObject</code>インスタンスを出力します。</li>
-<li><code>CityObject</code> は属性情報を持ちます。属性情報はキーと値のペアのセットです。</li>
-<li><code>GetAttributeMap</code>ノードは<code>CityObject</code>インスタンスを受け取り、都市オブジェクトが持つ属性情報を<code>AttributeMap</code>インスタンスとして出力します。
-<img src="../resources/manual/accessCityObject/blueprintSection3.png" alt=""></li>
+<li>左ボタンクリック時にカーソル位置にLineTraceを行い、クリックされた地物(CityObject)を取得します。</li>
+<li>LineTraceはSDKで提供している<code>LineTraceCityObject</code>関数を利用します。</li>
+</ul>
+<h4 id="地物の属性情報を取得する">地物の属性情報を取得する</h4>
+<p><img src="../resources/manual/accessCityObject/blueprintGetAttributes.png" alt=""></p>
+<ul>
+<li>取得されたCityObjectの<code>GetAttributes</code>関数を呼び出し、属性情報のTMapを取得します。</li>
 </ul>
 <h4 id="都市オブジェクトの属性情報の表示">都市オブジェクトの属性情報の表示</h4>
-<p><img src="../resources/manual/accessCityObject/blueprintSection4.png" alt=""></p>
-<h2 id="属性とは">属性とは</h2>
-<p>都市オブジェクトの情報は「属性」として取得できます。<br>属性は例えば  </p>
-<pre><code class="lang-text">(String) 大字・町コード =&gt; 42,
-(String) 防火及び準防火地域 =&gt; 準防火地域
-</code></pre><p>のように、キーと値のペアからなる辞書形式の情報です。<br>属性辞書は <code>CityObject.AttributesSet</code> メソッドで取得できます。<br><code>AttributesSet.ToString()</code> をコールすると、属性情報をすべて文字列にして返します。　　
-<code>AttributesSet.GetValueOrNull(&quot;key&quot;)</code> によってキーに対応する<code>AttributeValue</code> を取得できます。<br><code>AttributeValue</code> の具体的な値は文字列型として取得できるか、または<br>子の属性（属性は入れ子になることもあります）として取得できるかのいずれかです。<br>属性が入れ子になっている例は次のとおりです。</p>
-<pre><code class="lang-text"> (AttributeSet) 多摩水系多摩川、浅川、大栗川洪水浸水想定区域（想定最大規模） =&gt; 
-    [ { (String) 浸水ランク =&gt; 2 }
-    { (Measure) 浸水深 =&gt; 0.990 }
-    { (Measure) 継続時間 =&gt; 0.68 }
-    { (String) 規模 =&gt; L2 } ]
-</code></pre><p>上の例において、(括弧)内の文字は属性の型を示します。<br>属性値は次の型があります。:<br><code>AttributeSet, String, Double, Integer, Data, Uri, Measure</code><br>AttributeSet以外の型はすべて内部的には文字列型であり、<br><code>AttributeValue.AsString</code> で値を取得できます。<br>入れ子AttributeSetの値は <code>AsString</code> ではなく <code>AttributeValue.AsAttrSet</code>で取得できます。<br>属性値の型は <code>AttributeValue.Type</code> で取得でき、この値が <code>AttributeSet</code> である場合は　　
-<code>AttributeValue.AsAttrSet</code>で子の <code>AttributesMap</code> を取得できます。<br><code>AttributeValue.Type</code> がそれ以外 (String, Doubleなど) である場合は <code>AttributeValue.AsString</code> で文字列を取得できます。</p>
+<p><img src="../resources/manual/accessCityObject/blueprintPrintAttributes.png" alt=""></p>
+<ul>
+<li>TMapから各属性情報値を取得し、<code>GetString</code>関数で文字列として内容を取り出します。</li>
+<li><code>PrintString</code>関数で文字列を画面内に表示します。</li>
+</ul>
 </article>
           </div>
           

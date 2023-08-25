@@ -39,7 +39,7 @@
       "output": {
         ".html": {
           "relative_path": "manual/AccessCityObject.html",
-          "hash": "T4MXe8M2M+1K+3ULtjZLTmVoNlj6yVkPevAHMDC4iEY="
+          "hash": "3EZAN+rd3u+tkuaGl+o80DoB71PRA2ZKqQ/EVD+6jsc="
         }
       },
       "is_incremental": false,
@@ -87,7 +87,7 @@
       "output": {
         ".html": {
           "relative_path": "manual/Installation.html",
-          "hash": "F9grcxaIXHBVrFyNnajyV24XK1Ux6tBlnFJX2OZ3jyo="
+          "hash": "Okk3vVimovYAAN2VVzDgTXOCihJATqCqTsfJAcnIlK4="
         }
       },
       "is_incremental": false,
@@ -129,17 +129,6 @@
     },
     {
       "type": "Resource",
-      "source_relative_path": "resources/manual/accessCityObject/assignInstance.png",
-      "output": {
-        "resource": {
-          "relative_path": "resources/manual/accessCityObject/assignInstance.png"
-        }
-      },
-      "is_incremental": false,
-      "version": ""
-    },
-    {
-      "type": "Resource",
       "source_relative_path": "resources/manual/accessCityObject/blueprint.png",
       "output": {
         "resource": {
@@ -151,10 +140,10 @@
     },
     {
       "type": "Resource",
-      "source_relative_path": "resources/manual/accessCityObject/blueprintSection1.png",
+      "source_relative_path": "resources/manual/accessCityObject/blueprintGetAttributes.png",
       "output": {
         "resource": {
-          "relative_path": "resources/manual/accessCityObject/blueprintSection1.png"
+          "relative_path": "resources/manual/accessCityObject/blueprintGetAttributes.png"
         }
       },
       "is_incremental": false,
@@ -162,10 +151,10 @@
     },
     {
       "type": "Resource",
-      "source_relative_path": "resources/manual/accessCityObject/blueprintSection2.png",
+      "source_relative_path": "resources/manual/accessCityObject/blueprintLineTrace.png",
       "output": {
         "resource": {
-          "relative_path": "resources/manual/accessCityObject/blueprintSection2.png"
+          "relative_path": "resources/manual/accessCityObject/blueprintLineTrace.png"
         }
       },
       "is_incremental": false,
@@ -173,10 +162,10 @@
     },
     {
       "type": "Resource",
-      "source_relative_path": "resources/manual/accessCityObject/blueprintSection3.png",
+      "source_relative_path": "resources/manual/accessCityObject/blueprintPrintAttributes.png",
       "output": {
         "resource": {
-          "relative_path": "resources/manual/accessCityObject/blueprintSection3.png"
+          "relative_path": "resources/manual/accessCityObject/blueprintPrintAttributes.png"
         }
       },
       "is_incremental": false,
@@ -184,10 +173,10 @@
     },
     {
       "type": "Resource",
-      "source_relative_path": "resources/manual/accessCityObject/blueprintSection4.png",
+      "source_relative_path": "resources/manual/accessCityObject/blueprintSetup.png",
       "output": {
         "resource": {
-          "relative_path": "resources/manual/accessCityObject/blueprintSection4.png"
+          "relative_path": "resources/manual/accessCityObject/blueprintSetup.png"
         }
       },
       "is_incremental": false,
@@ -195,10 +184,10 @@
     },
     {
       "type": "Resource",
-      "source_relative_path": "resources/manual/accessCityObject/getObjectInfoSettings.png",
+      "source_relative_path": "resources/manual/accessCityObject/editor.png",
       "output": {
         "resource": {
-          "relative_path": "resources/manual/accessCityObject/getObjectInfoSettings.png"
+          "relative_path": "resources/manual/accessCityObject/editor.png"
         }
       },
       "is_incremental": false,
@@ -210,17 +199,6 @@
       "output": {
         "resource": {
           "relative_path": "resources/manual/accessCityObject/overrideGameMode.png"
-        }
-      },
-      "is_incremental": false,
-      "version": ""
-    },
-    {
-      "type": "Resource",
-      "source_relative_path": "resources/manual/accessCityObject/placeGetObjectInfo.png",
-      "output": {
-        "resource": {
-          "relative_path": "resources/manual/accessCityObject/placeGetObjectInfo.png"
         }
       },
       "is_incremental": false,
@@ -353,6 +331,17 @@
       "output": {
         "resource": {
           "relative_path": "resources/manual/importCityModels/progress.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "resources/manual/installation/disableAutoMapSave.png",
+      "output": {
+        "resource": {
+          "relative_path": "resources/manual/installation/disableAutoMapSave.png"
         }
       },
       "is_incremental": false,

@@ -95,13 +95,21 @@
 <h2 id="plateau-sdk-for-unrealの導入">PLATEAU SDK for Unrealの導入</h2>
 <ul>
 <li><a href="https://github.com/Project-PLATEAU/PLATEAU-SDK-for-Unreal/releases">リリースページ</a>から提供されている<code>PLATEAU-SDK-for-Unreal-{バージョン名}.zip</code>をダウンロードします。</li>
-<li>作成したプロジェクトのフォルダに<code>Plugins</code>という名前のフォルダを作成し、先程ダウンロードしたSDKを解凍しコピーします。</li>
+<li>作成したプロジェクトのフォルダに<code>Plugins</code>という名前のフォルダを作成し、先程ダウンロードしたSDKを解凍しコピーします。
+(<code>Plugins</code>フォルダの作成は、<code>Unreal Engine</code> のコンテンツブラウザからではなく、エクスプローラで作成してください。)</li>
 <li><code>Plugins/PLATEAU-SDK-for-Unreal/PLATEAU-SDK-for-Unreal.uplugin</code>が存在することを確認します。</li>
 <li>プロジェクトを開きます。既にプロジェクトを開いている場合は一度閉じてから再度プロジェクトを開いてください。</li>
 <li>プロジェクトを開く際に以下の画面が表示される場合は<code>はい</code>を押して完了です。</li>
 </ul>
 <p><img src="../resources/manual/installation/pluginBuild.png" alt=""></p>
-<h1 id="エディタ設定の変更推奨">エディタ設定の変更(推奨)</h1>
+<h1 id="エディタ設定の変更">エディタ設定の変更</h1>
+<h2 id="自動保存の無効化">自動保存の無効化</h2>
+<p>3D都市モデルのインポート中にマップの自動保存が実行された際エディタがクラッシュしてしまう場合があるため、以下の手順で自動保存を無効化してください。</p>
+<ol>
+<li><code>エディタの環境設定</code>から<code>ロード＆保存中</code>を選択します。</li>
+<li><code>自動保存</code>内の<code>マップを保存</code>のチェックを外します。
+<img src="../resources/manual/installation/disableAutoMapSave.png" alt=""></li>
+</ol>
 <h2 id="自動再インポート対象の除外">自動再インポート対象の除外</h2>
 <ol>
 <li><code>エディタの環境設定</code>から<code>ロード＆保存中</code>→<code>監査するディレクトリ</code>→<code>インデックス[0]</code>を選択します。</li>
