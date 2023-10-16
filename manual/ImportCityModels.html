@@ -87,7 +87,7 @@
 <h2 id="インポート手順">インポート手順</h2>
 <h3 id="インポート元の選択">インポート元の選択</h3>
 <ul>
-<li>Unreal Engineのメニューバーから <code>PLATEAU → PLATEAU SDK</code> を選択します。<br>表示されるウィンドウの上部に3つのタブ「インポート、モデル調整、エクスポート」があります。<br>このうちインポートを選択します。
+<li>Unreal Engineのメニューバーから <code>PLATEAU → PLATEAU SDK</code> を選択します。<br>表示されるウィンドウの上部に3つのタブ「インポート、モデル調整、エクスポート、属性情報」があります。<br>このうちインポートを選択します。
 <img src="../resources/manual/importCityModels/plateauWindowImport.png" alt=""></li>
 <li>インポート元で <code>ローカル</code> か <code>サーバー</code> を選択します。</li>
 </ul>
@@ -117,13 +117,23 @@
 <li>範囲選択画面の操作方法：<ul>
 <li>マウスホイールを上下に回してズームアウト、ズームインします。</li>
 <li>マウスクリックしたままドラッグしてカメラ移動します。</li>
-<li>オレンジ色の球体をドラッグして範囲を選択します。</li>
+<li>範囲の選択方法については、画面右下に説明があるとおり、<ul>
+<li>クリックで選択/選択解除</li>
+<li>ドラッグで矩形での選択追加</li>
+<li>Shift+ドラッグで矩形での選択除外をします。</li>
+</ul>
+</li>
+<li>範囲がオレンジ色で表示されない場合は、見えるまでズームします。</li>
 <li>ビューポート左上の決定ボタンを押して範囲を確定します。</li>
 </ul>
 </li>
 <li>画面のみかた：<ul>
 <li>青色の線は利用可能な地域を示します。</li>
-<li>地域ごとに利用可能な地物種類とLODがアイコン形式で表示されます。(地形、災害リスクなど、アイコンとして表示されない地物も一部存在します。)</li>
+<li>地域ごとに利用可能な地物種類とLODがアイコン形式で表示されます。(アイコンとして表示されない地物も一部存在します。)<ul>
+<li>対応LODは色で表現されます。画面左下の凡例の色と対応します。</li>
+</ul>
+</li>
+<li>アイコンが多すぎると感じる場合は、画面左下の凡例のチェックを切り替えることでアイコンの表示/非表示をLODごとに切り替えることができます。</li>
 <li>地図は国土地理院のサイトから自動でダウンロードされて表示されます。インターネットへの接続が必要です。</li>
 <li>区域に表示される番号は、後述の<code>indexmap.pdf</code> に記載の番号と同じです。</li>
 </ul>
@@ -140,6 +150,15 @@
 </li>
 <li><code>テクスチャを含める</code><ul>
 <li>テクスチャが存在する地物タイプで表示される設定項目です。<br>チェックが付いていて、かつテクスチャがある場合はそれを含めてインポートします。<br>都市データによってはテクスチャがない場合があり、<br>その場合はチェックを外した時と同様に真っ白な3Dモデルが出力されます。</li>
+</ul>
+</li>
+<li><code>テクスチャを結合する</code><ul>
+<li>テクスチャを含める場合、テクスチャ結合機能を利用できます。</li>
+<li>PLATEAUのデータはテクスチャの枚数が多い傾向にあり、結合しないと描画負荷が高くなる傾向にあります。<br>結合機能を有効にすると、複数のテクスチャを1枚の画像にまとめ、3DモデルのUVも合わせて調整されます。それによって描画負荷を改善できます。</li>
+</ul>
+</li>
+<li><code>テクスチャ解像度</code><ul>
+<li>テクスチャを結合する場合の、結合後のテクスチャの大きさを指定します。</li>
 </ul>
 </li>
 <li><code>最小LOD</code>, <code>最大LOD</code><ul>
@@ -169,9 +188,58 @@
 </li>
 </ul>
 </li>
+<li><code>デフォルトマテリアル</code><ul>
+<li>PLATEAUの3Dモデルのうち、テクスチャやマテリアル指定がない箇所のマテリアルを指定します。</li>
+<li>デフォルトでは、地物タイプに応じたマテリアルが指定されています。</li>
+</ul>
+</li>
 </ul>
 <div class="NOTE"><h5>Note</h5><p><strong>地物の選択について</strong><br>地物の中にはインポートに時間がかかるものもあるのでご注意ください。<br>例えば 土地起伏 はデータの範囲が 10km × 10km と非常に広く、<br>データ容量が重く処理に時間がかかるのでご注意ください。</p>
 </div>
+<h3 id="土地に衛星写真や地図を貼り付ける">土地に衛星写真や地図を貼り付ける</h3>
+<p>土地に衛星写真や地図を貼り付けることができます。</p>
+<p><img src="../resources/manual/importCityModels/landPhotoSample.png" alt=""></p>
+<h4 id="設定方法">設定方法</h4>
+<ul>
+<li>範囲選択画面で土地起伏の3Dモデルが存在する地域を選択すると、インポート設定に「起伏」が表示されます。
+<img src="../resources/manual/importCityModels/landConfig.png" alt=""></li>
+<li>土地起伏では、上述の地物別設定に加えて土地起伏専用の設定項目があります。</li>
+<li><code>衛星写真または地図を付与する</code><ul>
+<li>チェックがONになっていると機能が有効化されます。</li>
+</ul>
+</li>
+<li><code>地図タイルURL</code><ul>
+<li>航空写真または地図の画像をダウンロードするためのURLです。</li>
+<li>デフォルトでは地理院地図の航空写真のURLが入力されています。</li>
+<li>このURLを変更すれば、航空写真だけでなく、国土地理院が提供している多種多様な地図や写真を土地に貼り付けることができます。<br>利用できる地図については<a href="https://maps.gsi.go.jp/development/ichiran.html">国土地理院のページ</a>を参照してください。<br>そのページに記載されているURLを貼り付けることで地図を利用できます。</li>
+<li>下図は地図を貼り付けた例です。
+<img src="../resources/manual/importCityModels/mapExample.png" alt=""></li>
+<li>下図は陰影起伏図を貼り付けた例です。
+<img src="../resources/manual/importCityModels/mapHeightExample.png" alt=""></li>
+<li>URLには文字列 <code>{z}, {x}, {y}</code>を含めるようにしてください。これは地図タイルのxyz座標に変換されます。<ul>
+<li>地図タイルのxyz座標については<a href="https://maps.gsi.go.jp/development/siyou.html">国土地理院のページ</a>を参照してください。</li>
+<li>SDKの機能により、土地の座標をもとに文字列<code>{z}, {x}, {y}</code>を適切な数値に置き換えて画像をダウンロードします。</li>
+</ul>
+</li>
+<li><code>ズームレベル</code><ul>
+<li>地図タイルのズームレベルです。<ul>
+<li>数値が大きいほど高精細な画像になります。</li>
+<li>数値が1つ下がると、画素数が4分の1になります。</li>
+<li>ズームレベルは、地図タイルxyz座標のzの値に相当します。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><code>利用可能なズームレベルの検索</code><ul>
+<li>ボタンを押すと、現在入力されているURLでどのズームレベルが利用可能なのかを検索します。</li>
+<li>検索が完了すると、ズームレベルのドロップダウンの選択肢が変化し、利用可能なズームレベルから選択できるようになります。
+<img src="../resources/manual/importCityModels/zoomLevelSelect.png" alt=""></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p>この機能でダウンロードされた地図タイルは、自動で1枚の画像に結合され、土地のUVとマテリアルが設定されてインポートされます。</p>
 <h3 id="基準座標系からのオフセット値の設定">基準座標系からのオフセット値の設定</h3>
 <p>3Dモデルの原点をどこに置くかを指定します。<br>デフォルト値として、選択範囲の中心位置が自動入力されるので、<br>このままの値でインポート可能です。<br>3Dモデルの原点位置を調整したい場合のみ値を編集してください。　　
 <img src="../resources/manual/importCityModels/offset.png" alt=""> </p>
@@ -193,6 +261,50 @@
 <h3 id="原点情報の確認">原点情報の確認</h3>
 <p>インポートした3D都市モデルは原点付近に位置するようにオフセットがかけられます。<br>原点情報はPLATEAUInstancedCityModelアクタの詳細パネルから確認が可能です。
 <img src="../resources/manual/importCityModels/coordinate.png" alt=""></p>
+<h3 id="デフォルトマテリアルの見た目を変えたいとき">デフォルトマテリアルの見た目を変えたいとき</h3>
+<p>PLATEAU SDKでは地物タイプごとにデフォルトマテリアルが用意されています。<br>例えば、下図の建物には建築物のデフォルトマテリアルが適用されています。
+<img src="../resources/manual/importCityModels/defaultBuilding.png" alt="">
+このマテリアルは独自のTriplanarマテリアルを利用しているため、UVのない地物にもテクスチャを投影できます。<br>PLATEAUのモデルにはUVが<strong>ない</strong>場合があります。<br>そのため、ご自分で見た目をカスタマイズする場合でも、SDK付属のTriplanar系マテリアル、またはそれと同様のTriplanar機能を有したマテリアルを利用することを推奨します。<br>以下に同マテリアルをもとにしたマテリアルの作成方法を説明します。</p>
+<h4 id="sdk付属のマテリアルについて">SDK付属のマテリアルについて</h4>
+<p>PLATEAU SDKのデフォルトマテリアルは、以下の3種類のマテリアルを元に作られています。<br>どれもUVなしでテクスチャを投影できるのが特徴です。</p>
+<ul>
+<li><code>通常のTriplanarマテリアル</code></li>
+<li><code>デュアルテクスチャのTriplanarマテリアル</code><ul>
+<li>上下を向いた面と横を向いた面で異なる見た目を表現するTriplanarマテリアルです。</li>
+<li>利用例：建築物の上を向いた面をコンクリートの屋根に、側面を窓付きの壁にしたい場合などに利用できます。</li>
+</ul>
+</li>
+</ul>
+<p>このマテリアルを元にして別のマテリアルを作成する手順は次のとおりです：</p>
+<ul>
+<li>コンテンツブラウザで<code>Plugins/PLATEAU SDK for Unreal コンテンツ/Materials/Fallback</code>を開きます。</li>
+<li>ベースとしたいマテリアルを右クリックし、「マテリアルインスタンスを作成」します。<ul>
+<li><code>PlateauDefaultBuildingMaterial</code>を元にした場合はデュアルテクスチャのTriplanarになります。</li>
+<li>それ以外のデフォルトマテリアルを元にした場合は通常のTriplanarになります。</li>
+</ul>
+</li>
+<li>マテリアルにテクスチャを割り当て、設定します。設定項目は次のとおりです：<ul>
+<li><code>MainTexture</code> : メインのテクスチャです。</li>
+<li><code>NormalMap</code> : ノーマルマップです。</li>
+<li><code>NormalMapStrength</code> : ノーマルマップの強さです。</li>
+<li><code>Tiling</code> : テクスチャをタイリングさせる大きさです。</li>
+<li><code>Blend</code> : ポリゴンの向きに応じてテクスチャをブレンドさせる程度です。</li>
+<li><code>Metallic</code> : メタリック（金属感の強さ）です。</li>
+<li><code>MetallicTexture</code> : メタリックを表現するテクスチャです。</li>
+<li><code>Roughness</code> : ラフネス（ざらざら感の強さ）です。</li>
+<li><code>RoughnessTexture</code> : ラフネスを表現する強さです。</li>
+<li><code>AmbientOcclusion</code> : アンビエントオクルージョン(環境光の影響を受ける程度)です。</li>
+<li><code>AmbientOcclusionTex</code> : アンビエントオクルージョンを表現するテクスチャです。</li>
+<li><code>EmissionColor</code> : エミッション（発光）の色です。</li>
+<li><code>EmissionTexture</code> : エミッションを表現するテクスチャです。</li>
+<li><code>Opacity</code> : 不透明度です。 </li>
+</ul>
+</li>
+</ul>
+<p>デュアルテクスチャでは、上記の設定値がそれぞれ<code>Top</code>と<code>Side</code>の2つに分かれます。Topは上下面、Sideは側面の見た目を設定します。</p>
+<ul>
+<li>自作したマテリアルは、インポート後にドラッグ＆ドロップ等で適用できるほか、インポートの設定項目として「デフォルトマテリアル」に指定できます。</li>
+</ul>
 </article>
           </div>
           

@@ -39,7 +39,7 @@
       "output": {
         ".html": {
           "relative_path": "manual/AccessCityObject.html",
-          "hash": "3EZAN+rd3u+tkuaGl+o80DoB71PRA2ZKqQ/EVD+6jsc="
+          "hash": "RhD/FdZZLQ9Qw+0Og9oOZXe471jr1iVoMsSC/vIpWCU="
         }
       },
       "is_incremental": false,
@@ -75,7 +75,7 @@
       "output": {
         ".html": {
           "relative_path": "manual/ImportCityModels.html",
-          "hash": "3TUePq5ziEdUAdAiqG4oq3NT9Tlj4JPhuP8/S7PmMB8="
+          "hash": "FDScddqG67Y8KOkH77iuQ+Zj1400SHOnlgjIKVuwsoQ="
         }
       },
       "is_incremental": false,
@@ -87,7 +87,7 @@
       "output": {
         ".html": {
           "relative_path": "manual/Installation.html",
-          "hash": "Okk3vVimovYAAN2VVzDgTXOCihJATqCqTsfJAcnIlK4="
+          "hash": "rZkc4wrRvPrrCft9ALrsvYCxfOh/w/cN2bOek888+EM="
         }
       },
       "is_incremental": false,
@@ -272,6 +272,17 @@
     },
     {
       "type": "Resource",
+      "source_relative_path": "resources/manual/importCityModels/defaultBuilding.png",
+      "output": {
+        "resource": {
+          "relative_path": "resources/manual/importCityModels/defaultBuilding.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
       "source_relative_path": "resources/manual/importCityModels/idmap.png",
       "output": {
         "resource": {
@@ -305,6 +316,50 @@
     },
     {
       "type": "Resource",
+      "source_relative_path": "resources/manual/importCityModels/landConfig.png",
+      "output": {
+        "resource": {
+          "relative_path": "resources/manual/importCityModels/landConfig.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "resources/manual/importCityModels/landPhotoSample.png",
+      "output": {
+        "resource": {
+          "relative_path": "resources/manual/importCityModels/landPhotoSample.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "resources/manual/importCityModels/mapExample.png",
+      "output": {
+        "resource": {
+          "relative_path": "resources/manual/importCityModels/mapExample.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "resources/manual/importCityModels/mapHeightExample.png",
+      "output": {
+        "resource": {
+          "relative_path": "resources/manual/importCityModels/mapHeightExample.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
       "source_relative_path": "resources/manual/importCityModels/offset.png",
       "output": {
         "resource": {
@@ -331,6 +386,17 @@
       "output": {
         "resource": {
           "relative_path": "resources/manual/importCityModels/progress.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "resources/manual/importCityModels/zoomLevelSelect.png",
+      "output": {
+        "resource": {
+          "relative_path": "resources/manual/importCityModels/zoomLevelSelect.png"
         }
       },
       "is_incremental": false,
