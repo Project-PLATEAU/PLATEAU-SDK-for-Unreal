@@ -79,19 +79,98 @@
             <article class="content wrap" id="_content" data-uid="">
 <h1 id="3d都市モデルのエクスポート">3D都市モデルのエクスポート</h1>
 
-<p>このページではワールドに配置された3D都市モデルをOBJ形式またはglTF形式でエクスポートする手順を説明します。</p>
+<p>Unrealのレベルに配置された都市の3Dモデルを、objファイルや gltfファイルとしてエクスポートできます。<br>このページではエクスポートの手順を説明します。  </p>
 <h2 id="前提">前提</h2>
-<p>ワールド内に3D都市モデルがインポートされていることが前提です。<br>インポートの方法については <a href="ImportCityModels.html">3D都市モデルのインポート</a> をご覧ください。  </p>
+<p>ワールド内に3D都市モデルがインポートされていることが前提です。<br>インポートの方法については <a href="ImportCityModels.html">3D都市モデルのインポート</a> をご覧ください。<br><img src="../resources/manual/exportCityModels/importedCity.png" alt=""></p>
 <h2 id="エクスポート手順">エクスポート手順</h2>
 <h3 id="エクスポート対象の指定">エクスポート対象の指定</h3>
 <ul>
-<li><p>メニューバーから <code>PLATEAU → PLATEAU SDK</code> を選択し、エクスポートを開きます。  </p>
-<p><img src="../resources/manual/exportCityModels/exportWindow.png" alt=""></p>
-</li>
-<li><p>エクスポート対象をアウトライナーから選択します。</p>
-</li>
-<li>オプションを設定し、<code>モデルをエクスポート</code>ボタンを押します。</li>
+<li>メニューバーから <code>PLATEAU → PLATEAU SDK</code> を選択します。<br>表示されるウィンドウの上部に4つのタブ「インポート、モデル修正、エクスポート、属性情報」があります。<br>このうちエクスポートを選択します。  </li>
 </ul>
+<p>  <img src="../resources/manual/exportCityModels/exportWindow.png" alt=""></p>
+<ul>
+<li><p>エクスポート対象の選択
+エクスポート対象をアウトライナーから選択します。</p>
+<p><img src="../resources/manual/exportCityModels/selectOBJECT.png" alt=""></p>
+<ul>
+<li>対象として選択できるのはインポート時に生成されたゲームオブジェクトのうち、<br>親子関係における最上位のものです。</li>
+<li>親子関係の最上位には自動で <code>PLATEAUInstancedCityModel</code> コンポーネントが付与されています。<br>このコンポーネントを持つゲームオブジェクトが選択対象となります。</li>
+</ul>
+</li>
+</ul>
+<h3 id="出力オプションの設定">出力オプションの設定</h3>
+<p>オプションの設定項目について説明します。</p>
+<h5 id="出力形式"><strong>出力形式</strong></h5>
+<ul>
+<li><strong>OBJ</strong>  </li>
+<li><strong>FBX</strong><br> <strong>フォーマット</strong>を次から選択します。
+  お使いの用途に合わせて選択してください。<ul>
+<li><strong>バイナリ</strong></li>
+<li><strong>ASCII</strong>  </li>
+</ul>
+</li>
+<li><p><strong>GLTF</strong><br> <strong>フォーマット</strong>を次から選択します。</p>
+<ul>
+<li><strong>バイナリ</strong><ul>
+<li>3Dモデルとその関連データをまとめて1つのファイルとするフォーマットです。</li>
+</ul>
+</li>
+<li><strong>ASCII</strong><ul>
+<li>3Dモデル、テクスチャ、binファイルを別々のファイルとするフォーマットです。 </li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><strong>テクスチャを出力する</strong></p>
+<ul>
+<li>出力にテクスチャを含めるかどうかを設定します。チェックが付いていれば含みます。  </li>
+</ul>
+</li>
+<li><p><code>座標変換</code></p>
+<ul>
+<li>座標の基準点を設定します。</li>
+<li><p><code>Local</code> (ローカル) のとき:</p>
+<ul>
+<li>ポリゴンの座標は <code>PLATEAUInstancedCityModel</code> の位置を原点とした座標で表されます。<br><img src="../resources/manual/exportCityModels/exportLocalCoord.png" alt=""></li>
+</ul>
+</li>
+<li><p><code>Plane Cartesian</code> (直交座標系) のとき: </p>
+<ul>
+<li>ポリゴンの座標は、国土交通省が定める直交座標系のうち、インポート時に選択した直交座標系を原点とするよう平行移動されます。<br><img src="../resources/manual/exportCityModels/japanCoordinateSystem.png" alt=""><br>上図は <a href="https://www.gsi.go.jp/sokuchikijun/jpc.html">国土地理院のWebサイト「わかりやすい平面直角座標系」</a> より引用<br>(原点マークは別途追記)</li>
+</ul>
+</li>
+<li>2つの使い分けについて<ul>
+<li>原点付近に3Dモデルが来るようにしたいときは Local</li>
+<li>原点から遠い位置に3Dモデルが配置されますが、複数の異なる都市をエクスポートするときに位置の整合性を取りたいときは Plane Cartesian が利用できます。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><strong>非表示モデルを出力する</strong></p>
+<ul>
+<li>ヒエラルキー上で非表示になっているゲームオブジェクトを含めるかどうかを設定します。</li>
+<li>チェックが外れているとき、非表示のものを出力から除外します。</li>
+<li>ここでいう <code>非表示</code> とは、下図のチェックマークが自身または親において外れている状態を指します。<br><img src="../resources/manual/exportCityModels/disabledObj.png" alt=""></li>
+</ul>
+</li>
+<li><p><code>座標系の設定</code></p>
+<ul>
+<li>Unrealではobj・fbxファイルはzが上向きの右手座標系として扱われるため
+エクスポートしたobj・fbxファイルをUnrealにインポートしたい場合は、 ENU を指定してください。<br>gltfの場合は、yが上向きの右手座標系として扱われるため WUN を指定し、インポート時にz軸を180度回転させてください。<br><strong>座標軸設定の趣旨:</strong></li>
+<li>x,y,z 軸がどの方向を向いているかはアプリケーションによって異なりますが、<br>この設定項目によって座標軸の違いに合わせて変換できます。</li>
+<li>座標軸の名称はアルファベット3文字で表され、<br>(1文字目,2文字目,3文字目) が (x軸,y軸,z軸) の向きを表します。</li>
+<li>例えば、Unrealでは x軸が東(East), y軸が南(South), z軸が上(UP) を向くので、<br>頭文字をとって ESU が Unrealの座標系となります。</li>
+<li>W は 西(West) を、N は 北(North) を表します。  </li>
+</ul>
+</li>
+</ul>
+<h3 id="エクスポートの実行">エクスポートの実行</h3>
+<ul>
+<li>右端の<code>参照...</code>から出力先のフォルダを指定します。</li>
+<li><code>モデルをエクスポート</code> ボタンを押してしばらく待ちます。</li>
+<li>指定のフォルダに3Dモデルファイルが出力されます。</li>
+</ul>
+<p><img src="../resources/manual/exportCityModels/tokyoBlender.png" alt=""><br>上図はエクスポートしたobjファイルを Blender で読み込んだものです。</p>
 </article>
           </div>
           

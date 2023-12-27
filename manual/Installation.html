@@ -89,9 +89,38 @@
 <h2 id="unrealプロジェクトの作成">Unrealプロジェクトの作成</h2>
 <ul>
 <li>先ほどインストールしたバージョンを起動します。</li>
+<li>Project Defaultsで<code>C++</code>を選択します。</li>
 <li>適宜設定を行い<code>作成</code>を押します。
 <img src="../resources/manual/installation/unrealEngineNewProjectCategory.png" alt=""></li>
 </ul>
+<p><a id="blueprint_project"></a></p>
+<h2 id="既存のblueprintプロジェクトを利用する場合">既存のBlueprintプロジェクトを利用する場合</h2>
+<div class="NOTE"><h5>Note</h5><p>C++プロジェクトへのSDKを導入される場合はこの章の対応は必要ございません。  </p>
+</div>
+<p>BlueprintプロジェクトにSDKを導入し、パッケージを作成した場合はアプリケーション起動時にエラーダイアログが表示されます。パッケージを利用される場合は下記の手順を追加で行って頂く必要がございます。  </p>
+<h3 id="ダミーのcクラスを追加">ダミーのC++クラスを追加</h3>
+<ol>
+<li><p>メニューからC++クラスを追加します
+<img src="../resources/manual/installation/addCppCodes.png" alt=""></p>
+</li>
+<li><p>親クラスにNoneを選択します
+<img src="../resources/manual/installation/parentClass.png" alt=""></p>
+</li>
+<li><p>新しいクラス名をつけます
+<img src="../resources/manual/installation/newClass.png" alt=""></p>
+</li>
+<li><p>ダイアログを閉じた後、エディタを閉じます
+<img src="../resources/manual/installation/includeDialog.png" alt=""></p>
+</li>
+<li><p>YES選択後に作成されたC++クラスがIDEで開かれます
+<img src="../resources/manual/installation/openCodes.png" alt=""></p>
+</li>
+<li><p>コードをビルドします（エディタを閉じていないとビルドエラーが出ます）
+<img src="../resources/manual/installation/buildCodes.png" alt=""></p>
+</li>
+<li><p>エディターを起動してプロジェクトを開いた後、パッケージを作成してアプリケーションを起動できます</p>
+</li>
+</ol>
 <h2 id="plateau-sdk-for-unrealの導入">PLATEAU SDK for Unrealの導入</h2>
 <ul>
 <li><a href="https://github.com/Project-PLATEAU/PLATEAU-SDK-for-Unreal/releases">リリースページ</a>から提供されている<code>PLATEAU-SDK-for-Unreal-{バージョン名}.zip</code>をダウンロードします。</li>
@@ -137,6 +166,8 @@
 <p>うまく導入できない場合、次のことをご確認ください。</p>
 <ul>
 <li>お使いのウイルス対策ソフトによっては、SDKに含まれるバイナリファイルが削除されることがあります。ウィルス対策ソフトによってSDKのファイルが削除されないよう設定をお願いします。</li>
+<li>既存のBlueprintプロジェクトにSDKを導入してパッケージしたアプリケーションを起動した際に下図のエラーが出ます。<a href="#blueprint_project">こちら</a> を参照して下さい。
+<img src="../resources/manual/installation/moduleError.png" alt=""></li>
 </ul>
 </article>
           </div>

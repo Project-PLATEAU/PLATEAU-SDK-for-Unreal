@@ -1,0 +1,218 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>&#12456;&#12487;&#12451;&#12479;API | PLATEAU SDK for Unreal </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="&#12456;&#12487;&#12451;&#12479;API | PLATEAU SDK for Unreal ">
+    <meta name="generator" content="docfx 2.59.4.0">
+    
+    <link rel="shortcut icon" href="../favicon.ico">
+    <link rel="stylesheet" href="../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../styles/docfx.css">
+    <link rel="stylesheet" href="../styles/main.css">
+    <meta property="docfx:navrel" content="../toc.html">
+    <meta property="docfx:tocrel" content="toc.html">
+    
+    <meta property="docfx:rel" content="../">
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../index.html">
+                <img id="logo" class="svg" src="../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div class="container body-content">
+        
+        <div id="search-results">
+          <div class="search-list">Search Results for <span></span></div>
+          <div class="sr-items">
+            <p><i class="glyphicon glyphicon-refresh index-loading"></i></p>
+          </div>
+          <ul id="pagination" data-first="First" data-prev="Previous" data-next="Next" data-last="Last"></ul>
+        </div>
+      </div>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="">
+<h1 id="エディタapi">エディタAPI</h1>
+
+<p>このページではブループリントで、エディタAPIを使用する方法を記載します。</p>
+<h2 id="インポート">インポート</h2>
+<p>PLATEAU SDKウィンドウの<code>インポート</code>の機能をAPIにてご利用いただけます。</p>
+<h4 id="準備">準備</h4>
+<p>インポートを行うためにPLATEAUCityModelPackageをKeyとして、PackageInfoSettingsをValueとしたMapデータを作成します。</p>
+<p><img src="../resources/manual/editorAPI/importSettings.png" alt=""></p>
+<h4 id="特定の地物のみ読み込む場合のインポートデータ設定">特定の地物のみ読み込む場合のインポートデータ設定</h4>
+<p>インポートするPLATEAUCityModelPackageとPackageInfoSettingsをMapデータに格納します。</p>
+<ul>
+<li>PackageInfoSettingsの各項目はの設定は、PLATEAU SDKウィンドウの<code>インポート</code>に対応しています。</li>
+</ul>
+<p><img src="../resources/manual/editorAPI/importSingle.png" alt=""></p>
+<h4 id="全ての地物を読み込む場合のインポートデータ設定">全ての地物を読み込む場合のインポートデータ設定</h4>
+<p>PLATEAU|BPLibraries|Util|GetAllCityModelPackagesにて全てのパッケージを取得し、Mapデータに格納します。</p>
+<ul>
+<li>PackageInfoSettingsの各項目はの設定は、PLATEAU SDKウィンドウの<code>インポート</code>に対応しています。</li>
+</ul>
+<p><img src="../resources/manual/editorAPI/importMultiple.png" alt=""></p>
+<h4 id="ローカルからのインポート">ローカルからのインポート</h4>
+<p><img src="../resources/manual/editorAPI/importLocal.png" alt=""></p>
+<ol>
+<li>PLATEAU|BPLibraries|ImportAPI|Get City Model Loader Localを配置します。</li>
+<li>参照するローカルのCityGMLまでのパスをSource Pathにセットします。</li>
+<li>読み込みたい地域のメッシュコードのArrayをMesh Codesにセットします。</li>
+<li>基準座標系の番号をZone IDにセットします。</li>
+<li>オフセット値のx,y,zの値をVectorとしてReference Pointにセットします。</li>
+<li>上記で作成したPLATEAUCityModelPackageをKeyとして、PackageInfoSettingsをValueとしたMapデータをPackage Info Settings Dataにセットします。</li>
+<li>Return ValueでPLATEAUCityModelLoaderを取得できます。</li>
+</ol>
+<h4 id="サーバーからのインポート">サーバーからのインポート</h4>
+<p><img src="../resources/manual/editorAPI/importServer.png" alt=""></p>
+<ol>
+<li>PLATEAU|BPLibraries|ImportAPI|Get City Model Loader Serverを配置します。</li>
+<li>接続先を上書きする場合は、In　Server URL, In Tokenの値をセットします。上書きしない場合は空欄にします。</li>
+<li>Dataset IDをセットします。　<ul>
+<li>（取得方法は、以下のNOTEを参照してください。）</li>
+</ul>
+</li>
+<li>読み込みたい地域のメッシュコードのArrayをMesh Codesにセットします。</li>
+<li>基準座標系の番号をZoneIDにセットします。</li>
+<li>オフセット値のx,y,zの値をVectorとしてReference Pointにセットします。</li>
+<li>上記で作成したPLATEAUCityModelPackageをKeyとして、PackageInfoSettingsをValueとしたMapデータをPackage Info Settings Dataにセットします。</li>
+<li>Return ValueでPLATEAUCityModelLoaderを取得できます。</li>
+</ol>
+<div class="NOTE"><h5>Note</h5><p><strong>Dataset IDの取得</strong><br>PLATEAU SDKにてサーバからインポートを行いシーン上のPLATEAUCityModelLoaderを選択します。詳細パネルのSource項目がDataset IDに該当します。</p>
+</div>
+<h4 id="ローカルサーバー共通">ローカル・サーバー共通</h4>
+<ol>
+<li>Is Validを使用して、上記で取得したPLATEAUCityModelLoaderが利用可能かどうか確認します。</li>
+<li>PLATEAUCityModelLoaderをTargetとしてPLATEAU|Load Modelを配置します。</li>
+</ol>
+<div class="NOTE"><h5>Note</h5><p>Validでない場合、内部エラーが発生していますので、設定項目に間違いがないかご確認ください。</p>
+</div>
+<h4 id="ロード完了通知">ロード完了通知</h4>
+<p><img src="../resources/manual/editorAPI/importFinish.png" alt=""></p>
+<p>PLATEAUCityModelLoaderにImport Finished Delegate Eventをバインドすることで、ロード完了通知を受け取る事ができます。</p>
+<h4 id="ロードキャンセル">ロードキャンセル</h4>
+<p><img src="../resources/manual/editorAPI/importCancel.png" alt=""></p>
+<p>PLATEAUCityModelLoaderをTargetとしてPLATEAU|Cancelを配置することでロードをキャンセルする事ができます。</p>
+<h2 id="エクスポート">エクスポート</h2>
+<p>PLATEAU SDKウィンドウの<code>エクスポート</code>の機能をAPIにてご利用いただけます。</p>
+<p><img src="../resources/manual/editorAPI/exportModel.png" alt=""></p>
+<ol>
+<li>エクスポートするModelを含むPLATEAUInstancedCityModelを取得します。</li>
+<li>PLATEAU|BPLibraries|ExportAPI|Export Modelを配置し、Target City Modelに取得したPLATEAUInstancedCityModelをセットします。</li>
+<li>PLATEAUMeshExportOptionsを配置し、各項目を設定し、Optionsにセットします。<ul>
+<li>設定内容は、PLATEAU SDKウィンドウの<code>エクスポート</code>に対応しています。</li>
+</ul>
+</li>
+<li>出力するフォルダーパスを Export Pathに設定します。</li>
+</ol>
+<h2 id="ゲームオブジェクトonoff">ゲームオブジェクトON/OFF</h2>
+<p>PLATEAU SDKウィンドウの<code>ゲームオブジェクトON/OFF</code>の機能をAPIにてご利用いただけます。</p>
+<p><img src="../resources/manual/editorAPI/filterModel.png" alt=""></p>
+<ol>
+<li>フィルタするModelを含むPLATEAUInstancedCityModelを取得します。</li>
+<li>PLATEAU|BPLibraries|ModelAdjustmentAPI|Filter Modelを配置し、Target City Modelに取得したPLATEAUInstancedCityModelをセットします。</li>
+<li>表示するパッケージ(EPLATEAUCityModelPackage)のArrayをEnablePackagesにセットします。</li>
+<li>表示する各パッケージ(EPLATEAUCityModelPackage)ごとのLOD(PLATEAUPackageLod)をパッケージをKey,LODをValueとしたMapにしてPackageToLodRangeMapにセットします。</li>
+<li>重複する地物を非表示にする場合は、OnlyMaxLodをTrueに設定します。</li>
+<li>表示するタイプ(EPLATEAUCityObjectsType)のArrayをEnableCityObjectsにセットします。</li>
+</ol>
+<h2 id="結合分離">結合・分離</h2>
+<p>PLATEAU SDKウィンドウの<code>結合・分離</code>の機能をAPIにてご利用いただけます。</p>
+<p><img src="../resources/manual/editorAPI/reconstructModel.png" alt=""></p>
+<ol>
+<li>結合・分離するModelを含むPLATEAUInstancedCityModelを取得します。</li>
+<li>PLATEAU|BPLibraries|ReconstructAPI|Reconstruct Modelを配置し、Target City Modelに取得したPLATEAUInstancedCityModelをセットします。</li>
+<li>取得したPLATEAUInstancedCityModel内の結合・分離する各SceneComponentのArrayをTargetComponentsにセットします。</li>
+<li>結合・分離単位(EPLATEAUMeshGranularity)をReconstructTypeにセットします。<ul>
+<li>地域単位:PerCityModelArea, 主要地物単位:PerPrimaryFeatureObject, 最小地物単位:PerAtomicFeatureObject</li>
+</ul>
+</li>
+<li>変換元を削除する場合は、DestroyOriginalをTrueに設定します。</li>
+</ol>
+<div class="NOTE"><h5>Note</h5><p>上の例では、Convertタグをつけたコンポーネントのみを変換しています。</p>
+</div>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                  <li>
+                    <a href="https://github.com/Project-PLATEAU/PLATEAU-SDK-for-Unreal/blob/main/Documentation/manual/EditorAPI.md/#L1" class="contribution-link">Improve this Doc</a>
+                  </li>
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+                <h5>In This Article</h5>
+                <div></div>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            PLATEAU SDK for Unreal
+            
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../styles/docfx.js"></script>
+    <script type="text/javascript" src="../styles/main.js"></script>
+  </body>
+</html>

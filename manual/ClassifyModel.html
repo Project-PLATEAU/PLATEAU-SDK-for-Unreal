@@ -1,0 +1,141 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>&#12510;&#12486;&#12522;&#12450;&#12523;&#20998;&#12369; | PLATEAU SDK for Unreal </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="&#12510;&#12486;&#12522;&#12450;&#12523;&#20998;&#12369; | PLATEAU SDK for Unreal ">
+    <meta name="generator" content="docfx 2.59.4.0">
+    
+    <link rel="shortcut icon" href="../favicon.ico">
+    <link rel="stylesheet" href="../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../styles/docfx.css">
+    <link rel="stylesheet" href="../styles/main.css">
+    <meta property="docfx:navrel" content="../toc.html">
+    <meta property="docfx:tocrel" content="toc.html">
+    
+    <meta property="docfx:rel" content="../">
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../index.html">
+                <img id="logo" class="svg" src="../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div class="container body-content">
+        
+        <div id="search-results">
+          <div class="search-list">Search Results for <span></span></div>
+          <div class="sr-items">
+            <p><i class="glyphicon glyphicon-refresh index-loading"></i></p>
+          </div>
+          <ul id="pagination" data-first="First" data-prev="Previous" data-next="Next" data-last="Last"></ul>
+        </div>
+      </div>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="">
+<h1 id="マテリアル分け">マテリアル分け</h1>
+
+<p>このページではワールドに配置された3D都市モデルを都市オブジェクトのタイプごとにマテリアル分けする手順を説明します。</p>
+<p>  <img src="../resources/manual/classifyModel/classifyImage.png" alt=""></p>
+<h2 id="前提">前提</h2>
+<p>ワールド内に3D都市モデルがインポートされていることが前提です。<br>インポートの方法については <a href="ImportCityModels.html">3D都市モデルのインポート</a> をご覧ください。  </p>
+<h2 id="結合分離手順">結合・分離手順</h2>
+<h3 id="結合分離対象の指定">結合・分離対象の指定</h3>
+<ul>
+<li><p>メニューバーから <code>PLATEAU → PLATEAU SDK</code> を選択し、<code>モデル修正</code>から<code>マテリアル分け</code>を開きます。  </p>
+<p><img src="../resources/manual/classifyModel/classifyPanel.png" alt=""></p>
+</li>
+<li><p>マテリアル分け対象をアウトライナーから選択し、詳細パネルからコンポーネントを選択します。選択されたコンポーネントが選択オブジェクト項目に表示されます。</p>
+</li>
+<li>マテリアル分類を指定して、検索ボタンを押します。</li>
+<li>対象コンポーネントに含まれる地物型がリストアップされますので、変更したい地物の<code>マテリアルを変更する</code>にチェックを入れ、マテリアルを選択します。</li>
+<li>マテリアル分け完了後の地物単位を<code>粒度</code>プルダウンから選択します。</li>
+<li>元のデータを残す場合は、<code>変換元を削除</code>のチェックを外します。</li>
+<li><code>実行</code>ボタンを押すとマテリアル分け処理が開始されます。</li>
+</ul>
+<div class="NOTE"><h5>Note</h5><p><strong>コンポーネント選択</strong><br>選択対象コンポーネントは複数指定可能です。また階層となるコンポーネントの親コンポーネントを選択した場合子コンポーネントが全て選択対象となります。</p>
+</div>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                  <li>
+                    <a href="https://github.com/Project-PLATEAU/PLATEAU-SDK-for-Unreal/blob/main/Documentation/manual/ClassifyModel.md/#L1" class="contribution-link">Improve this Doc</a>
+                  </li>
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+                <h5>In This Article</h5>
+                <div></div>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            PLATEAU SDK for Unreal
+            
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../styles/docfx.js"></script>
+    <script type="text/javascript" src="../styles/main.js"></script>
+  </body>
+</html>

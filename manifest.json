@@ -47,11 +47,47 @@
     },
     {
       "type": "Conceptual",
+      "source_relative_path": "manual/ChangeColorByAttrs.md",
+      "output": {
+        ".html": {
+          "relative_path": "manual/ChangeColorByAttrs.html",
+          "hash": "wOqrv21eMyUqfsY5TJI1R63BQLndXNzWWpIMYQwyuds="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "manual/ClassifyModel.md",
+      "output": {
+        ".html": {
+          "relative_path": "manual/ClassifyModel.html",
+          "hash": "561UihPr4zxzFx4lZXfRUXp8VqfM1RrY0CD2nkk4gp8="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "manual/EditorAPI.md",
+      "output": {
+        ".html": {
+          "relative_path": "manual/EditorAPI.html",
+          "hash": "URKkr4u/XIYAJAoAZTg1P5PgE2biW2dkiZvgaSobNq4="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
       "source_relative_path": "manual/ExportCityModels.md",
       "output": {
         ".html": {
           "relative_path": "manual/ExportCityModels.html",
-          "hash": "ougT30//GehAYlfGOofJGLkluRteBcqXKqPTqV3zXA0="
+          "hash": "uIuApPNXgPgXDlX8ANr1FpC6/8fT8v3PgSmlwKdBW1s="
         }
       },
       "is_incremental": false,
@@ -75,7 +111,7 @@
       "output": {
         ".html": {
           "relative_path": "manual/ImportCityModels.html",
-          "hash": "FDScddqG67Y8KOkH77iuQ+Zj1400SHOnlgjIKVuwsoQ="
+          "hash": "AoFMQmUMXTf7TyzuIRZiptG0nnrASMKTgD8ThFN26Oo="
         }
       },
       "is_incremental": false,
@@ -87,7 +123,19 @@
       "output": {
         ".html": {
           "relative_path": "manual/Installation.html",
-          "hash": "rZkc4wrRvPrrCft9ALrsvYCxfOh/w/cN2bOek888+EM="
+          "hash": "OFwfT8VPVYjAhqq7FuGzgIeYX9ngnIqctaGZd+dHR4Q="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "manual/ReconstructModel.md",
+      "output": {
+        ".html": {
+          "relative_path": "manual/ReconstructModel.html",
+          "hash": "ukq7CIvnoPEN56jzcv38ZXYesbgZFMYapR5Ia/5PIAQ="
         }
       },
       "is_incremental": false,
@@ -99,7 +147,7 @@
       "output": {
         ".html": {
           "relative_path": "manual/toc.html",
-          "hash": "EezmRjlET5lbSv9n/H2cTKSTxcZ5yjs/XyuyFqA3zzQ="
+          "hash": "RlCTEANlaxAQIyIDMScWnNTDWFiWFht9sf2rqS3I8U8="
         }
       },
       "is_incremental": false,
@@ -217,10 +265,384 @@
     },
     {
       "type": "Resource",
+      "source_relative_path": "resources/manual/changeColorByAttrs/AttributeColorSampleFlood.png",
+      "output": {
+        "resource": {
+          "relative_path": "resources/manual/changeColorByAttrs/AttributeColorSampleFlood.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "resources/manual/changeColorByAttrs/AttributeColorSampleUrbanPlanning.png",
+      "output": {
+        "resource": {
+          "relative_path": "resources/manual/changeColorByAttrs/AttributeColorSampleUrbanPlanning.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "resources/manual/changeColorByAttrs/AttributeMap.png",
+      "output": {
+        "resource": {
+          "relative_path": "resources/manual/changeColorByAttrs/AttributeMap.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "resources/manual/changeColorByAttrs/Fld_Material.png",
+      "output": {
+        "resource": {
+          "relative_path": "resources/manual/changeColorByAttrs/Fld_Material.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "resources/manual/changeColorByAttrs/Fld_PLATEAUCityObjectGroup.png",
+      "output": {
+        "resource": {
+          "relative_path": "resources/manual/changeColorByAttrs/Fld_PLATEAUCityObjectGroup.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "resources/manual/changeColorByAttrs/GetAllRootCityObjects.png",
+      "output": {
+        "resource": {
+          "relative_path": "resources/manual/changeColorByAttrs/GetAllRootCityObjects.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "resources/manual/changeColorByAttrs/NestAttributeMap.png",
+      "output": {
+        "resource": {
+          "relative_path": "resources/manual/changeColorByAttrs/NestAttributeMap.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "resources/manual/changeColorByAttrs/PlateauInstancedCityModel.png",
+      "output": {
+        "resource": {
+          "relative_path": "resources/manual/changeColorByAttrs/PlateauInstancedCityModel.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "resources/manual/changeColorByAttrs/SampleBlueprint.png",
+      "output": {
+        "resource": {
+          "relative_path": "resources/manual/changeColorByAttrs/SampleBlueprint.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "resources/manual/changeColorByAttrs/SampleLevel.png",
+      "output": {
+        "resource": {
+          "relative_path": "resources/manual/changeColorByAttrs/SampleLevel.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "resources/manual/changeColorByAttrs/ShowFloodUI.png",
+      "output": {
+        "resource": {
+          "relative_path": "resources/manual/changeColorByAttrs/ShowFloodUI.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "resources/manual/changeColorByAttrs/ShowPluginContent.png",
+      "output": {
+        "resource": {
+          "relative_path": "resources/manual/changeColorByAttrs/ShowPluginContent.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "resources/manual/changeColorByAttrs/ShowUrbanPlanningUI.png",
+      "output": {
+        "resource": {
+          "relative_path": "resources/manual/changeColorByAttrs/ShowUrbanPlanningUI.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "resources/manual/changeColorByAttrs/Urf_Material.png",
+      "output": {
+        "resource": {
+          "relative_path": "resources/manual/changeColorByAttrs/Urf_Material.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "resources/manual/changeColorByAttrs/Urf_PLATEAUCityObjectGroup.png",
+      "output": {
+        "resource": {
+          "relative_path": "resources/manual/changeColorByAttrs/Urf_PLATEAUCityObjectGroup.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "resources/manual/classifyModel/classifyImage.png",
+      "output": {
+        "resource": {
+          "relative_path": "resources/manual/classifyModel/classifyImage.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "resources/manual/classifyModel/classifyPanel.png",
+      "output": {
+        "resource": {
+          "relative_path": "resources/manual/classifyModel/classifyPanel.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "resources/manual/editorAPI/exportModel.png",
+      "output": {
+        "resource": {
+          "relative_path": "resources/manual/editorAPI/exportModel.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "resources/manual/editorAPI/filterModel.png",
+      "output": {
+        "resource": {
+          "relative_path": "resources/manual/editorAPI/filterModel.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "resources/manual/editorAPI/importCancel.png",
+      "output": {
+        "resource": {
+          "relative_path": "resources/manual/editorAPI/importCancel.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "resources/manual/editorAPI/importFinish.png",
+      "output": {
+        "resource": {
+          "relative_path": "resources/manual/editorAPI/importFinish.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "resources/manual/editorAPI/importLocal.png",
+      "output": {
+        "resource": {
+          "relative_path": "resources/manual/editorAPI/importLocal.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "resources/manual/editorAPI/importMultiple.png",
+      "output": {
+        "resource": {
+          "relative_path": "resources/manual/editorAPI/importMultiple.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "resources/manual/editorAPI/importServer.png",
+      "output": {
+        "resource": {
+          "relative_path": "resources/manual/editorAPI/importServer.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "resources/manual/editorAPI/importSettings.png",
+      "output": {
+        "resource": {
+          "relative_path": "resources/manual/editorAPI/importSettings.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "resources/manual/editorAPI/importSingle.png",
+      "output": {
+        "resource": {
+          "relative_path": "resources/manual/editorAPI/importSingle.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "resources/manual/editorAPI/reconstructModel.png",
+      "output": {
+        "resource": {
+          "relative_path": "resources/manual/editorAPI/reconstructModel.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "resources/manual/exportCityModels/blenderVertexGroup.png",
+      "output": {
+        "resource": {
+          "relative_path": "resources/manual/exportCityModels/blenderVertexGroup.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "resources/manual/exportCityModels/disabledObj.png",
+      "output": {
+        "resource": {
+          "relative_path": "resources/manual/exportCityModels/disabledObj.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "resources/manual/exportCityModels/exportLocalCoord.png",
+      "output": {
+        "resource": {
+          "relative_path": "resources/manual/exportCityModels/exportLocalCoord.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
       "source_relative_path": "resources/manual/exportCityModels/exportWindow.png",
       "output": {
         "resource": {
           "relative_path": "resources/manual/exportCityModels/exportWindow.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "resources/manual/exportCityModels/importedCity.png",
+      "output": {
+        "resource": {
+          "relative_path": "resources/manual/exportCityModels/importedCity.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "resources/manual/exportCityModels/japanCoordinateSystem.png",
+      "output": {
+        "resource": {
+          "relative_path": "resources/manual/exportCityModels/japanCoordinateSystem.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "resources/manual/exportCityModels/selectOBJECT.png",
+      "output": {
+        "resource": {
+          "relative_path": "resources/manual/exportCityModels/selectOBJECT.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "resources/manual/exportCityModels/tokyoBlender.png",
+      "output": {
+        "resource": {
+          "relative_path": "resources/manual/exportCityModels/tokyoBlender.png"
         }
       },
       "is_incremental": false,
@@ -404,6 +826,28 @@
     },
     {
       "type": "Resource",
+      "source_relative_path": "resources/manual/installation/addCppCodes.png",
+      "output": {
+        "resource": {
+          "relative_path": "resources/manual/installation/addCppCodes.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "resources/manual/installation/buildCodes.png",
+      "output": {
+        "resource": {
+          "relative_path": "resources/manual/installation/buildCodes.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
       "source_relative_path": "resources/manual/installation/disableAutoMapSave.png",
       "output": {
         "resource": {
@@ -481,6 +925,61 @@
     },
     {
       "type": "Resource",
+      "source_relative_path": "resources/manual/installation/includeDialog.png",
+      "output": {
+        "resource": {
+          "relative_path": "resources/manual/installation/includeDialog.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "resources/manual/installation/moduleError.png",
+      "output": {
+        "resource": {
+          "relative_path": "resources/manual/installation/moduleError.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "resources/manual/installation/newClass.png",
+      "output": {
+        "resource": {
+          "relative_path": "resources/manual/installation/newClass.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "resources/manual/installation/openCodes.png",
+      "output": {
+        "resource": {
+          "relative_path": "resources/manual/installation/openCodes.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "resources/manual/installation/parentClass.png",
+      "output": {
+        "resource": {
+          "relative_path": "resources/manual/installation/parentClass.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
       "source_relative_path": "resources/manual/installation/pluginBuild.png",
       "output": {
         "resource": {
@@ -535,6 +1034,17 @@
       "version": ""
     },
     {
+      "type": "Resource",
+      "source_relative_path": "resources/manual/reconstructModel/reconstructPanel.png",
+      "output": {
+        "resource": {
+          "relative_path": "resources/manual/reconstructModel/reconstructPanel.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
       "type": "Toc",
       "source_relative_path": "toc.yml",
       "output": {
@@ -561,7 +1071,7 @@
         "ConceptualDocumentProcessor": {
           "can_incremental": false,
           "incrementalPhase": "build",
-          "total_file_count": 6,
+          "total_file_count": 10,
           "skipped_file_count": 0
         },
         "ResourceDocumentProcessor": {
