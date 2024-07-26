@@ -1,0 +1,298 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>3D&#37117;&#24066;&#12514;&#12487;&#12523;&#12398;&#35519;&#25972; | PLATEAU SDK for Unreal </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="3D&#37117;&#24066;&#12514;&#12487;&#12523;&#12398;&#35519;&#25972; | PLATEAU SDK for Unreal ">
+    <meta name="generator" content="docfx 2.59.4.0">
+    
+    <link rel="shortcut icon" href="../favicon.ico">
+    <link rel="stylesheet" href="../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../styles/docfx.css">
+    <link rel="stylesheet" href="../styles/main.css">
+    <meta property="docfx:navrel" content="../toc.html">
+    <meta property="docfx:tocrel" content="toc.html">
+    
+    <meta property="docfx:rel" content="../">
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../index.html">
+                <img id="logo" class="svg" src="../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div class="container body-content">
+        
+        <div id="search-results">
+          <div class="search-list">Search Results for <span></span></div>
+          <div class="sr-items">
+            <p><i class="glyphicon glyphicon-refresh index-loading"></i></p>
+          </div>
+          <ul id="pagination" data-first="First" data-prev="Previous" data-next="Next" data-last="Last"></ul>
+        </div>
+      </div>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="">
+<h1 id="3d都市モデルの調整">3D都市モデルの調整</h1>
+
+<h2 id="概要">概要</h2>
+<p>PLATEAUウィンドウの<code>モデル調整</code>では、インポートした都市モデルを編集できます。<br>次の機能があります。</p>
+<ul>
+<li>コンポーネントON/OFF<ul>
+<li>条件指定で一括でアクティブ化・非アクティブ化します。</li>
+</ul>
+</li>
+<li>分割/結合/マテリアル分け<ul>
+<li>地物の結合・分離や属性情報・地物型によるマテリアル分けを行います。</li>
+</ul>
+</li>
+<li>地形変換/高さ合わせ<ul>
+<li>地形の平滑化とテレインへの変換、高さ情報が無い地物（LOD1道路モデル等）の地形への高さ合わせを行います。</li>
+</ul>
+</li>
+</ul>
+<div class="NOTE"><h5>Note</h5><ul>
+<li>地物とは・・建物、道路、地形など、地図上に表示されるもの。物理的なものとは限らず、都市計画区域、土砂災害警戒区域などの目には見えない領域を示すものも地物の一種として扱います。</li>
+<li>地形とは・・地表の起伏です。</li>
+</ul>
+</div>
+<h3 id="操作画面の開き方">操作画面の開き方</h3>
+<ul>
+<li>Unrealのメニューバーから <code>PLATEAU</code> → <code>PLATEAU SDK</code> を選択します。</li>
+<li>ウィンドウ上部のタブのうち <code>モデル調整</code> を選択します。</li>
+<li>その下のタブで各機能を切り替えて表示します。</li>
+</ul>
+<h2 id="コンポーネントonoff機能">コンポーネントON/OFF機能</h2>
+<p><img src="../resources/manual/modelAdjust/gameObjOnOff.png" alt=""></p>
+<ul>
+<li>条件指定をしてフィルタリングできます。</li>
+<li>ここでいうフィルタリングとは、条件に合致するコンポーネントをアクティブにし、そうでないものを非アクティブにすることを指します。</li>
+<li>「重複する地物を表示」にチェックを入れた場合、フィルタリング後に重複している地物について、<br>もっともLODが高いもののみを残してそれ以外を非表示にします。</li>
+<li>表示したい地物の種類をチェックボックスで指定します。</li>
+<li>チェックボックスは入れ子構造になっています。<ul>
+<li>第1階層のチェックボックスは、「建築物」「道路」などのパッケージ種別を指定します。</li>
+<li>複数のLODがシーン中に存在する場合、パッケージ種別ごとにLOD範囲選択のスライダーを使ってLODを指定できます。</li>
+<li>第2階層のチェックボックスは、「ドア」「屋根」など細かい都市オブジェクト分類での種別を指定します。</li>
+</ul>
+</li>
+</ul>
+<div class="NOTE"><h5>Note</h5><p>都市インポート時のメッシュ結合単位の設定によっては、第2階層の分類チェックマークが動作しない場合があります。<br>例えば、インポート時に建物を「最小地物単位」に指定した場合、「窓」「屋根面」などでコンポーネントが分かれているので、細かい分類のチェックマークが動作します。<br>しかし、建物を「主要地物単位」にした場合、建物ごとにコンポーネントが結合されているので、細かい「窓」「屋根面」といった分類は動作しません。<br>分類指定のチェックマークは入れ子構造になっていますが、第1階層の「建築物」「道路」といった分類は結合単位によらず必ず動作し、<br>第2階層の「窓」「屋根面」といった細かい分類はインポート時に「最小値物単位」にした場合のみ動作します。</p>
+</div>
+<h2 id="分割結合マテリアル分け機能">分割・結合・マテリアル分け機能</h2>
+<p><img src="../resources/manual/modelAdjust/materialByType.png" alt=""></p>
+<h3 id="できること">できること</h3>
+<ul>
+<li>選択されたコンポーネントの粒度を変更できます。<ul>
+<li>例えば、主要地物単位でインポートされたものを結合して地域単位にまとめたり、分解して最小地物単位にしたりできます。</li>
+<li>属性情報も合わせて分割・結合されます。</li>
+</ul>
+</li>
+<li>地物型や属性情報に応じてマテリアルを設定できます。<ul>
+<li>例えば上図は、地物型によるマテリアル分けによって建築物の屋根面を緑色のマテリアルに設定した例です。</li>
+<li>また下図は、属性情報によるマテリアル分けによって道路のうち歩道を緑色、車道を青色に設定した例です。</li>
+</ul>
+</li>
+</ul>
+<p><img src="../resources/manual/modelAdjust/materialByAttr.png" alt=""></p>
+<h3 id="操作方法">操作方法</h3>
+<ul>
+<li><p>PLATEAU Windowの「モデル調整」タブ → 「分割/結合/マテリアル分け」タブを開きます。</p>
+<p><img src="../resources/manual/modelAdjust/materialAdjustWindow.png" alt=""></p>
+</li>
+</ul>
+<h4 id="対象選択">対象選択</h4>
+<p><code>対象選択</code>では処理の対象となるコンポーネントを指定します。<br>指定の方法は次のとおりいくつかあります。</p>
+<ul>
+<li><code>追加</code>ボタンを押して開いたウインドウからコンポーネントを選択することで追加します。</li>
+<li><code>選択中のn個を追加</code>ボタンを押すことで、現在選択中のオブジェクト（複数可）を追加します。</li>
+<li><code>パッケージ種から選択</code>ボタンを押すことで下図の選択ウィンドウが開き、指定のパッケージ種に該当するものをまとめて指定します。<br><img src="../resources/manual/modelAdjust/packageSelectWindow.png" alt=""><ul>
+<li>パッケージ種選択ウィンドウ内でデータセットを選択すると、データセットに含まれるパッケージ種が検索され選択肢として表示されます。</li>
+<li>選択肢から任意個のパッケージを選んで<code>決定</code>を押して選択できます。</li>
+</ul>
+</li>
+<li>追加したオブジェクトは<code>除く</code>ボタンで対象から除きます。</li>
+</ul>
+<h4 id="共通設定">共通設定</h4>
+<ul>
+<li><code>オブジェクト配置</code>では、変換後に元オブジェクトを削除するか残すかを選択します。</li>
+</ul>
+<h4 id="分割結合">分割/結合</h4>
+<ul>
+<li><code>粒度を変更する</code>にチェックが入っている場合、<code>粒度</code>で指定した粒度に変換します。<ul>
+<li>最小地物単位（壁面・屋根等面等ごと）</li>
+<li>主要地物内のマテリアルごと（マテリアル分けの結果に応じてコンポーネントを分けた場合に便利です）</li>
+<li>主要地物単位（建築物・道路等ごと）</li>
+<li>すべて1つに結合（インポート時の地域単位に相当します）</li>
+</ul>
+</li>
+<li><code>粒度を変更する</code>にチェックが入っていない状態でマテリアル分けした場合、現在と同じ粒度にします。</li>
+<li>後述の<code>マテリアルを条件指定で変更する</code>にチェックが入っていない状態で実行ボタンを押した場合、マテリアルを変えずに粒度を変更します。</li>
+<li><code>主要地物内の同一マテリアル単位</code>で分割結合した場合は出力されたコンポーネントの名前は&quot;Material-(マテリアルID)&quot;となり、それ以外の場合はコンポーネントが対応する地物のgml:idと同じ文字列で設定されます。</li>
+</ul>
+<h4 id="マテリアル分け">マテリアル分け</h4>
+<p>条件に応じてマテリアル分けをします。<br>また分割/結合で粒度が指定されている場合、その粒度に変換します。</p>
+<ul>
+<li><code>マテリアルを条件指定で変更する</code> にチェックが入っている場合、以下の設定項目のとおりにマテリアルを分けます。<br>チェックが入っていない場合、マテリアルを変更せず分割結合のみ行います。</li>
+<li><code>分類</code>は、マテリアル分けの基準として<code>地物型</code>か<code>属性情報</code>を選択できます。</li>
+</ul>
+<h4 id="地物型でのマテリアル分け">地物型でのマテリアル分け</h4>
+<ul>
+<li><code>地物型</code>をマテリアル分けの基準とした場合、設定項目は次のようになります。<br>下図は建築物のうち屋根面のみを緑色にする場合の設定です。</li>
+</ul>
+<p><img src="../resources/manual/modelAdjust/windowByType.png" alt=""></p>
+<ul>
+<li><code>検索</code>ボタンを押すことでマテリアルの設定画面が表示されます。</li>
+<li>表示される条件に合致するマテリアルを指定します。</li>
+<li><code>マテリアルを変更する</code>にチェックが入っていないものはマテリアルを変更しません。<br>チェックが入っているものに関してマテリアルを選択します。</li>
+</ul>
+<h5 id="属性情報でのマテリアル分け">属性情報でのマテリアル分け</h5>
+<ul>
+<li><code>属性情報</code>をマテリアル分けの基準とした場合、設定項目は次のようになります。<br>下図は道路のうち歩道部分を茶色、車道部分をグレー色にする場合の設定です。</li>
+</ul>
+<p><img src="../resources/manual/modelAdjust/windowByAttr.png" alt=""></p>
+<ul>
+<li><code>属性情報キー</code>で分類基準となる属性情報のキーを指定します。<ul>
+<li>この際、<code>属性情報キーを選択</code>ボタンを押すことで下図のウィンドウが表示され、選択肢から選んで入力できます。<br>  <img src="../resources/manual/modelAdjust/attrSelectWindow.png" alt=""><br>このウィンドウでは、対象オブジェクトとその子に存在する属性情報を検索して表示します。<br>選択肢から1つ選んで<code>決定</code>ボタンを押すことで属性情報キーを選択します。</li>
+</ul>
+</li>
+<li>以下、<code>検索</code>ボタン、パターンごとのマテリアル指定、実行は上述の「地物型でのマテリアル分け」と同じです。</li>
+</ul>
+<h2 id="地形変換高さ合わせ機能">地形変換/高さ合わせ機能</h2>
+<p><img src="../resources/manual/landscape/landscapeMenu.png" alt=""></p>
+<p><code>地形変換</code>画面では以下を行えます。</p>
+<ul>
+<li>地形をランドスケープに変換<ul>
+<li>地形モデルをUnrealのLandscapeに変換します。</li>
+</ul>
+</li>
+<li>高さ合わせ<ul>
+<li>LOD1道路等、高さが付与されていない地物の地形への高さ合わせや、LOD3道路にめり込んでしまっている地形の形状修正を行います。</li>
+</ul>
+</li>
+</ul>
+<div class="NOTE"><h5>Note</h5><p>高さ合わせ対象となる都市モデルは次のパッケージタイプです。
+「道路、災害リスク、土地利用、都市計画決定情報、徒歩道、広場、水部、交通(航路)」</p>
+</div>
+<div class="NOTE"><h5>Note</h5><p>テレインのメリットは、例えば芸術的な目的で高さを変える、テクスチャペイントするなどの操作ができることにあります。<br>高さ合わせは、急傾斜の地形では誤差が出ることがあります。</p>
+</div>
+<h3 id="使い方">使い方</h3>
+<ul>
+<li><code>変換対象</code>には、起伏モデルを含む都市モデルを選択します。</li>
+<li><code>オブジェクト配置</code>プルダウンを選択します。<ul>
+<li><code>新規追加</code>は元のコンポーネントを非表示にし、そのまま残します。</li>
+<li><code>置き換える</code>は元のコンポーネントを削除します。</li>
+</ul>
+</li>
+<li><code>詳細設定</code>から詳細な設定が行えます。</li>
+<li><p><code>実行</code>ボタンを押すと地形の平滑化が行われ、道路、災害リスク、土地利用等対象の都市モデルが変換した地形に重なるよう自動的に調整されます。</p>
+</li>
+<li><p>地形変換/高さ合わせ処理の出力結果について、ランドスケープは名前の先頭に&quot;TERRAIN_&quot;が付与されます。高さ合わせした地物については、前と同じ名前のコンポーネントが生成されます。</p>
+</li>
+</ul>
+<h3 id="詳細設定">詳細設定</h3>
+<p><img src="../resources/manual/landscape/advancedSettings.png" alt=""></p>
+<h4 id="地形変換">地形変換</h4>
+<ul>
+<li><code>地形変換</code>にチェックを入れると地形の変換（平滑化・テレインへの変換）が有効になり、詳細なオプションが表示されます。<ul>
+<li><code>解像度</code>プルダウンから変換時にハイトマップとして利用する画像解像度を選択できます。  </li>
+<li><code>地形変換</code>では、地形の起伏を滑らかに変更する処理が入ります。そのため、測量の高さを厳密に使いたいケース、特に測量からの誤差の少なさが重要となる状況ではこの処理はそぐわない場合があります。</li>
+<li><code>ハイトマップ平滑化</code>にチェックを入れるとハイトマップにぼかしフィルターを適用し、よりスムーズな地形になります。</li>
+<li><code>余白を端の高さに合わせる</code>にチェックを入れるとハイトマップの余白を一番端のピクセルで埋めます。チェックが外れていると余白部分の高さは0になります。</li>
+</ul>
+</li>
+</ul>
+<h4 id="高さ合わせ機能">高さ合わせ機能</h4>
+<ul>
+<li><code>高さ合わせ</code>にチェックを入れると高さ合わせが有効になり、詳細なオプションが表示されます。<ul>
+<li><code>交通・区域モデルの高さを地形に合わせる</code>にチェックをいれると道路、災害リスク、土地利用等の都市モデルを変換した地形に重なるよう調整します。　</li>
+<li><code>土地をLOD3道路モデルに合わせる</code>にチェックをいれると地形モデルの形状がLOD3道路モデルに合わせて変形されます。  </li>
+<li>インスペクターで非表示にしていなくても、シーン上で非表示にしたものについては高さ合わせの対象外となります。</li>
+</ul>
+</li>
+</ul>
+<div class="CAUTION"><h5>Caution</h5><p>地形変換の機能を利用するためには、都市モデルインポート時に<code>起伏</code>を含めてインポートする必要があります。</p>
+</div>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                  <li>
+                    <a href="https://github.com/Project-PLATEAU/PLATEAU-SDK-for-Unreal/blob/main/Documentation/manual/ModelAdjust.md/#L1" class="contribution-link">Improve this Doc</a>
+                  </li>
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+                <h5>In This Article</h5>
+                <div></div>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            PLATEAU SDK for Unreal
+            
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../styles/docfx.js"></script>
+    <script type="text/javascript" src="../styles/main.js"></script>
+  </body>
+</html>
