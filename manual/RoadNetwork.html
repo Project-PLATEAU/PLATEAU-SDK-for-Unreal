@@ -1,0 +1,190 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>&#36947;&#36335;&#12493;&#12483;&#12488;&#12527;&#12540;&#12463;&#12398;&#21033;&#29992; | PLATEAU SDK for Unreal </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="&#36947;&#36335;&#12493;&#12483;&#12488;&#12527;&#12540;&#12463;&#12398;&#21033;&#29992; | PLATEAU SDK for Unreal ">
+    <meta name="generator" content="docfx 2.59.4.0">
+    
+    <link rel="shortcut icon" href="../favicon.ico">
+    <link rel="stylesheet" href="../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../styles/docfx.css">
+    <link rel="stylesheet" href="../styles/main.css">
+    <meta property="docfx:navrel" content="../toc.html">
+    <meta property="docfx:tocrel" content="toc.html">
+    
+    <meta property="docfx:rel" content="../">
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../index.html">
+                <img id="logo" class="svg" src="../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div class="container body-content">
+        
+        <div id="search-results">
+          <div class="search-list">Search Results for <span></span></div>
+          <div class="sr-items">
+            <p><i class="glyphicon glyphicon-refresh index-loading"></i></p>
+          </div>
+          <ul id="pagination" data-first="First" data-prev="Previous" data-next="Next" data-last="Last"></ul>
+        </div>
+      </div>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="">
+<h1 id="道路ネットワークの利用">道路ネットワークの利用</h1>
+
+<p>インポートされた道路モデルから<br>道路の見た目を向上できます。
+このページでその機能を説明します。</p>
+<p><img src="../resources/manual/roadnetwork/reproduced_road.png" alt="reproduced_road.png"></p>
+<h2 id="道路ネットワーク機能の概要">道路ネットワーク機能の概要</h2>
+<p>道路ネットワークとは、道路の車道、歩道、交差点などのレーンと、それらのつながりを構造化したものです。</p>
+<p><img src="../resources/manual/roadnetwork/road_network_debug_view.png" alt="road_network_debug_view.png"></p>
+<p>本機能では、道路メッシュの形状から道路の構造を推定し、ユーザーが入力したパラメーターに応じて、見た目の向上を行います。<br>具体的には次の機能があります。</p>
+<ul>
+<li>推定された車道形状を基に、道路に白線や停止線を引きます。</li>
+<li>推定された歩道と車道に対して、それぞれ別のマテリアルを設定します。</li>
+</ul>
+<p>自動生成される道路ネットワークは推定であり、現実の道路とは異なる場合があります。  </p>
+<h2 id="道路ネットワークの機能について">道路ネットワークの機能について</h2>
+<p>下図が道路ネットワーク機能に関する画面です。<br>この画面を開くには、メニューバーの PLATEAU → PLATEAU SDKからウィンドウを開き、「道路調整」タブを開きます。<br><img src="../resources/manual/roadnetwork/generate_panel.png" alt=""></p>
+<h3 id="道路調整画面">「道路調整」画面</h3>
+<p>道路調整の画面では、インポート済みの道路モデルから道路ネットワークを自動で生成できます。<br>「生成」ボタンをクリックしてしばらくすると道路ネットワークが生成されます。<br>加えて、車道の白線や停止線、横断歩道、車線の矢印標示が生成され、見た目が良くなります。</p>
+<p><img src="../resources/manual/roadnetwork/generated_road.png" alt="generated_road.png"></p>
+<p>ここでシーンに生成及び変換されるオブジェクトは次の通りです。</p>
+<ul>
+<li>インポートした都市モデル<ul>
+<li>都市モデルの道路オブジェクトは、マテリアル分け機能によって車道用と歩道用のマテリアルが設定されます。</li>
+</ul>
+</li>
+<li><code>PLATEAUReproducedRoad</code>という名称のアクター<ul>
+<li>生成された道路標示（白線、停止線など）がこのアクターのコンポーネントに設定されます。</li>
+<li>コンポーネントの名称は、横断歩道であれば<code>LineGeneratorComponent_Crossing</code> 、白線であれば<code>LineGeneratorComponent_WhiteLine</code>、破線であれば<code>LineGeneratorComponent_DashedWhilteLine</code>、黄色の線であれば<code>LineGeneratorComponent_YellowLine</code>、停止線であれば<code>LineGeneratorComponent_StopLine</code>、車線の矢印であれば <code>LineGeneratorComponent_WhiteLine</code> となります。</li>
+</ul>
+</li>
+<li><code>PLATEAURnStructureModel</code>という名称のアクター<ul>
+<li>このアクターには、道路ネットワーク作成時のパラメータや道路標示生成のために一時的に道路ネットワークが格納されます。</li>
+<li>ただし、格納されている道路ネットワークはシリアライズされない為、レベルを閉じると削除されます。</li>
+<li>アクターの <code>PLATEAU/Debug</code>項目では、<code>Visible</code>をオンにすることでPIE実行時に道路ネットワーク構造を可視化できます。</li>
+<li>可視化する種類、色などを同コンポーネントで設定できます。可視化時はPCの動作が重くなることがあります。</li>
+<li>下図はメインの<code>Visible</code>をオンにしたうえで、<code>Road Option</code>の<code>Visible</code>および<code>Lane Option</code>の<code>Visible</code>をオンにした場合の表示です。</li>
+</ul>
+</li>
+</ul>
+<p><img src="../resources/manual/roadnetwork/road_network_visible.png" alt="generated_road.png"></p>
+<p>道路ネットワーク生成時、すでに上記の生成ゲームオブジェクトが存在する場合は、古いものを置き換える形で生成します。  </p>
+<p><img src="../resources/manual/roadnetwork/generate_panel.png" alt=""></p>
+<p>道路ネットワーク生成の設定項目は次のとおりです。</p>
+<ul>
+<li><p>生成パラメータ  </p>
+<ul>
+<li><code>車線幅（メートル）</code>：3D都市モデルの道路幅と車線幅を基準に車線が生成されます。車線数や形状に影響します。  </li>
+<li><code>歩道生成時の歩道幅</code>：歩道が生成可能な場合にこの幅を基準に歩道が生成されます。</li>
+<li><code>横断歩道の配置</code>：横断歩道を配置する条件を次から選びます。<ul>
+<li><code>大きい道路に配置</code> : 道路の車線数が2以上、かつ長さが30m以上の道路に横断歩道を配置します。</li>
+<li><code>すべての交差点に配置</code> : すべての交差点に横断歩道を配置します。</li>
+<li><code>配置しない</code> : 横断歩道を配置しません。</li>
+</ul>
+</li>
+<li><code>道路LOD2以上の歩道情報を利用</code>：LOD2以上の道路に歩道情報があれば、それを利用して歩道を生成します。LOD1しか無い場合は、チェックを外した場合と同様に推定により歩道を決めます。  </li>
+<li><code>中央分離帯があれば生成</code>：道路の属性情報として中央分離帯があり、それが1つのレーンを形成している場合に中央分離帯を作成します。   </li>
+</ul>
+</li>
+<li><p>詳細パラメータ   </p>
+<ul>
+<li><code>同一直線に近い中間点を削除する距離</code>：3つの頂点が同一直線上に並んでいるかを判断する閾値です。同一直線上にある際には中央の頂点は削除されます。  </li>
+<li><code>行き止まりの線の拡大許容角度</code>：行き止まりの末端線の検出において、道路の末端の線の曲がり角の総和がどの角度以内なら同一直線の行き止まりとみなすかです。行き止まり道路の末端と判別される線が実際より長くて側面まで延びている場合は小さい値に、末端の線が実際より短い場合は大きい値にすると良いです。  </li>
+<li><code>高速道路を対象外にする</code>：高速道路を自動生成の対象外にします。高速道路は、複雑な立体交差などの判別がうまくいかないことが多いためデフォルトで対象外となっています。  </li>
+</ul>
+</li>
+</ul>
+<h3 id="仕組みについて">仕組みについて</h3>
+<h4 id="歩道推定の仕組み">歩道推定の仕組み</h4>
+<p>LOD1の道路の歩道を推定する仕組みを説明します。<br>まずすべてを車道扱いで生成します。<br>次に、パラメータで指定した歩道幅より太い道路の場合、車道を狭めて歩道を追加します。<br>ただし、これにより車道幅が2m未満になる場合は歩道を生成しません。</p>
+<h4 id="頂点の結合について">頂点の結合について</h4>
+<p>道路ネットワークの生成において、近くにある頂点は結合されたものとみなされます。<br>その理由は、道路モデル上で繋がっているべき頂点が離れているケースに対応するため、<br>および高速化のためになります。<br>この処理の結果として、急激なUターンを伴うなど一部の箇所で道路形状が元から変わって生成される場合があります。</p>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                  <li>
+                    <a href="https://github.com/Project-PLATEAU/PLATEAU-SDK-for-Unreal/blob/main/Documentation/manual/RoadNetwork.md/#L1" class="contribution-link">Improve this Doc</a>
+                  </li>
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+                <h5>In This Article</h5>
+                <div></div>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            PLATEAU SDK for Unreal
+            
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../styles/docfx.js"></script>
+    <script type="text/javascript" src="../styles/main.js"></script>
+  </body>
+</html>
