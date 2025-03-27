@@ -171,9 +171,10 @@
 <li>指定のフォルダに3Dモデルファイルが出力されます。</li>
 </ul>
 <p><img src="../resources/manual/exportCityModels/tokyoBlender.png" alt=""><br>上図はエクスポートしたobjファイルを Blender で読み込んだものです。  </p>
-<div class="NOTE"><h5>Note</h5><p><strong>エクスポートした3Dモデルを再度UnrealEngineに取り込む場合</strong></p>
-<p>テクスチャ込みでエクスポートしたものを再度UEにインポートする場合は、
+<div class="NOTE"><h5>Note</h5><p><strong>エクスポートした3Dモデルを再度UnrealEngineに取り込む場合</strong><br>テクスチャ込みでエクスポートしたものを再度UEにインポートする場合は、
 Unreal Engineの「ファイル」→「レベルにインポート」メニューを選択し、3Dモデルファイルをインポートしてください。</p>
+</div>
+<div class="NOTE"><h5>Note</h5><p><strong>UVのない地物のテクスチャについて</strong><br>都市モデルにはUVのない地物が含まれる場合があります。<br>PLATEAU SDKでは、UVのない地物に対してはTriplanarを使ったデフォルトマテリアルを使用することで見た目を構成しています。<br>これをエクスポートするとき、テクスチャは出力可能ですが、他の3DCGソフトで見た目を再現するには同じようにTriplanarシェーダーを使用する必要があります。</p>
 </div>
 </article>
           </div>

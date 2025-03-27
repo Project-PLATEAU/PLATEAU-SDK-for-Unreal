@@ -93,12 +93,14 @@
 </ul>
 <h4 id="ローカルからインポートする場合">ローカルからインポートする場合</h4>
 <ul>
-<li>導入したい都市データが自分のコンピュータにある場合はローカルを選択します。3D都市モデルは<a href="https://www.geospatial.jp/ckan/dataset/plateau">G空間情報センターのPLATEAUポータルサイト</a>からダウンロードできます。<ul>
+<li>導入したい都市データが自分のコンピュータにある場合はローカルを選択します。3D都市モデルは<a href="https://www.geospatial.jp/ckan/dataset/plateau">G空間情報センターのPLATEAUポータルサイト</a>からCityGMLをダウンロードできます。<ul>
 <li><code>参照</code>ボタンを押します。都市データのフォルダの選択画面が表示されます。</li>
 <li>都市データのフォルダの中には、<code>udx</code>,<code>codelists</code>という名前のフォルダがあるはずです。<br><code>udx</code>から<strong>階層が1つ上</strong>のフォルダを選択します。</li>
 </ul>
 </li>
 </ul>
+<div class="NOTE"><h5>Note</h5><p><strong>CityGMLのバージョン</strong><br>G空間情報センターのWebサイトからダウンロードできるCityGMLについて、複数のバージョンが掲載されている場合があります(v3とv2があるなど)。<br>2025年3月現在は、最新のv3に対応しています。今後に新しいバージョンが出た際には対応していく予定です。</p>
+</div>
 <h4 id="サーバーからインポートする場合">サーバーからインポートする場合</h4>
 <ul>
 <li><code>サーバー</code>では、PLATEAUのデータサーバーから直接3D都市モデルをインポートできます。<ul>
@@ -139,6 +141,9 @@
 </ul>
 </li>
 </ul>
+<div class="NOTE"><h5>Note</h5><p><strong>インポートにはインターネット接続が必要です</strong><br>範囲選択画面の地図を表示するために、次のドメインにアクセスできる必要があります。
+<code>https://cyberjapandata.gsi.go.jp</code><br>また、サーバーインポートでデータを取得するためには、次のドメインにアクセスできる必要があります。<br><code>https://api.plateau.reearth.io</code><br>プロキシでの接続には対応しておりません。</p>
+</div>
 <p><strong>補足</strong>:<br>  地域の区分を確認したい時は、ローカルにダウンロードしたフォルダに付属している <code>indexmap</code> という名前のpdfファイルをご覧ください。<br>下図のように地図上に区分が記載されています。
   <img src="../resources/manual/importCityModels/idmap.png" alt=""></p>
 <h3 id="地物別設定">地物別設定</h3>

@@ -90,7 +90,8 @@
 <ul>
 <li>先ほどインストールしたバージョンを起動します。</li>
 <li>Project Defaultsで<code>C++</code>を選択します。</li>
-<li>適宜設定を行い<code>作成</code>を押します。
+<li>適宜設定を行い<code>作成</code>を押します。</li>
+<li>Unreal Engineの仕様上、プロジェクトパスに日本語が含まれるとビルド時にエラーが発生する場合があります。フォルダ名に日本語を含めないようにしてください。
 <img src="../resources/manual/installation/unrealEngineNewProjectCategory.png" alt=""></li>
 </ul>
 <p><a id="blueprint_project"></a></p>
@@ -124,7 +125,7 @@
 <h2 id="plateau-sdk-for-unrealの導入">PLATEAU SDK for Unrealの導入</h2>
 <ul>
 <li><a href="https://github.com/Project-PLATEAU/PLATEAU-SDK-for-Unreal/releases">リリースページ</a>から提供されている<code>PLATEAU-SDK-for-Unreal-{バージョン名}.zip</code>をダウンロードします。</li>
-<li>作成したプロジェクトのフォルダに<code>Plugins</code>という名前のフォルダを作成し、先程ダウンロードしたSDKを解凍しコピーします。
+<li>作成したプロジェクトのフォルダ（先ほどのプロジェクト作成で指定した場所）に<code>Plugins</code>という名前のフォルダを作成し、先程ダウンロードしたSDKを解凍しコピーします。
 (<code>Plugins</code>フォルダの作成は、<code>Unreal Engine</code> のコンテンツブラウザからではなく、エクスプローラで作成してください。)</li>
 <li><code>Plugins/PLATEAU-SDK-for-Unreal/PLATEAU-SDK-for-Unreal.uplugin</code>が存在することを確認します。</li>
 <li>プロジェクトを開きます。既にプロジェクトを開いている場合は一度閉じてから再度プロジェクトを開いてください。</li>
