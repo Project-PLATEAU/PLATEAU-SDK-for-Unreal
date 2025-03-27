@@ -1,3 +1,5 @@
+// Copyright 2023 Ministry of Land, Infrastructure and Transport
+
 #include "RoadNetwork/RGraph/RGraphFactory.h"
 
 #include "Component/PLATEAUCityObjectGroup.h"
@@ -167,8 +169,12 @@ RGraphRef_t<URGraph> FRGraphFactoryEx::CreateGraph(const FRGraphFactory& Factory
         FRGraphEx::RemoveIsolatedEdgeFromFace(Graph);
     }
 
-    if (Factory.bOptModifySideWalkShape)
+    if (Factory.bOptModifySideWalkShape) {
         FRGraphEx::ModifySideWalkShape(Graph);
+    }
 
+    if(Factory.bFaceReduction) {
+        FRGraphEx::FaceReduction(Graph);
+    }
     return Graph;
 }

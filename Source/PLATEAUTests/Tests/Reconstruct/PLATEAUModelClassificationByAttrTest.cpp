@@ -1,8 +1,7 @@
 // Copyright © 2023 Ministry of Land, Infrastructure and Transport
 
 #include "FileHelpers.h"
-#include "../PLATEAUAutomationTestBase.h"
-#include "../PLATEAUAutomationTestUtil.h"
+#include "PLATEAUTests/Tests/PLATEAUAutomationTestBase.h"
 #include "Reconstruct/PLATEAUMeshLoaderForReconstruct.h"
 #include "PLATEAUInstancedCityModel.h"
 #include "Component/PLATEAUSceneComponent.h"
@@ -13,6 +12,7 @@
 #include <Reconstruct/PLATEAUModelClassificationByAttribute.h>
 #include <PLATEAUExportSettings.h>
 #include <PLATEAUMeshExporter.h>
+#include "PLATEAUModelConvertUtil.h"
 
 
 namespace FPLATEAUTest_Reconstruct_ModelClassificationByAttr_Local {
@@ -48,6 +48,16 @@ namespace FPLATEAUTest_Reconstruct_ModelClassificationByAttr_Local {
         CityObj.SetGmlID(PLATEAUAutomationTestUtil::Fixtures::TEST_CITYOBJ_WALL_NAME);
         CityObj.SetCityObjectsType(PLATEAUAutomationTestUtil::Fixtures::TEST_CITYOBJ_WALL_TYPE);
         CityObj.SetCityObjectIndex(plateau::polygonMesh::CityObjectIndex(0, 0));
+    }
+
+    void CreateCityObjectWallWithAttr(FPLATEAUCityObject& CityObj) {
+        CreateCityObjectWall(CityObj);
+        TMap<FString, FPLATEAUAttributeValue> AttrMap;
+        FPLATEAUAttributeValue Value;
+        Value.SetType("String");
+        Value.SetValue(EPLATEAUAttributeType::String, TestAttrValue);
+        AttrMap.Add(TestAttrKey, Value);
+        CityObj.SetAttribute(AttrMap);
     }
 
     void CreateCityObjectRoof(FPLATEAUCityObject& CityObj) {
@@ -89,7 +99,8 @@ bool FPLATEAUTest_Reconstruct_ModelClassificationByAttr::RunTest(const FString& 
         if (!WallCreated) {
             //Wall
             FPLATEAUCityObject CityObj;
-            FPLATEAUTest_Reconstruct_ModelClassificationByAttr_Local::CreateCityObjectWall(CityObj);
+            //FPLATEAUTest_Reconstruct_ModelClassificationByAttr_Local::CreateCityObjectWall(CityObj);
+            FPLATEAUTest_Reconstruct_ModelClassificationByAttr_Local::CreateCityObjectWallWithAttr(CityObj);
             ChildCompConv->SerializeCityObject(CityObj, PLATEAUAutomationTestUtil::Fixtures::TEST_OBJ_NAME);
 
             auto StaticMesh1 = PLATEAUAutomationTestUtil::Fixtures::CreateStaticMesh(ModelActor, FName(TEXT("TestMesh1")), FVector3f(-100, -100, 0));
@@ -122,9 +133,9 @@ bool FPLATEAUTest_Reconstruct_ModelClassificationByAttr::RunTest(const FString& 
 
     //Model Creation Test
     for(const auto& Target : TargetComponents )
-        PLATEAUAutomationTestUtil::TestConvertModel(this, ModelActor, Target, ConvertGranularity::PerPrimaryFeatureObject);
+        ModelConvert::TestConvertModel(this, ModelActor, Target, ConvertGranularity::PerPrimaryFeatureObject);
 
-    FPLATEAUModelClassificationByAttribute ModelClassification(ModelActor, AttributeKey, Materials);
+    FPLATEAUModelClassificationByAttribute ModelClassification(ModelActor, AttributeKey, Materials);//, PLATEAUAutomationTestUtil::Fixtures::CreateMaterial());
     ModelClassification.SetConvertGranularity(ConvertGranularity::PerPrimaryFeatureObject);
     const auto& Converted = ModelClassification.ConvertModelForReconstruct(TargetComponents);
     const auto ResultComponents = ModelClassification.ReconstructFromConvertedModel(Converted);
@@ -153,7 +164,7 @@ bool FPLATEAUTest_Reconstruct_ModelClassificationByAttr::RunTest(const FString& 
             TestNotNull("Dynamic Material is not null", DynMat);
 
             //CreateMaterialMapで設定したMaterialがセットされている
-            TestEqual("Material switched", DynMat->Parent.GetName(), "PlateauDefaultDisasterMaterialInstance");
+            TestEqual("Material switched", DynMat->GetName(), "PlateauDefaultDisasterMaterialInstance");
 
             AddInfo("StaticMeshTest Finish " + CompAsCOG->GetName());
             return true;

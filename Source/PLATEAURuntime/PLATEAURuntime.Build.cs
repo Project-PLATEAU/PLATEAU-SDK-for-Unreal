@@ -10,7 +10,7 @@ public class PLATEAURuntime : ModuleRules
     {
         bEnableExceptions = true;
         PCHUsage = ModuleRules.PCHUsageMode.UseExplicitOrSharedPCHs;
-        CppStandard = CppStandardVersion.Cpp17;
+        CppStandard = CppStandardVersion.Default;
 
         PublicIncludePaths.AddRange(
             new string[]
@@ -106,6 +106,6 @@ public class PLATEAURuntime : ModuleRules
 
 
         //using c++17
-        CppStandard = CppStandardVersion.Cpp17;
+        CppStandard = CppStandardVersion.Default;
     }
 }

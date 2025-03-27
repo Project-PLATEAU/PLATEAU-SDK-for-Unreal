@@ -1,3 +1,5 @@
+// Copyright 2023 Ministry of Land, Infrastructure and Transport
+
 #pragma once
 
 #include "CoreMinimal.h"
@@ -24,9 +26,6 @@ public:
 
     // メインレーンすべて取得
     const auto& GetMainLanes() const { return MainLanes; }
-
-    // 全レーン
-    const TArray<TRnRef_T<URnLane>>& GetAllLanes() const;
 
     // 中央分離帯を含めた全てのレーン
     TArray<TRnRef_T<URnLane>> GetAllLanesWithMedian() const;
@@ -105,11 +104,20 @@ public:
 
     /// <summary>
     /// #TODO : 左右の隣接情報がないので要修正
-    /// laneを追加する. ParentRoad情報も更新する
+    /// MainLanesにlaneを追加する. すでに存在する場合には無視される.ParentRoad情報も更新する
     /// </summary>
     /// <param name="Lane"></param>
-    void AddMainLane(TRnRef_T<URnLane> Lane);
+    bool AddMainLane(TRnRef_T<URnLane> Lane);
 
+    /*
+     * MainLanesのIndex位置にlaneを追加する. すでに存在する場合には無視される. ParentRoad情報も更新する
+     */
+    bool AddMainLane(TRnRef_T<URnLane> Lane, int32 Index);
+
+    /*
+     * MainLanesからLaneを削除. ParentRoad情報も更新する
+     */
+    bool RemoveMainLane(TRnRef_T<URnLane> Lane);
 
     // 指定した方向の境界線を取得する(全レーンマージした状態で取得する)
     TRnRef_T<URnWay> GetMergedBorder(EPLATEAURnLaneBorderType BorderType, TOptional<EPLATEAURnDir> Dir = NullOpt) const;
@@ -167,6 +175,8 @@ public:
     // 隣接情報を置き換える
     virtual void ReplaceNeighbor(const TRnRef_T<URnRoadBase>& From, const TRnRef_T<URnRoadBase>& To) override;
 
+    // 隣接情報を置き換える
+    virtual void ReplaceNeighbor(URnWay* BorderWay, URnRoadBase* To) override;
     // 左右のWayを結合したものを取得
     TArray<TRnRef_T<URnWay>> GetMergedSideWays() const;
     bool TryMerge2NeighborIntersection(EPLATEAURnLaneBorderType BorderType);
@@ -185,7 +195,7 @@ public:
     }
 
     // 構造的に正しいかどうかチェック
-    virtual bool Check() const override;
+    virtual bool Check() override;
 
 
     bool TryGetVerticalSliceSegment(
@@ -204,7 +214,8 @@ public:
 
 private:
 
-    void OnAddLane(TRnRef_T<URnLane> lane);
+    void OnAddLane(TRnRef_T<URnLane> Lane);
+    void OnRemoveLane(TRnRef_T<URnLane> Lane);
 
 public:
     // 接続先(nullの場合は接続なし)

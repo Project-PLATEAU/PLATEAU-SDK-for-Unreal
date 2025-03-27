@@ -1,3 +1,5 @@
+// Copyright 2023 Ministry of Land, Infrastructure and Transport
+
 #pragma once
 
 #include "CoreMinimal.h"
@@ -44,7 +46,7 @@ struct FRnModelDrawOption
     UPROPERTY(EditAnywhere, Category = "PLATEAU|Debug")
     bool bVisible = true;
 
-    UPROPERTY(EditAnywhere, Category = "PLATEAU|Debug", Meta = (Bitmask, BitmaskEnum = ERnModelDrawerVisibleType))
+    UPROPERTY(EditAnywhere, Category = "PLATEAU|Debug", Meta = (Bitmask, BitmaskEnum = "/Script/PLATEAURuntime.ERnModelDrawerVisibleType"))
     ERnModelDrawerVisibleType VisibleType = ERnModelDrawerVisibleType::All;
 
 };
@@ -143,7 +145,10 @@ struct FRnModelDrawRoadNormalOption : public FRnModelDrawOption {
     GENERATED_BODY()
 public:
     UPROPERTY(EditAnywhere, Category = "PLATEAU|Debug")
-    bool bShowSpline = true;
+    bool bShowNextConnection = false;
+
+    UPROPERTY(EditAnywhere, Category = "PLATEAU|Debug")
+    bool bShowPrevConnection = false;
 
     UPROPERTY(EditAnywhere, Category = "PLATEAU|Debug")
     int ShowLaneIndex = -1;
@@ -186,8 +191,19 @@ public:
     bool bSliceHorizontal = false;
 
     UPROPERTY(EditAnywhere, Category = "PLATEAU|Debug")
+    bool bMerge2Intersection = false;
+
+    UPROPERTY(EditAnywhere, Category = "PLATEAU|Debug")
+    bool bMergeRoadGroup = false;
+
+    UPROPERTY(EditAnywhere, Category = "PLATEAU|Debug")
     bool bCheckSliceHorizontal = false;
 
+    UPROPERTY(EditAnywhere, Category = "PLATEAU|Debug")
+    EPLATEAURnLaneBorderType CheckSliceHorizontalDir = EPLATEAURnLaneBorderType::Next;
+
+    UPROPERTY(EditAnywhere, Category = "PLATEAU|Debug")
+    float CheckSliceHorizontalOffset = 200.f;
 };
 
 USTRUCT()
@@ -229,6 +245,8 @@ USTRUCT()
 struct FRnModelDrawSideWalkOption : public FRnModelDrawOption {
     GENERATED_BODY()
 public:
+
+    FRnModelDrawSideWalkOption();
     UPROPERTY(EditAnywhere, Category = "PLATEAU|Debug")
     FRnModelDrawWayOption ShowOutsideWay;
 
@@ -240,6 +258,10 @@ public:
 
     UPROPERTY(EditAnywhere, Category = "PLATEAU|Debug")
     FRnModelDrawWayOption ShowEndEdgeWay;
+
+
+    UPROPERTY(EditAnywhere, Category = "PLATEAU|Debug")
+    bool bCheck;
 };
 
 USTRUCT()
@@ -284,7 +306,7 @@ public:
     UPROPERTY(EditAnywhere, Category = "PLATEAU|Debug")
     FRnModelDrawSideWalkOption SideWalkOption;
 
-    UPROPERTY(EditAnywhere, Category = "PLATEAU|Debug", Meta = (Bitmask, BitmaskEnum = ERnPartsTypeMask))
+    UPROPERTY(EditAnywhere, Category = "PLATEAU|Debug", Meta = (Bitmask, BitmaskEnum = "/Script/PLATEAURuntime.ERnPartsTypeMask"))
     int32 ShowPartsType = 0;
 
     UPROPERTY(EditAnywhere, Category = "PLATEAU|Debug")
@@ -292,6 +314,12 @@ public:
 
     UPROPERTY(EditAnywhere, Category = "PLATEAU|Debug")
     TArray<FString> ShowTargetNames;
+
+    UPROPERTY(EditAnywhere, Category = "PLATEAU|Debug")
+    bool bShowOnlyTargetTrans = false;
+
+    UPROPERTY(EditAnywhere, Category = "PLATEAU|Debug")
+    TArray<FString> ShowTargetTranNames;
 
     void Draw(URnModel* Model);
 };

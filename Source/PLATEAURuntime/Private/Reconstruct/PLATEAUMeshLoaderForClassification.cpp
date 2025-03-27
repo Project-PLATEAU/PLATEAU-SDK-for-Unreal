@@ -15,7 +15,7 @@ FPLATEAUMeshLoaderForClassification::FPLATEAUMeshLoaderForClassification(const F
 }
 
 UMaterialInterface* FPLATEAUMeshLoaderForClassification::GetMaterialForSubMesh(const FSubMeshMaterialSet& SubMeshValue, UStaticMeshComponent* Component,
-    const FLoadInputData& LoadInputData, UTexture2D* Texture, FNodeHierarchy NodeHier) {
+    const FLoadInputData& LoadInputData, UTexture2D* Texture, FNodeHierarchy NodeHier, UObject* Outer) {
 
     UE_LOG(LogTemp, Log, TEXT("GetMaterialForSubMesh: %d"), SubMeshValue.GameMaterialID);
 
@@ -39,7 +39,7 @@ UMaterialInterface* FPLATEAUMeshLoaderForClassification::GetMaterialForSubMesh(c
         return DefaultMaterial;
     }
 
-    return FPLATEAUMeshLoader::GetMaterialForSubMesh(SubMeshValue, Component, LoadInputData, Texture, NodeHier);
+    return FPLATEAUMeshLoader::GetMaterialForSubMesh(SubMeshValue, Component, LoadInputData, Texture, NodeHier, Outer);
 }
 
 

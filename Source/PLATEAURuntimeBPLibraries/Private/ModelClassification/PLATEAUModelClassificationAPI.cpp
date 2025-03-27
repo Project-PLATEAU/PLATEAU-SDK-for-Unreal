@@ -6,6 +6,7 @@
 #include "Component/PLATEAUCityObjectGroup.h"
 #include "PLATEAURuntime/Public/PLATEAUInstancedCityModel.h"
 #include "Algo/Sort.h"
+#include "Misc/MessageDialog.h"
 
 using namespace Algo;
 

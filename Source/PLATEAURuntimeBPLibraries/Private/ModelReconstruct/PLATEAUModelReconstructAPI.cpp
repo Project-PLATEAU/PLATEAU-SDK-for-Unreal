@@ -3,6 +3,7 @@
 #include "ModelReconstruct/PLATEAUModelReconstructAPI.h"
 #include "PLATEAURuntime/Public/PLATEAUInstancedCityModel.h"
 #include "PLATEAUImportSettings.h"
+#include "Misc/MessageDialog.h"
 
 TArray<UActorComponent*> UPLATEAUModelReconstructAPI::GetSelectedComponents(AActor* Actor) {
     TArray<UActorComponent*> arr;

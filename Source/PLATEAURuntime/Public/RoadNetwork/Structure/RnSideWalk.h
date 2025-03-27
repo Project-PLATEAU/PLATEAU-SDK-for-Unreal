@@ -1,3 +1,5 @@
+// Copyright 2023 Ministry of Land, Infrastructure and Transport
+
 #pragma once
 
 #include "CoreMinimal.h"
@@ -15,6 +17,14 @@ class URnSideWalk : public UObject {
 public:
     URnSideWalk();
     void Init();
+
+    void Init(
+        const TRnRef_T<URnRoadBase>& Parent,
+        const TRnRef_T<URnWay>& OutsideWay,
+        const TRnRef_T<URnWay>& InsideWay,
+        const TRnRef_T<URnWay>& StartEdgeWay,
+        const TRnRef_T<URnWay>& EndEdgeWay,
+        EPLATEAURnSideWalkLaneType LaneType = EPLATEAURnSideWalkLaneType::Undefined);
     // 自分が所属するRoadNetworkModel
     TRnRef_T<URnRoadBase> GetParentRoad() const;
 
@@ -50,9 +60,6 @@ public:
     // 強制的に親を変更する. 構造壊れるので扱い注意
     void SetParent(const TRnRef_T<URnRoadBase>& Parent);
 
-    // 親からのリンク解除
-    void UnLinkFromParent();
-
     // 左右のWayを再設定
     void SetSideWays(const TRnRef_T<URnWay>& OutsideWay, const TRnRef_T<URnWay>& InsideWay);
 
@@ -65,7 +72,7 @@ public:
     void ReverseLaneType();
 
     // InSideWay/OutSideWayの方向を合わせる
-    void TryAlign();
+    void Align();
 
     // 歩道作成
     static TRnRef_T<URnSideWalk> Create(
@@ -74,7 +81,10 @@ public:
         const TRnRef_T<URnWay>& InsideWay,
         const TRnRef_T<URnWay>& StartEdgeWay,
         const TRnRef_T<URnWay>& EndEdgeWay,
-        EPLATEAURnSideWalkLaneType LaneType = EPLATEAURnSideWalkLaneType::Undefined);
+        EPLATEAURnSideWalkLaneType LaneType = EPLATEAURnSideWalkLaneType::Undefined,
+        bool AddToParent = true
+    );
+
 
     // 代表点を取得
     FVector GetCentralVertex() const;
@@ -84,11 +94,12 @@ public:
 
     // 近接スコア計算
     float CalcRoadProximityScore(const TRnRef_T<URnRoadBase>& Other) const;
+    void Reverse();
+    URnSideWalk* ReversedSideWalk();
+    bool TryMergeNeighborSideWalk(URnSideWalk* SrcSideWalk);
 
-    bool Check() const
-    {
-        return true;
-    }
+    bool Check() const;
+
 private:
     UPROPERTY(VisibleAnywhere, Category = "PLATEAU")
     TWeakObjectPtr<URnRoadBase> ParentRoad;

@@ -1,3 +1,5 @@
+// Copyright 2023 Ministry of Land, Infrastructure and Transport
+
 #include "RoadNetwork/Structure/RnWay.h"
 #include "Algo/Reverse.h"
 
@@ -361,7 +363,12 @@ void URnWay::Move(const FVector& Offset) {
 
 TRnRef_T<URnWay> URnWay::Clone(bool CloneVertex) const
 {
-    return RnNew<URnWay>(LineString->Clone(CloneVertex), IsReversed, IsReverseNormal);
+    return Create(LineString->Clone(CloneVertex), IsReversed, IsReverseNormal);
+}
+
+TRnRef_T<URnWay> URnWay::ShallowClone() const
+{
+    return Create(LineString, IsReversed, IsReverseNormal);
 }
 
 bool URnWay::IsSameLineReference(const URnWay* Other) const {
@@ -429,6 +436,29 @@ TArray<TRnRef_T<URnWay>> URnWay::Split(int32 Num, bool InsertNewPoint, TFunction
     return Result;
 }
 
+TRnRef_T<URnWay> URnWay::Create(const TRnRef_T<URnLineString>& InLineString, bool bInIsReversed, bool bInIsReverseNormal)
+{
+    return RnNew<URnWay>(InLineString, bInIsReversed, bInIsReverseNormal);
+}
+
+TRnRef_T<URnWay> URnWay::CreateMergedWay(URnWay* A, URnWay* B, bool RemoveDuplicate)
+{
+    TArray<URnPoint*> Points;
+    if(A)
+    {
+        for (auto P : A->GetPoints())
+            Points.Add(P);
+    }
+
+    if(B)
+    {
+        for (auto P : B->GetPoints())
+            Points.Add(P);
+    }
+    auto Ls = URnLineString::Create(Points, RemoveDuplicate);
+    return Create(Ls, false, false);
+}
+
 bool FRnWayEx::TryMergePointsToLineString(URnWay* Self, URnWay* Src, float PointDistanceTolerance) {
     if (Self->GetPoint(0)->IsSamePoint(Src->GetPoint(0), PointDistanceTolerance)) {
         Self->AppendFront2LineString(Src->ReversedWay());
@@ -447,4 +477,11 @@ bool FRnWayEx::TryMergePointsToLineString(URnWay* Self, URnWay* Src, float Point
     }
 
     return true;
+}
+
+TRnRef_T<URnWay> FRnWayEx::ShallowCloneOrDefault(URnWay* Self)
+{
+    if (!Self)
+        return nullptr;
+    return Self->ShallowClone();
 }

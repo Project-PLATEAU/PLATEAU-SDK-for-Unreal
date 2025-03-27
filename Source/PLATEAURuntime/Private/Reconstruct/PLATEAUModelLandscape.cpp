@@ -5,6 +5,7 @@
 #include <PLATEAUTextureLoader.h>
 #include "Materials/MaterialInstanceConstant.h"
 #include "UObject/SavePackage.h"
+#include "Misc/EngineVersionComparison.h"
 
 namespace {
 
@@ -97,8 +98,12 @@ ALandscape* FPLATEAUModelLandscape::CreateLandScape(UWorld* World, const int32 N
     ALandscape* Landscape = World->SpawnActor<ALandscape>(Param);
     Landscape->bCanHaveLayersContent = false;
     Landscape->SetActorTransform(LandscapeTransform);
-
+#if UE_VERSION_NEWER_THAN(5, 5, 0)
+    const TArrayView<const struct FLandscapeLayer> ImportLayers;
+    Landscape->Import(FGuid::NewGuid(), 0, 0, SizeX - 1, SizeY - 1, NumSubsections, SubsectionSizeQuads, HeightDataPerLayers, nullptr, MaterialLayerDataPerLayers, ELandscapeImportAlphamapType::Additive, ImportLayers);
+#else
     Landscape->Import(FGuid::NewGuid(), 0, 0, SizeX - 1, SizeY - 1, NumSubsections, SubsectionSizeQuads, HeightDataPerLayers, nullptr, MaterialLayerDataPerLayers, ELandscapeImportAlphamapType::Additive);
+#endif
 
     //Create Package
     FString PackageName = TEXT("/Game/PLATEAU/Materials/");

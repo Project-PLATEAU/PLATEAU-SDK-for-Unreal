@@ -139,7 +139,7 @@ public:
             CityModel = citygml::load(TCHAR_TO_UTF8(*GmlPath), ParserParams, Logger->GetLogger());
         }
         catch (std::exception& e) {
-            UE_LOG(LogTemp, Error, TEXT("Error parsing gml file. Path=%s, What=%s"), *GmlPath, e.what());
+            UE_LOG(LogTemp, Error, TEXT("Error parsing gml file. Path=%s, What=%s"), *GmlPath, *FString(e.what()));
             CityModel = nullptr;
         }
         if (CityModel == nullptr)

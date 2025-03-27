@@ -1,4 +1,5 @@
-/// Copyright 2023 Ministry of Land, Infrastructure and Transport
+﻿// Copyright 2023 Ministry of Land, Infrastructure and Transport
+
 #include "CityGML/Serialization/PLATEAUCityObjectDeserialization.h"
 #include <Component/PLATEAUCityObjectGroup.h>
 #include "Util/PLATEAUGmlUtil.h"

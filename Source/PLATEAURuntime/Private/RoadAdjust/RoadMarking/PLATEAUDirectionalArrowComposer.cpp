@@ -1,3 +1,5 @@
+// Copyright © 2023 Ministry of Land, Infrastructure and Transport
+
 #include "RoadAdjust/RoadMarking/PLATEAUDirectionalArrowComposer.h"
 #include "RoadNetwork/Structure/RnIntersection.h"
 #include "Engine/StaticMesh.h"
@@ -45,7 +47,7 @@ TArray<TObjectPtr<UStaticMeshComponent>> FPLATEAUDirectionalArrowComposer::Compo
 
             if (Lane->GetNextBorder())
             {
-                auto* Inter = Lane->GetIsReverse() ? PrevIntersection : NextIntersection;
+                auto* Inter = Lane->GetIsReversed() ? PrevIntersection : NextIntersection;
                 bool bIsSucceedPosition = false;
                 bool bIsSucceedAngle = false;
                 const auto Position = ArrowPosition(Lane, true, bIsSucceedPosition);
@@ -63,7 +65,7 @@ TArray<TObjectPtr<UStaticMeshComponent>> FPLATEAUDirectionalArrowComposer::Compo
 
             if (Lane->GetPrevBorder())
             {
-                auto* Inter = Lane->GetIsReverse() ? NextIntersection : PrevIntersection;
+                auto* Inter = Lane->GetIsReversed() ? NextIntersection : PrevIntersection;
                 bool bIsSucceedPosition = false;
                 bool bIsSucceedAngle = false;
                 const auto Position = ArrowPosition(Lane, false, bIsSucceedPosition);

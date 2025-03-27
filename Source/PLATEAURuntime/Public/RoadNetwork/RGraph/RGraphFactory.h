@@ -1,3 +1,5 @@
+// Copyright 2023 Ministry of Land, Infrastructure and Transport
+
 #pragma once
 
 #include "CoreMinimal.h"
@@ -5,7 +7,7 @@
 
 #include "RGraph.h"
 #include "RGraphFactory.generated.h"
-class FSubDividedCityObject;
+struct FSubDividedCityObject;
 class UPLATEAUCityObjectGroup;
 class URnModel;
 class URGraph;
@@ -51,6 +53,10 @@ public:
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "PLATEAU|Factory|Optimize")
     bool bOptModifySideWalkShape = true;
+
+    // 全く同じ辺を持つFaceを統合する
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "PLATEAU|Factory|Optimize")
+    bool bFaceReduction = true;
 };
 
 struct FRGraphFactoryEx

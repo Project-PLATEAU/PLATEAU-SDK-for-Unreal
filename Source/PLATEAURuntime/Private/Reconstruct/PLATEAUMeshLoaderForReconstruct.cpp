@@ -4,12 +4,13 @@
 #include "PLATEAUCityModelLoader.h"
 #include "Component/PLATEAUCityObjectGroup.h"
 #include "Util/PLATEAUComponentUtil.h"
+#include "Materials/MaterialInstance.h"
 
-FPLATEAUMeshLoaderForReconstruct::FPLATEAUMeshLoaderForReconstruct(const FPLATEAUCachedMaterialArray& CachedMaterials) : FPLATEAUMeshLoader(CachedMaterials) {
+FPLATEAUMeshLoaderForReconstruct::FPLATEAUMeshLoaderForReconstruct(const FPLATEAUCachedMaterialArray& CachedMaterials) : BeforeConvertCachedMaterials(CachedMaterials) {
     bAutomationTest = false;
 }
 
-FPLATEAUMeshLoaderForReconstruct::FPLATEAUMeshLoaderForReconstruct(const bool InbAutomationTest, const FPLATEAUCachedMaterialArray& CachedMaterials) : FPLATEAUMeshLoader(CachedMaterials) {
+FPLATEAUMeshLoaderForReconstruct::FPLATEAUMeshLoaderForReconstruct(const bool InbAutomationTest, const FPLATEAUCachedMaterialArray& CachedMaterials) : BeforeConvertCachedMaterials(CachedMaterials) {
     bAutomationTest = InbAutomationTest;
 }
 
@@ -121,7 +122,7 @@ USceneComponent* FPLATEAUMeshLoaderForReconstruct::ReloadNode(USceneComponent* P
 }
 
 UMaterialInterface* FPLATEAUMeshLoaderForReconstruct::GetMaterialForSubMesh(const FSubMeshMaterialSet& SubMeshValue, UStaticMeshComponent* Component,
-    const FLoadInputData& LoadInputData, UTexture2D* Texture, FNodeHierarchy NodeHier) {
+    const FLoadInputData& LoadInputData, UTexture2D* Texture, FNodeHierarchy NodeHier, UObject* Outer) {
 
     FString TexturePath = SubMeshValue.TexturePath;
     //分割・結合時のFallback Material取得
@@ -133,10 +134,10 @@ UMaterialInterface* FPLATEAUMeshLoaderForReconstruct::GetMaterialForSubMesh(cons
             FString SourcePath = "/PLATEAU-SDK-for-Unreal/Materials/Fallback/" / FallbackName;
             UMaterialInstance* FallbackMat = Cast<UMaterialInstance>(
                 StaticLoadObject(UMaterialInstance::StaticClass(), nullptr, *SourcePath));
-            return StaticCast<UMaterialInstanceDynamic*>(FallbackMat);
+            return Cast<UMaterialInterface>(FallbackMat);
         }
     }
-    return FPLATEAUMeshLoader::GetMaterialForSubMesh(SubMeshValue, Component, LoadInputData, Texture, NodeHier);
+    return FPLATEAUMeshLoader::GetMaterialForSubMesh(SubMeshValue, Component, LoadInputData, Texture, NodeHier, Outer);
 }
 
 UStaticMeshComponent* FPLATEAUMeshLoaderForReconstruct::GetStaticMeshComponentForCondition(AActor& Actor, EName Name, FNodeHierarchy NodeHier,
@@ -149,6 +150,17 @@ UStaticMeshComponent* FPLATEAUMeshLoaderForReconstruct::GetStaticMeshComponentFo
     PLATEAUCityObjectGroup->SerializeCityObject(NodeName, InMesh, ConvGranularity, CityObjMap);
     return PLATEAUCityObjectGroup;
 }
+
+UMaterialInterface* FPLATEAUMeshLoaderForReconstruct::GetPreCachedMaterial(int32 MaterialId) {
+    if (UseCachedMaterial() && 
+        MaterialId >= 0 && BeforeConvertCachedMaterials.Num() > 0 &&
+        MaterialId < BeforeConvertCachedMaterials.Num())
+    {
+        return BeforeConvertCachedMaterials.Get(MaterialId);
+    }
+    return nullptr;
+}
+
 
 bool FPLATEAUMeshLoaderForReconstruct::InvertMeshNormal() {
     return true;

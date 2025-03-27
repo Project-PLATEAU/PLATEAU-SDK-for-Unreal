@@ -1,7 +1,7 @@
 // Copyright © 2023 Ministry of Land, Infrastructure and Transport
 
 #include "FileHelpers.h"
-#include "../PLATEAUAutomationTestBase.h"
+#include "PLATEAUTests/Tests/PLATEAUAutomationTestBase.h"
 #include "Util/PLATEAUComponentUtil.h"
 #include "Component/PLATEAUSceneComponent.h"
 #include "Kismet/GameplayStatics.h"

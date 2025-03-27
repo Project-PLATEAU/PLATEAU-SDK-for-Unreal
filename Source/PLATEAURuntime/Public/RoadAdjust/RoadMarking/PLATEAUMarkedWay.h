@@ -71,10 +71,10 @@ private:
     FPLATEAUMWLine Line;
 
     UPROPERTY()
-    EPLATEAUMarkedWayType Type;
+    EPLATEAUMarkedWayType Type = EPLATEAUMarkedWayType::None;
 
     UPROPERTY()
-    bool bIsReversed;
+    bool bIsReversed = false;
 };
 
 /**

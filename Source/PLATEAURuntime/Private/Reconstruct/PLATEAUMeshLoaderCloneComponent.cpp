@@ -75,14 +75,14 @@ UStaticMeshComponent* FPLATEAUMeshLoaderCloneComponent::GetStaticMeshComponentFo
 }
 
 UMaterialInterface* FPLATEAUMeshLoaderCloneComponent::GetMaterialForSubMesh(const FSubMeshMaterialSet& SubMeshValue, UStaticMeshComponent* Component, 
-    const FLoadInputData& LoadInputData, UTexture2D* Texture, FNodeHierarchy NodeHier) {
+    const FLoadInputData& LoadInputData, UTexture2D* Texture, FNodeHierarchy NodeHier, UObject* Outer) {
 
     // Originalコンポーネントのマテリアルをそのまま利用
     const auto& OriginalComponent = GetOriginalComponent(NodeHier.NodePath);
     if (OriginalComponent)
         return OriginalComponent->GetMaterial(0);
 
-    return FPLATEAUMeshLoader::GetMaterialForSubMesh(SubMeshValue, Component, LoadInputData, Texture, NodeHier);
+    return FPLATEAUMeshLoader::GetMaterialForSubMesh(SubMeshValue, Component, LoadInputData, Texture, NodeHier, Outer);
 }
 
 /**

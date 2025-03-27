@@ -12,7 +12,7 @@ FPLATEAUMarkedWayList UPLATEAUMCShoulderLine::ComposeFrom(const IPLATEAURrTarget
         if (!Road->IsValid())
             continue;
 
-        const auto& CarLanes = Road->GetAllLanes();
+        const auto& CarLanes = Road->GetMainLanes();
         if (CarLanes.Num() == 0)
             continue;
 
@@ -25,7 +25,7 @@ FPLATEAUMarkedWayList UPLATEAUMCShoulderLine::ComposeFrom(const IPLATEAURrTarget
             Result.Add(FPLATEAUMarkedWay(
                 FPLATEAUMWLine(FirstLane->GetLeftWay()->GetVertices()),
                 EPLATEAUMarkedWayType::ShoulderLine,
-                FirstLane->GetIsReverse()
+                FirstLane->GetIsReversed()
             ));
         }
 
@@ -34,7 +34,7 @@ FPLATEAUMarkedWayList UPLATEAUMCShoulderLine::ComposeFrom(const IPLATEAURrTarget
             Result.Add(FPLATEAUMarkedWay(
                 FPLATEAUMWLine(LastLane->GetLeftWay()->GetVertices()),
                 EPLATEAUMarkedWayType::ShoulderLine,
-                LastLane->GetIsReverse()
+                LastLane->GetIsReversed()
             ));
         }
     }

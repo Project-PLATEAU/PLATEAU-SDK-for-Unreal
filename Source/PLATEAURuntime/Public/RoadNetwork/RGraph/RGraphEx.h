@@ -1,3 +1,5 @@
+// Copyright 2023 Ministry of Land, Infrastructure and Transport
+
 #pragma once
 
 #include "CoreMinimal.h"
@@ -92,4 +94,17 @@ public:
     {
         return FPLATEAURnEx::GroupByOutlineEdges<T, RGraphRef_t<UREdge>>(OutlineEdges, KeySelector);
     }
+
+    /**
+     * FaceReduction
+     *
+     * URGraph に含まれる Face 同士のうち、Edge 数ごとにグループ化し、
+     * 同じ Edge 群を持つ Face (すなわち、f1 のすべての Edge が f2 に含まれる場合)
+     * を f2 -> f1 の順にマージします。マージに成功した場合は対象 Face をグループから除去し、
+     * マージされた Face 数を返します。
+     *
+     * @param Graph マージ対象の URGraph オブジェクト
+     * @return マージにより削除された Face の数
+     */
+    static int32 FaceReduction(URGraph* Graph);
 };

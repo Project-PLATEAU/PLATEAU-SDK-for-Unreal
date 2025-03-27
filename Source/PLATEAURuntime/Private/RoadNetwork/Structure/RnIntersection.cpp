@@ -1,3 +1,5 @@
+// Copyright 2023 Ministry of Land, Infrastructure and Transport
+
 #include "RoadNetwork/Structure/RnIntersection.h"
 
 #include "Algo/AnyOf.h"
@@ -253,16 +255,39 @@ void URnIntersection::RemoveEdges(const TRnRef_T<URnRoadBase>& Road) {
     RemoveEdges([&](const TRnRef_T<URnIntersectionEdge>& Edge) { return Edge->GetRoad() == Road; });
 }
 
-void URnIntersection::RemoveEdges(const TFunction<bool(const TRnRef_T<URnIntersectionEdge>&)>& Predicate) {
-    for (int32 i = Edges.Num() - 1; i >= 0; --i) {
-        if (Predicate((Edges)[i])) {
-            Edges.RemoveAt(i);
-        }
+int32 URnIntersection::RemoveEdges(const TFunction<bool(const TRnRef_T<URnIntersectionEdge>&)>& Predicate)
+{
+    auto Targets = Edges.FilterByPredicate(Predicate);
+    for (auto& Target : Targets) {
+        RemoveEdge(Target);
     }
+    return Targets.Num();
 }
 
-void URnIntersection::ReplaceEdges(const TRnRef_T<URnRoadBase>& Road, const TArray<TRnRef_T<URnWay>>& NewBorders) {
-    RemoveEdges(Road);
+int32 URnIntersection::RemoveEdges(const TRnRef_T<URnWay>& Way)
+{
+    return RemoveEdges([&](const TRnRef_T<URnIntersectionEdge>& Edge) {
+        return Edge->GetBorder()->IsSameLineReference(Way);
+    });
+}
+
+void URnIntersection::ReplaceEdges(const TRnRef_T<URnRoad>& Road, EPLATEAURnLaneBorderType BorderType, const TArray<TRnRef_T<URnWay>>& NewBorders)
+{
+    if (!Road)
+        return;
+
+    auto BorderWays = Road->GetBorderWays(BorderType);
+    for(auto Way : BorderWays)
+    {
+        auto RemoveCount = RemoveEdges(Way);
+        if(RemoveCount != 1)
+        {
+            UE_LOG(LogTemp, Warning
+                , TEXT("URnIntersection::ReplaceEdges:削除しようとしたエッジが交差点に存在しませんでした. Road: %s, BorderType: %d, RemoveCount: %d")
+                , *Road->GetName(), BorderType, RemoveCount);
+        }
+    }
+
     for (const auto& Border : NewBorders) {
         AddEdge(Road, Border);
     }
@@ -280,9 +305,13 @@ int32 URnIntersection::ReplaceEdgeLink(TRnRef_T<URnWay> Border, TRnRef_T<URnRoad
     return Count;
 }
 
-void URnIntersection::AddEdge(const TRnRef_T<URnRoadBase>& Road, const TRnRef_T<URnWay>& Border) {
+bool URnIntersection::AddEdge(const TRnRef_T<URnRoadBase>& Road, const TRnRef_T<URnWay>& Border) {
+    if (!Border)
+        return false;
+        
     auto NewEdge = RnNew<URnIntersectionEdge>(Road, Border);
     Edges.Add(NewEdge);
+    return true;
 }
 
 bool URnIntersection::HasEdge(const TRnRef_T<URnRoadBase>& Road) const {
@@ -291,6 +320,26 @@ bool URnIntersection::HasEdge(const TRnRef_T<URnRoadBase>& Road) const {
 
 bool URnIntersection::HasEdge(const TRnRef_T<URnRoadBase>& Road, const TRnRef_T<URnWay>& Border) const {
     return GetEdgeBy(Road, Border) != nullptr;
+}
+
+bool URnIntersection::IsAligned() const {
+    const int32 EdgeCount = Edges.Num();
+    if (EdgeCount == 0) {
+        return true;
+    }
+
+    for (int32 i = 0; i < EdgeCount; ++i) {
+        const URnIntersectionEdge* E0 = Edges[i];
+        const URnIntersectionEdge* E1 = Edges[(i + 1) % EdgeCount];
+
+        // e0 の境界線の最後のポイントと、e1 の境界線の先頭のポイントを比較する
+        const auto LastPoint = E0->GetBorder()->GetPoint(-1);
+        const auto FirstPoint = E1->GetBorder()->GetPoint(0);
+        if (FirstPoint != LastPoint) {
+            return false;
+        }
+    }
+    return true;
 }
 
 void URnIntersection::Align()
@@ -445,6 +494,19 @@ void URnIntersection::AlignEdgeNormal(TRnRef_T<URnIntersectionEdge> edge)
         edge->GetBorder()->IsReverseNormal = false;
 }
 
+bool URnIntersection::RemoveEdge(URnIntersectionEdge* Edge)
+{
+    auto RemoveCount = Edges.Remove(Edge);
+    if (RemoveCount == 0)
+        return false;
+
+    Tracks.RemoveAll([&](const URnTrack* Track) {
+        return Track->ContainsBorder(Edge->GetBorder());
+        });
+
+    return true;
+}
+
 bool FRnIntersectionEx::FEdgeGroup::IsValid() const
 {
     if (Edges.IsEmpty())
@@ -589,7 +651,78 @@ void URnIntersection::SeparateContinuousBorder() {
 
 void URnIntersection::BuildTracks()
 {
+    BuildTracks(FBuildTrackOption::Default());
+}
+
+void URnIntersection::BuildTracks(const FBuildTrackOption& Option) {
     Align();
     FRnTracksBuilder builder;
-    builder.BuildTracks(this, FBuildTrackOption::Default());
+    builder.BuildTracks(this, Option);
+}
+bool URnIntersection::Check()
+{
+    Align();
+    if(IsAligned() == false)
+    {
+        UE_LOG(LogTemp, Error, TEXT("ループしていない輪郭の交差点%s"), *GetTargetTransName());
+    }
+    return true;
+}
+// MergeContinuousNonBorderEdge
+// 境界線以外のエッジが連続している場合、一つのエッジにまとめます。
+void URnIntersection::MergeContinuousNonBorderEdge() {
+    // エッジの整列処理。各エッジが連結し、時計回りになるように並んでいる前提です。
+    Align();
+
+    for (int32 i = 0; i < Edges.Num(); ++i) {
+        auto Edge = Edges[i];
+
+        // 境界線であればスキップ
+        if (Edge->IsBorder()) {
+            continue;
+        }
+
+        // 連続する非境界エッジがある間、マージを繰り返す
+        while (Edges.Num() > 1 && !Edges[(i + 1) % Edges.Num()]->IsBorder()) 
+        {
+            auto NextEdge = Edges[(i + 1) % Edges.Num()];
+
+            // 現在のエッジの Border と次のエッジの Border をクローンしてマージ
+            URnWay* ClonedWay1 = Edge->GetBorder()->Clone(false);
+            URnWay* ClonedWay2 = NextEdge->GetBorder()->Clone(false);
+            URnWay* MergedWay = URnWay::CreateMergedWay(ClonedWay1, ClonedWay2, false);
+
+            // マージ結果を現在のエッジにセット
+            Edge->SetBorder(MergedWay);
+
+            // 次のエッジをリストから削除
+            Edges.RemoveAt((i + 1) % Edges.Num());
+            UE_LOG(LogTemp, Log, TEXT("Merge NonBorder Edge %s"), *GetTargetTransName());
+
+            // i が末尾で削除された場合に備え、i を調整
+            i = FMath::Min(i, Edges.Num() - 1);
+        }
+    }
+}
+
+void URnIntersection::ReplaceNeighbor(URnWay* BorderWay, URnRoadBase* To)
+{
+    if (BorderWay == nullptr) {
+        return;
+    }
+
+    bool bFound = false;
+    for (URnIntersectionEdge* Edge : Edges) {
+        // Border が存在し、IsSameLineReference で同一か判定
+        if (Edge->IsValid() && Edge->GetBorder()->IsSameLineReference(BorderWay)) {
+            Edge->SetRoad(To);
+            bFound = true;
+        }
+    }
+
+    // 該当する境界線が見つからなかった場合はエラーログを出力
+    if (!bFound) {
+        UE_LOG(LogTemp, Error, TEXT("境界線 %s が %s に存在しませんでした"),
+               *BorderWay->GetName(), *GetName());
+    }
 }

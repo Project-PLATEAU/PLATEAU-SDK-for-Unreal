@@ -79,6 +79,13 @@ public:
 
     ULineGeneratorComponent();
 
+#if WITH_EDITOR
+	/**
+	 * スプラインを編集したとき、線メッシュに反映させるために必要です
+	 */
+	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
+#endif
+
 private:
 
 	float GetMeshLength(bool includeGap);

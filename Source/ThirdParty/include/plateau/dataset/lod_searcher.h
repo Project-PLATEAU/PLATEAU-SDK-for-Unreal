@@ -33,13 +33,14 @@ namespace plateau::dataset {
          * 高速化のための調整項目です。
          * GMLファイル内で最初にLOD表記が見つかった時点を0バイト目として、ファイルを指定バイト数読んだ時点で検索を打ち切ります。
          * サイズを制限しないと、範囲選択画面で重いGMLファイルのアイコンを1つ表示するのに長々と待たされることになります。
-         * 制限が10MBであれば、2023年の東京、沼津、新潟の全データにおいて、全文を読むのと結果が変わらないことを検証済みです。
+         * この制限であれば、2023年の東京、沼津、新潟の全データにおいて、全文を読むのと結果が変わらないことを検証済みです。
          * また、「ファイル先頭からのバイト数」で制限するよりも「最初のLODからのバイト数」で制限したほうがバイト数を小さくでき、結果としてより高速化できることも東京、沼津、新潟で検証済みです。
          * しかし、今後のあらゆるデータで大丈夫であるという保証はなく、今後に調整が必要になるかもしれません。
          */
-        static constexpr std::streamsize max_gml_read_size_from_first_lod_found = 10 /*メガバイト*/*1000000;
-        static constexpr std::streamsize max_gml_read_size_from_second_lod_found = 60/*メガバイト*/*1000000; // LOD1→2を検索するときは多めに検索しないと見逃す
-        static constexpr std::streamsize max_gml_read_size_from_third_lod_found =  120/*メガバイト*/*1000000; // LOD3→4を検索するときはさらに多めに検索しないと見逃す
-//        static constexpr std::streamsize max_gml_read_size_from_first_lod_found = LONG_MAX;
+        static constexpr std::streamsize max_gml_read_size_from_lod_0_found = 10 /*メガバイト*/* 1000000;
+        static constexpr std::streamsize max_gml_read_size_from_lod_1_found = 50 /*メガバイト*/* 1000000;
+        static constexpr std::streamsize max_gml_read_size_from_lod_2_found = 120/*メガバイト*/* 1000000; // LOD2→3を検索するときは多めに検索しないと見逃す
+        static constexpr std::streamsize max_gml_read_size_from_lod_3_found = 240/*メガバイト*/* 1000000; // LOD3→4を検索するときはさらに多めに検索しないと見逃す
+//        static constexpr std::streamsize max_gml_read_size_from_lod_0_found = LONG_MAX;
     };
 }

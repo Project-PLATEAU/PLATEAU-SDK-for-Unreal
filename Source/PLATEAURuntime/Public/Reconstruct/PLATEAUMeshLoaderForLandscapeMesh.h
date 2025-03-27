@@ -21,7 +21,7 @@ protected:
     UStaticMeshComponent* GetStaticMeshComponentForCondition(AActor& Actor, EName Name, FNodeHierarchy NodeHier,
         const plateau::polygonMesh::Mesh& InMesh, const FLoadInputData& LoadInputData,
         const std::shared_ptr <const citygml::CityModel> CityModel) override;
-    UMaterialInterface* GetMaterialForSubMesh(const FSubMeshMaterialSet& SubMeshValue, UStaticMeshComponent* Component, const FLoadInputData& LoadInputData, UTexture2D* Texture, FNodeHierarchy NodeHier) override;
+    UMaterialInterface* GetMaterialForSubMesh(const FSubMeshMaterialSet& SubMeshValue, UStaticMeshComponent* Component, const FLoadInputData& LoadInputData, UTexture2D* Texture, FNodeHierarchy NodeHier, UObject* Outer) override;
 
     bool OverwriteTexture() override;
     bool InvertMeshNormal() override;

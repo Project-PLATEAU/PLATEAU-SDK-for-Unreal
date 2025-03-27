@@ -11,10 +11,13 @@
 #include "StaticMeshOperations.h"
 #include "StaticMeshAttributes.h"
 #include "plateau/height_map_generator/heightmap_mesh_generator.h"
+#include "MathUtil.h"
+#include "Materials/Material.h"
+#include "Materials/MaterialInstanceDynamic.h"
 
-FPLATEAUMeshLoaderForLandscapeMesh::FPLATEAUMeshLoaderForLandscapeMesh() {}
+FPLATEAUMeshLoaderForLandscapeMesh::FPLATEAUMeshLoaderForLandscapeMesh(){}
 
-FPLATEAUMeshLoaderForLandscapeMesh::FPLATEAUMeshLoaderForLandscapeMesh(const bool InbAutomationTest){
+FPLATEAUMeshLoaderForLandscapeMesh::FPLATEAUMeshLoaderForLandscapeMesh(const bool InbAutomationTest) {
     bAutomationTest = InbAutomationTest;
 }
 
@@ -107,10 +110,16 @@ UStaticMeshComponent* FPLATEAUMeshLoaderForLandscapeMesh::GetStaticMeshComponent
 }
 
 UMaterialInterface* FPLATEAUMeshLoaderForLandscapeMesh::GetMaterialForSubMesh(const FSubMeshMaterialSet& SubMeshValue, UStaticMeshComponent* Component,
-    const FLoadInputData& LoadInputData, UTexture2D* Texture, FNodeHierarchy NodeHier) {
-    if (ReplaceMaterial != nullptr)
-        return ReplaceMaterial;
-    return FPLATEAUMeshLoader::GetMaterialForSubMesh(SubMeshValue, Component, LoadInputData, Texture, NodeHier);
+    const FLoadInputData& LoadInputData, UTexture2D* Texture, FNodeHierarchy NodeHier, UObject* Outer) {
+    if (ReplaceMaterial != nullptr) {
+        //Dynamic Material 再生成・Texture再設定 (レベル保存時に消えてしまうため）
+        auto DynMaterial = UMaterialInstanceDynamic::Create(ReplaceMaterial->GetMaterial(), Outer);
+        UTexture* ReferencedTexture = nullptr;
+        ReplaceMaterial->GetTextureParameterValue(TEXT("Texture"), ReferencedTexture);
+        DynMaterial->SetTextureParameterValue("Texture", ReferencedTexture);
+        return DynMaterial;
+    }
+    return FPLATEAUMeshLoader::GetMaterialForSubMesh(SubMeshValue, Component, LoadInputData, Texture, NodeHier, Outer);
 }
 
 void FPLATEAUMeshLoaderForLandscapeMesh::ModifyMeshDescription(FMeshDescription& MeshDescription) {
@@ -122,7 +131,7 @@ void FPLATEAUMeshLoaderForLandscapeMesh::ModifyMeshDescription(FMeshDescription&
     for (FEdgeID EdgeID : MeshDescription.Edges().GetElementIDs()) {
         EdgeHardness.Set(EdgeID, 0, false);
     }
-
+    
     FStaticMeshOperations::ComputeTriangleTangentsAndNormals(MeshDescription, FMathf::Epsilon);
     FStaticMeshOperations::RecomputeNormalsAndTangentsIfNeeded(MeshDescription, 
         EComputeNTBsFlags::WeightedNTBs | EComputeNTBsFlags::Normals | EComputeNTBsFlags::Tangents | EComputeNTBsFlags::BlendOverlappingNormals);

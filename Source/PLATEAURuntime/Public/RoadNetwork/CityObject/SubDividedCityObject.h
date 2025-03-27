@@ -1,3 +1,5 @@
+// Copyright 2023 Ministry of Land, Infrastructure and Transport
+
 #pragma once
 
 #include "CoreMinimal.h"
@@ -81,6 +83,7 @@ public:
     FSubDividedCityObject()
     : CityObject()
     , SelfRoadType()
+    , ParentRoadType()
     {}
 
     FSubDividedCityObject(UPLATEAUCityObjectGroup* Co, const plateau::polygonMesh::Model& PlateauModel, TMap<FString, FPLATEAUCityObject>& CityObj);

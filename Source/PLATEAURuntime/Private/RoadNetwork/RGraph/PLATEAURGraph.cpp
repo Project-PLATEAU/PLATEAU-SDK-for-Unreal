@@ -1,3 +1,5 @@
+// Copyright 2023 Ministry of Land, Infrastructure and Transport
+
 #include "RoadNetwork/RGraph/PLATEAURGraph.h"
 
 #include "Algo/Count.h"
@@ -20,6 +22,7 @@ UPLATEAURGraph::UPLATEAURGraph() {
     RoadColor = FLinearColor::White;
     HighWayColor = FLinearColor::Blue;
     SideWalkColor = FLinearColor::Green;
+    MedianColor = FLinearColor::Yellow;
     UndefinedColor = FLinearColor::Red;
     VertexOption.bVisible = false;
     EdgeOption.ShowTypeMask = (int32)FRRoadTypeMaskEx::All();
@@ -31,6 +34,8 @@ FLinearColor UPLATEAURGraph::GetColor(ERRoadTypeMask RoadType) {
         return HighWayColor;
     if (FRRoadTypeMaskEx::IsSideWalk(RoadType))
         return SideWalkColor;
+    if (FRRoadTypeMaskEx::IsMedian(RoadType))
+        return MedianColor;
     if (FRRoadTypeMaskEx::IsRoad(RoadType))
         return RoadColor;
     return UndefinedColor;

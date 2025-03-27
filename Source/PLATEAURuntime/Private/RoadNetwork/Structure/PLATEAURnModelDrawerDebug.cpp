@@ -1,3 +1,5 @@
+// Copyright 2023 Ministry of Land, Infrastructure and Transport
+
 
 #include "RoadNetwork/Structure/PLATEAURnModelDrawerDebug.h"
 
@@ -238,6 +240,14 @@ FRnModelDrawIntersectionOption::FRnModelDrawIntersectionOption()
     }
 }
 
+FRnModelDrawSideWalkOption::FRnModelDrawSideWalkOption()
+{
+    ShowInsideWay.Color = FLinearColor::Red;
+    ShowOutsideWay.Color = FLinearColor::Blue;
+    ShowStartEdgeWay.Color = FLinearColor::Yellow;
+    ShowEndEdgeWay.Color = FLinearColor::Green;
+}
+
 FPLATEAURnModelDrawerDebug::FPLATEAURnModelDrawerDebug()
 {
     MedianLaneOption.bVisible = false;
@@ -277,50 +287,40 @@ FPLATEAURnModelDrawerDebug::FPLATEAURnModelDrawerDebug()
 //
 //    return true;
 //}
-void FPLATEAURnModelDrawerDebug::Draw(URnModel* Model)
+
+namespace
 {
-    if (bVisible == false)
-        return;
-
-    if (!Model)
-        return;
-
-    struct Way : public FRnModelWayDrawer<FRnModelDrawWayOption>
-    {
-        Way(const FRnModelDrawWayOption& InOption)
-            : FRnModelWayDrawer(InOption)
-        {}
+    struct WayDrawer : public FRnModelWayDrawer<FRnModelDrawWayOption> {
+        WayDrawer(const FRnModelDrawWayOption& InOption)
+            : FRnModelWayDrawer(InOption) {
+        }
 
     private:
-        virtual bool DrawImpl(RnModelDrawWork& Work, URnWay& Self) override
-        {
+        virtual bool DrawImpl(RnModelDrawWork& Work, URnWay& Self) override {
             const auto Vertices = Self.GetVertices().ToArray();
             Work.DrawArrows(Vertices, false, Option.ArrowSize, FVector::UnitZ(), Option.Color);
             return true;
         }
     };
 
-    struct Lane : public FRnModelLaneDrawer<FRnModelDrawLaneOption>
-    {
-        Lane(const FRnModelDrawLaneOption& InOption)
+    struct LaneDrawer : public FRnModelLaneDrawer<FRnModelDrawLaneOption> {
+        LaneDrawer(const FRnModelDrawLaneOption& InOption)
             :FRnModelLaneDrawer(InOption) {
 
         }
     private:
-        virtual bool DrawImpl(RnModelDrawWork& Work, URnLane& Self) override
-        {
-            Way(Option.ShowLeftWay).Draw(Work, Self.GetLeftWay(), Work.visibleType);
-            Way(Option.ShowRightWay).Draw(Work, Self.GetRightWay(), Work.visibleType);
-            Way(Option.ShowNextBorder).Draw(Work, Self.GetNextBorder(), Work.visibleType);
-            Way(Option.ShowPrevBorder).Draw(Work, Self.GetPrevBorder(), Work.visibleType);
-            Way(Option.ShowCenterWay).Draw(Work, Self.GetCenterWay(), Work.visibleType);
+        virtual bool DrawImpl(RnModelDrawWork& Work, URnLane& Self) override {
+            WayDrawer(Option.ShowLeftWay).Draw(Work, Self.GetLeftWay(), Work.visibleType);
+            WayDrawer(Option.ShowRightWay).Draw(Work, Self.GetRightWay(), Work.visibleType);
+            WayDrawer(Option.ShowNextBorder).Draw(Work, Self.GetNextBorder(), Work.visibleType);
+            WayDrawer(Option.ShowPrevBorder).Draw(Work, Self.GetPrevBorder(), Work.visibleType);
+            WayDrawer(Option.ShowCenterWay).Draw(Work, Self.GetCenterWay(), Work.visibleType);
             auto Center = Self.GetCentralVertex();
-            auto DrawNeighborConnection = [&](bool Enable, TRnRef_T<URnWay> Border, FColor Color)
-            {
-                    if (!Enable || !Border)
-                        return;
+            auto DrawNeighborConnection = [&](bool Enable, TRnRef_T<URnWay> Border, FColor Color) {
+                if (!Enable || !Border)
+                    return;
                 Work.DrawArrow(Center, Border->GetLerpPoint(0.5f), 50, FVector::UpVector, Color);
-            };
+                };
 
             if ((Work.Self->ShowPartsType & (int32)ERnPartsTypeMask::Lane) != 0)
                 FPLATEAURnDebugEx::DrawString(FString::Printf(TEXT("%s"), *Self.GetName()), Center);
@@ -331,19 +331,15 @@ void FPLATEAURnModelDrawerDebug::Draw(URnModel* Model)
         }
     };
 
-    struct Road : public FRnModelRoadDrawer<FRnModelDrawRoadOption>
-    {
-        struct MergeDrawer : public FRnModelRoadDrawer<FRnModelDrawRoadMergeOption>
-        {
-            MergeDrawer(Road& InParent, const FRnModelDrawRoadMergeOption& InOption)
-            : FRnModelRoadDrawer(InOption)
-            , Parent(InParent)
-            {
-                
+    struct RoadDrawer : public FRnModelRoadDrawer<FRnModelDrawRoadOption> {
+        struct MergeDrawer : public FRnModelRoadDrawer<FRnModelDrawRoadMergeOption> {
+            MergeDrawer(RoadDrawer& InParent, const FRnModelDrawRoadMergeOption& InOption)
+                : FRnModelRoadDrawer(InOption)
+                , Parent(InParent) {
+
             }
-            virtual bool DrawImpl(RnModelDrawWork& Work, URnRoad& Self) override
-            {
-                Lane L(Work.Self->LaneOption);
+            virtual bool DrawImpl(RnModelDrawWork& Work, URnRoad& Self) override {
+                LaneDrawer L(Work.Self->LaneOption);
 
                 TOptional<EPLATEAURnDir> Dir;
                 if (Option.bShowMergedBorderNoDir == false) {
@@ -351,35 +347,33 @@ void FPLATEAURnModelDrawerDebug::Draw(URnModel* Model)
                 }
                 auto PrevBorder = Self.GetMergedBorder(EPLATEAURnLaneBorderType::Prev, Dir);
                 auto NextBorder = Self.GetMergedBorder(EPLATEAURnLaneBorderType::Next, Dir);
-                Way(L.Option.ShowPrevBorder).Draw(Work, PrevBorder, Work.visibleType);
-                Way(L.Option.ShowNextBorder).Draw(Work, NextBorder, Work.visibleType);
+                WayDrawer(L.Option.ShowPrevBorder).Draw(Work, PrevBorder, Work.visibleType);
+                WayDrawer(L.Option.ShowNextBorder).Draw(Work, NextBorder, Work.visibleType);
 
-                auto Draw = [&](TRnRef_T<URnWay> Border, Way Drawer)
-                {
+                auto Draw = [&](TRnRef_T<URnWay> Border, WayDrawer Drawer) {
                     if (Border) {
                         auto Splits = Border->Split(Option.SplitBorderNum, false);
                         for (auto&& Split : Splits) {
                             Drawer.Draw(Work, Split, Work.visibleType);
                         }
                     }
-                };
-                Draw(PrevBorder, Way( L.Option.ShowPrevBorder));
-                Draw(NextBorder, Way(L.Option.ShowNextBorder));
+                    };
+                Draw(PrevBorder, WayDrawer(L.Option.ShowPrevBorder));
+                Draw(NextBorder, WayDrawer(L.Option.ShowNextBorder));
                 return true;
             }
-            Road& Parent;
+            RoadDrawer& Parent;
         };
 
         struct NormalDrawer : public FRnModelRoadDrawer<FRnModelDrawRoadNormalOption> {
-            NormalDrawer(Road& InParent, const FRnModelDrawRoadNormalOption& InOption)
+            NormalDrawer(RoadDrawer& InParent, const FRnModelDrawRoadNormalOption& InOption)
                 : FRnModelRoadDrawer(InOption)
                 , Parent(InParent) {
 
             }
-            virtual bool DrawImpl(RnModelDrawWork& Work, URnRoad& Self) override
-            {
-                Lane L(Work.Self->LaneOption);
-                Lane Median(Work.Self->MedianLaneOption);
+            virtual bool DrawImpl(RnModelDrawWork& Work, URnRoad& Self) override {
+                LaneDrawer L(Work.Self->LaneOption);
+                LaneDrawer Median(Work.Self->MedianLaneOption);
                 for (auto i = 0; i < Self.MainLanes.Num(); ++i) {
                     if (Option.ShowLaneIndex >= 0 && Option.ShowLaneIndex != i)
                         continue;
@@ -389,22 +383,28 @@ void FPLATEAURnModelDrawerDebug::Draw(URnModel* Model)
                 if (Self.MedianLane)
                     Median.Draw(Work, Self.MedianLane, Work.visibleType);
 
-                
-
+                if(Self.GetNext() != nullptr &&  Option.bShowNextConnection)
+                {
+                    auto V = Self.GetNext()->GetCentralVertex();
+                    Work.DrawArrow(Self.GetCentralVertex(), V, 0.5f, FVector::UpVector, FLinearColor::Red);
+                }
+                if(Self.GetPrev() != nullptr && Option.bShowPrevConnection)
+                {
+                    auto V = Self.GetPrev()->GetCentralVertex();
+                    Work.DrawArrow(Self.GetCentralVertex(), V, 0.5f, FVector::UpVector, FLinearColor::Red);
+                }
                 return true;
             }
-            Road& Parent;
+            RoadDrawer& Parent;
         };
 
-        struct GroupDrawer : public FRnModelRoadDrawer< FRnModelDrawRoadGroupOption>
-        {
-            GroupDrawer(Road& InParent, const FRnModelDrawRoadGroupOption& InOption)
+        struct GroupDrawer : public FRnModelRoadDrawer< FRnModelDrawRoadGroupOption> {
+            GroupDrawer(RoadDrawer& InParent, const FRnModelDrawRoadGroupOption& InOption)
                 : FRnModelRoadDrawer(InOption)
                 , Parent(InParent) {
 
             }
-            virtual bool DrawImpl(RnModelDrawWork& Work, URnRoad& Self) override
-            {
+            virtual bool DrawImpl(RnModelDrawWork& Work, URnRoad& Self) override {
                 auto RoadGroup = URnRoadGroup::CreateRoadGroupOrDefault(&Self);
                 // 2重実行しないように入れておく
                 for (auto R : RoadGroup->Roads)
@@ -413,181 +413,252 @@ void FPLATEAURnModelDrawerDebug::Draw(URnModel* Model)
 
                 auto IsAligned = RoadGroup->IsAligned();
                 auto Color = IsAligned ? FColor::White : FColor::Red;
-                for(auto i = 0; i < RoadGroup->Roads.Num(); ++i)
-                {
+                for (auto i = 0; i < RoadGroup->Roads.Num(); ++i) {
                     auto R = RoadGroup->Roads[i];
-                    auto V= R->GetCentralVertex();
+                    auto V = R->GetCentralVertex();
                     auto GroupName = RoadGroup->Roads[0]->GetName();
-                    FPLATEAURnDebugEx::DrawString(FString::Printf(TEXT("%s[%d]_%s"), *GroupName, i, *R->GetName()),  V, Color);
+                    FPLATEAURnDebugEx::DrawString(FString::Printf(TEXT("%s[%d]_%s"), *GroupName, i, *R->GetName()), V, Color);
 
                     drawer.DrawImpl(Work, *R);
 
-                    
+
                 }
 
                 return true;
             }
-            Road& Parent;
+            RoadDrawer& Parent;
         };
 
-        Road(const FRnModelDrawRoadOption& InOption)
+        RoadDrawer(const FRnModelDrawRoadOption& InOption)
             : FRnModelRoadDrawer(InOption)
             , Merge(*this, InOption.MergeDrawer)
             , Normal(*this, InOption.NormalDrawer)
-        , Group(*this, InOption.GroupDrawer)
-        {
+            , Group(*this, InOption.GroupDrawer) {
 
         }
         MergeDrawer Merge;
         NormalDrawer Normal;
         GroupDrawer Group;
     private:
-        virtual bool DrawImpl(RnModelDrawWork& Work, URnRoad& Self) override
-        {
-            if ((Work.Self->ShowPartsType & (int32)ERnPartsTypeMask::Road) != 0)
-                FPLATEAURnDebugEx::DrawString(FString::Printf(TEXT("%s"), *Self.GetName()), Self.GetCentralVertex());
+        virtual bool DrawImpl(RnModelDrawWork& Work, URnRoad& Self) override;
 
-            if (Option.bCheckSliceHorizontal) {
-                FLineSegment3D Segment;
-                if (Self.TryGetVerticalSliceSegment(EPLATEAURnLaneBorderType::Next, 200.f, Segment)) {
-
-                    FPLATEAURnDebugEx::DrawLine(Segment.GetStart(), Segment.GetEnd(), FLinearColor::Red);
-                    FPLATEAURnEx::FLineCrossPointResult Res;
-                    URnModel::CanSliceRoadHorizontal(&Self, Segment, Res);
-                    for (auto& Line : Res.TargetLines) {
-                        for (auto& I : Line.Intersections) {
-                            FPLATEAURnDebugEx::DrawSphere(I.Value, 100.f);
-                            auto V = Line.LineString->GetVertexByFloatIndex(I.Key);
-                            FPLATEAURnDebugEx::DrawSphere(V + FVector::UpVector * 30, 100.f, FLinearColor::Blue);
-                            
-                        }
-                    }
-
-                }
-            }
-
-            if(Option.bSliceHorizontal)
-            {
-                Work.DelayExecs.Add([Road = &Self, Model=Work.Model]() 
-                    {
-                        FRnModelCalibrateIntersectionBorderOption Op;
-                        URnRoad* A;
-                        URnRoad* B;
-                        URnRoad* C;
-                        Model->TrySliceRoadHorizontalNearByBorder(Road, Op, A, B, C);
-                    });
-                
-            }
-
-            for (auto BorderType : { EPLATEAURnLaneBorderType::Prev , EPLATEAURnLaneBorderType::Next }) 
-            {
-                if(FRnRoadEx::IsValidBorderAdjacentNeighbor(RnFrom(&Self), BorderType, true) == false)
-                {
-                    FPLATEAURnDebugEx::DrawString(FString::Printf(TEXT("Invalid %s"), *Self.GetName()), Self.GetCentralVertex());
-                }
-            }
-            return true;
-        }
         virtual TArray<FRnModelDrawerOf<URnRoad>*> GetChildDrawers() override {
             return TArray<FRnModelDrawerOf<URnRoad>*>
             {
                 &Group,
-                &Merge,
-                &Normal
+                    & Merge,
+                    & Normal
             };
         }
     };
 
-    struct Intersection : public FRnModelIntersectionDrawer<FRnModelDrawIntersectionOption>
-    {
-        Intersection(const FRnModelDrawIntersectionOption& InOption)
+    struct IntersectionDrawer : public FRnModelIntersectionDrawer<FRnModelDrawIntersectionOption> {
+        IntersectionDrawer(const FRnModelDrawIntersectionOption& InOption)
             :FRnModelIntersectionDrawer(InOption) {
 
         }
     private:
-        virtual bool DrawImpl(RnModelDrawWork& Work, URnIntersection& Self) override
-        {
-            Way Border(Option.ShowBorderEdge);
-            Way NonBorder(Option.ShowNonBorderEdge);
-
-            for (auto&& Edge : Self.GetEdges()) 
-            {
-                if(Edge->IsBorder())
-                {
-                    Border.Draw(Work, Edge->GetBorder(), Work.visibleType);
-                }
-                else
-                {
-                    NonBorder.Draw(Work, Edge->GetBorder(), Work.visibleType);
-                }
-
-                if(Option.bShowEdgeNormal)
-                {
-                    auto Center = Edge->GetCenterPoint();
-                    auto Normal = FRnIntersectionEx::GetEdgeNormal(Edge);
-                    FPLATEAURnDebugEx::DrawArrow(Center, Center + Normal * 100, FColor::White);
-                }
-            }
-
-            if (Option.bShowTrack)
-            {
-                for(auto Track : Self.GetTracks())
-                {
-                    if (Option.showTrackColor.Contains(Track->TurnType) == false)
-                        continue;
-                    auto V = Option.showTrackColor[Track->TurnType];
-                    FPLATEAURnDebugEx::DrawArrow(Track->FromBorder->GetLerpPoint(0.5f), Track->ToBorder->GetLerpPoint(0.5f), V);
-                }
-            }
-
-            if ((Work.Self->ShowPartsType & (int32)ERnPartsTypeMask::Intersection) != 0)
-                FPLATEAURnDebugEx::DrawString(FString::Printf(TEXT("%s"), *Self.GetName()), Self.GetCentralVertex());
-            return true;
-        }
+        virtual bool DrawImpl(RnModelDrawWork& Work, URnIntersection& Self) override;
     };
 
-    struct SideWalk : public FRnModelSideWalkDrawer<FRnModelDrawSideWalkOption> {
-        SideWalk(const FRnModelDrawSideWalkOption& InOption)
+    struct SideWalkDrawer : public FRnModelSideWalkDrawer<FRnModelDrawSideWalkOption> {
+        SideWalkDrawer(const FRnModelDrawSideWalkOption& InOption)
             :FRnModelSideWalkDrawer(InOption) {
 
         }
     private:
-        virtual bool DrawImpl(RnModelDrawWork& Work, URnSideWalk& Self) override
-        {
-            Way(Option.ShowInsideWay).Draw(Work,Self.GetInsideWay(), Work.visibleType);
-            Way(Option.ShowOutsideWay).Draw(Work, Self.GetOutsideWay(), Work.visibleType);
-            Way(Option.ShowStartEdgeWay).Draw(Work, Self.GetStartEdgeWay(), Work.visibleType);
-            Way(Option.ShowEndEdgeWay).Draw(Work, Self.GetEndEdgeWay(), Work.visibleType);
+        virtual bool DrawImpl(RnModelDrawWork& Work, URnSideWalk& Self) override {
+            WayDrawer(Option.ShowInsideWay).Draw(Work, Self.GetInsideWay(), Work.visibleType);
+            WayDrawer(Option.ShowOutsideWay).Draw(Work, Self.GetOutsideWay(), Work.visibleType);
+            WayDrawer(Option.ShowStartEdgeWay).Draw(Work, Self.GetStartEdgeWay(), Work.visibleType);
+            WayDrawer(Option.ShowEndEdgeWay).Draw(Work, Self.GetEndEdgeWay(), Work.visibleType);
 
             if ((Work.Self->ShowPartsType & (int32)ERnPartsTypeMask::SideWalk) != 0)
                 FPLATEAURnDebugEx::DrawString(FString::Printf(TEXT("%s"), *Self.GetName()), Self.GetCentralVertex());
+            if(Option.bCheck)
+            {
+                auto CheckRes = Self.Check();
+            }
             return true;
         }
     };
 
-    Road RoadDrawer(RoadOption);
-    Intersection IntersectionDrawer(IntersectionOption);
-    SideWalk SideWalkDrawer(SideWalkOption);
+    bool RoadDrawer::DrawImpl(RnModelDrawWork& Work, URnRoad& Self) {
+        if ((Work.Self->ShowPartsType & (int32)ERnPartsTypeMask::Road) != 0)
+            FPLATEAURnDebugEx::DrawString(FString::Printf(TEXT("%s"), *Self.GetName()), Self.GetCentralVertex());
+
+        if (Option.bCheckSliceHorizontal) {
+            FLineSegment3D Segment;
+            if (Self.TryGetVerticalSliceSegment(Option.CheckSliceHorizontalDir, Option.CheckSliceHorizontalOffset, Segment)) {
+
+                FPLATEAURnDebugEx::DrawLine(Segment.GetStart(), Segment.GetEnd(), FLinearColor::Red);
+                FPLATEAURnEx::FLineCrossPointResult Res;
+                URnModel::CanSliceRoadHorizontal(&Self, Segment, Res);
+                for (auto& Line : Res.TargetLines) {
+                    for (auto& I : Line.Intersections) {
+                        FPLATEAURnDebugEx::DrawSphere(I.Value, 100.f);
+                        auto V = Line.LineString->GetVertexByFloatIndex(I.Key);
+                        FPLATEAURnDebugEx::DrawSphere(V + FVector::UpVector * 30, 100.f, FLinearColor::Blue);
+                    }
+                }
+            }
+        }
+
+        if (Option.bSliceHorizontal) {
+            Work.DelayExecs.Add([Road = &Self, Model = Work.Model]() {
+                FRnModelCalibrateIntersectionBorderOption Op;
+                URnRoad* A;
+                URnRoad* B;
+                URnRoad* C;
+                Model->TrySliceRoadHorizontalNearByBorder(Road, Op, A, B, C);
+                });
+
+        }
+
+        if(Option.bMerge2Intersection)
+        {
+            Work.DelayExecs.Add([Road = &Self, Model = Work.Model]() {
+                
+                if(Road->TryMerge2NeighborIntersection(EPLATEAURnLaneBorderType::Next))
+                {
+                    
+                }
+                else
+                {
+                    Road->TryMerge2NeighborIntersection(EPLATEAURnLaneBorderType::Prev);                    
+                }
+                });
+        }
+
+        if(Option.bMergeRoadGroup)
+        {
+            Work.DelayExecs.Add([Road = &Self, Model = Work.Model]() {
+                auto RoadGroup = URnRoadGroup::CreateRoadGroupOrDefault(Road);
+                RoadGroup->MergeRoads();
+                });
+        }
+
+        for (auto BorderType : { EPLATEAURnLaneBorderType::Prev , EPLATEAURnLaneBorderType::Next }) {
+            if (FRnRoadEx::IsValidBorderAdjacentNeighbor(RnFrom(&Self), BorderType, true) == false) {
+                FPLATEAURnDebugEx::DrawString(FString::Printf(TEXT("Invalid %s"), *Self.GetName()), Self.GetCentralVertex());
+            }
+        }
+        SideWalkDrawer SideWalkDrawer(Work.Self->SideWalkOption);
+        for (auto Sw : Self.GetSideWalks())
+            SideWalkDrawer.Draw(Work, Sw, ERnModelDrawerVisibleType::SceneSelected);
+        return true;
+    }
+
+    bool IntersectionDrawer::DrawImpl(RnModelDrawWork& Work, URnIntersection& Self)
+    {
+        WayDrawer Border(Option.ShowBorderEdge);
+        WayDrawer NonBorder(Option.ShowNonBorderEdge);
+
+        for (auto&& Edge : Self.GetEdges()) {
+            if (Edge->IsBorder()) {
+                Border.Draw(Work, Edge->GetBorder(), Work.visibleType);
+            }
+            else {
+                NonBorder.Draw(Work, Edge->GetBorder(), Work.visibleType);
+            }
+
+            if (Option.bShowEdgeNormal) {
+                auto Center = Edge->GetCenterPoint();
+                auto Normal = FRnIntersectionEx::GetEdgeNormal(Edge);
+                FPLATEAURnDebugEx::DrawArrow(Center, Center + Normal * 100, FColor::White);
+            }
+        }
+
+        if (Option.bShowTrack) {
+            for (auto Track : Self.GetTracks()) {
+                if (Option.showTrackColor.Contains(Track->TurnType) == false)
+                    continue;
+                auto V = Option.showTrackColor[Track->TurnType];
+                FPLATEAURnDebugEx::DrawArrow(Track->FromBorder->GetLerpPoint(0.5f), Track->ToBorder->GetLerpPoint(0.5f), V);
+            }
+        }
+
+        if ((Work.Self->ShowPartsType & (int32)ERnPartsTypeMask::Intersection) != 0)
+            FPLATEAURnDebugEx::DrawString(FString::Printf(TEXT("%s"), *Self.GetName()), Self.GetCentralVertex());
+
+        
+        SideWalkDrawer SideWalkDrawer(Work.Self->SideWalkOption);
+        for (auto Sw : Self.GetSideWalks())
+            SideWalkDrawer.Draw(Work, Sw, ERnModelDrawerVisibleType::SceneSelected);
+        return true;
+    }
+}
+
+void FPLATEAURnModelDrawerDebug::Draw(URnModel* Model)
+{
+    if (bVisible == false)
+        return;
+
+    if (!Model)
+        return;
+
+  
+
+    ::RoadDrawer RoadDrawer(RoadOption);
+    ::IntersectionDrawer IntersectionDrawer(IntersectionOption);
+    ::SideWalkDrawer SideWalkDrawer(SideWalkOption);
 
     RnModelDrawWork Work(this, Model);
 
 
-    for (auto road : Model->GetRoads()) {
+    auto IsTargetTran = [&](URnRoadBase* RoadBase) -> bool
+        {
+            if (!this->bShowOnlyTargetTrans)
+                return true;
 
+            if (!RoadBase)
+                return false;
+
+            for (auto& Comp : RoadBase->GetTargetTrans()) {
+                if (!Comp.Get())
+                    continue;
+                if (this->ShowTargetTranNames.Contains(Comp->GetName()))
+                    return true;
+            }
+            return false;
+
+        };
+
+    for (auto road : Model->GetRoads()) {
+        if (!road)
+            continue;
         if (bShowOnlyTargets && ShowTargetNames.Contains(road->GetName()) == false)
             continue;
+
+        if (IsTargetTran(road) == false)
+            continue;
+
         RoadDrawer.Draw(Work, road, ERnModelDrawerVisibleType::NonSelected);
     }
     // 実行ボタン代わりなので毎フレームリセット
     RoadOption.bSliceHorizontal = false;
+    RoadOption.bMerge2Intersection = false;
+    RoadOption.bMergeRoadGroup = false;
 
     for (auto intersection : Model->GetIntersections()) {
+        if(!intersection)
+            continue;
         if (bShowOnlyTargets && ShowTargetNames.Contains(intersection->GetName()) == false)
+            continue;
+
+        if (IsTargetTran(intersection) == false)
             continue;
         IntersectionDrawer.Draw(Work, intersection, ERnModelDrawerVisibleType::NonSelected);
     }
 
     for (auto sideWalk : Model->GetSideWalks()) {
+        if (!sideWalk)
+            continue;
+        if (bShowOnlyTargets && ShowTargetNames.Contains(sideWalk->GetName()) == false)
+            continue;
+
+        if (IsTargetTran(sideWalk->GetParentRoad()) == false)
+            continue;
         SideWalkDrawer.Draw(Work, sideWalk, ERnModelDrawerVisibleType::NonSelected);
     }
 

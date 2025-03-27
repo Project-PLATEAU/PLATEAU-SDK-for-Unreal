@@ -1,3 +1,5 @@
+// Copyright 2023 Ministry of Land, Infrastructure and Transport
+
 #pragma once
 
 #include "CoreMinimal.h"
@@ -25,7 +27,7 @@ public:
 
     // 歩道sideWalkを追加する
     // sideWalkの親情報も書き換える
-    void AddSideWalk(const TRnRef_T<URnSideWalk>& SideWalk);
+    bool AddSideWalk(const TRnRef_T<URnSideWalk>& SideWalk);
 
     // 歩道sideWalkを削除する
     // sideWalkの親情報は変更しない
@@ -76,12 +78,13 @@ public:
 
     TRnRef_T<URnModel> GetParentModel() const;
     void SetParentModel(const TRnRef_T<URnModel>& InParentModel);
+    bool RemoveSideWalk(URnSideWalk* InSideWalk, bool bRemoveFromModel);
+    void MergeConnectedSideWalks();
+    void MergeSideWalks(const TArray<URnSideWalk*>& AddSideWalks);
+    void MergeSamePointLineStrings();
 
     // 構造的に正しいかどうかチェック
-    virtual bool Check() const
-    {
-        return true;
-    }
+    virtual bool Check();
 
     // RnRoadへキャストする
     virtual TRnRef_T<URnRoad> CastToRoad()
@@ -94,6 +97,10 @@ public:
     {
         return nullptr;
     }
+
+    // ReplaceNeighbor(URnWay* borderWay, URnRoadBase* to)
+    // 指定した境界線（borderWay）に対応する隣接道路情報を to に置き換えます。
+    virtual void ReplaceNeighbor(URnWay* BorderWay, URnRoadBase* To) {}
 
 private:
 

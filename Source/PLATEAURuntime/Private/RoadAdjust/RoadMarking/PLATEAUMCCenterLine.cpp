@@ -70,9 +70,9 @@ float FPLATEAUIntersectionDistCalc::RoadLength(URnRoadBase* RoadBase) const
     if(RoadBase == nullptr) return 0.0f;
     auto Road = RoadBase->CastToRoad();
     if(Road == nullptr) return 0.0f;
-    if (Road->GetAllLanes().Num() > 0 && Road->GetAllLanes()[0]->GetRightWay() != nullptr)
+    if (Road->GetMainLanes().Num() > 0 && Road->GetMainLanes()[0]->GetRightWay() != nullptr)
     {
-        return Road->GetAllLanes()[0]->GetRightWay()->CalcLength();
+        return Road->GetMainLanes()[0]->GetRightWay()->CalcLength();
     }
     return 0.0f;
 }
@@ -87,7 +87,7 @@ bool UPLATEAUMCCenterLine::IsCenterLineYellow(float DistFromIntersection, float 
 
 EPLATEAUMarkedWayType UPLATEAUMCCenterLine::GetCenterLineTypeOfWidth(const URnRoad* Road) const
 {
-    const auto& CarLanes = Road->GetAllLanes();
+    const auto& CarLanes = Road->GetMainLanes();
     
     // 片側の道路幅からタイプを判定します
     float ReverseWidth = 0.0f;
@@ -95,7 +95,7 @@ EPLATEAUMarkedWayType UPLATEAUMCCenterLine::GetCenterLineTypeOfWidth(const URnRo
     
     for (const auto& Lane : CarLanes)
     {
-        if (Lane->GetIsReverse())
+        if (Lane->GetIsReversed())
             ReverseWidth += Lane->CalcWidth();
         else
             ForwardWidth += Lane->CalcWidth();
@@ -150,7 +150,7 @@ FPLATEAUMarkedWayList UPLATEAUMCCenterLine::ComposeFrom(const IPLATEAURrTarget* 
         if (!Road->IsValid())
             continue;
 
-        const auto& CarLanes = Road->GetAllLanes();
+        const auto& CarLanes = Road->GetMainLanes();
         const auto WidthType = GetCenterLineTypeOfWidth(Road);
         const FPLATEAUIntersectionDistCalc InterDistCalc(Road);
         const bool bMedianLaneExist = Road->GetMedianLane() != nullptr;
@@ -159,12 +159,12 @@ FPLATEAUMarkedWayList UPLATEAUMCCenterLine::ComposeFrom(const IPLATEAURrTarget* 
         {
             const auto& Lane = CarLanes[i];
             // 隣のレーンと進行方向が異なる場合、Rightwayはセンターラインです
-            bool bIsCenterLane = i < CarLanes.Num() - 1 && Lane->GetIsReverse() != CarLanes[i + 1]->GetIsReverse();
+            bool bIsCenterLane = i < CarLanes.Num() - 1 && Lane->GetIsReversed() != CarLanes[i + 1]->GetIsReversed();
             
             // 中央分離帯がある場合、センターラインは2つになるので、隣チェックを両方向で行います
             if (bMedianLaneExist)
             {
-                bIsCenterLane |= i >= 1 && Lane->GetIsReverse() != CarLanes[i - 1]->GetIsReverse();
+                bIsCenterLane |= i >= 1 && Lane->GetIsReversed() != CarLanes[i - 1]->GetIsReversed();
             }
 
             if (!bIsCenterLane)
@@ -214,7 +214,7 @@ FPLATEAUMarkedWayList UPLATEAUMCCenterLine::ComposeFrom(const IPLATEAURrTarget* 
                     Result.Add(FPLATEAUMarkedWay(
                         FPLATEAUMWLine(Points),
                         PrevInterType,
-                        Lane->GetIsReverse()
+                        Lane->GetIsReversed()
                     ));
 
                     // リセット
@@ -239,7 +239,7 @@ FPLATEAUMarkedWayList UPLATEAUMCCenterLine::ComposeFrom(const IPLATEAURrTarget* 
                 Result.Add(FPLATEAUMarkedWay(
                     FPLATEAUMWLine(Points),
                     PrevInterType,
-                    Lane->GetIsReverse()
+                    Lane->GetIsReversed()
                 ));
             }
 

@@ -11,7 +11,10 @@
 #include "Misc/FileHelper.h"
 #include "TextureResource.h"
 #include <filesystem>
-
+#include "Misc/EngineVersionComparison.h"
+#include "Misc/Paths.h"
+#include "Components/SceneComponent.h"
+#include "Misc/PackageName.h"
 #if WITH_EDITOR
 #include "EditorFramework/AssetImportData.h"
 #endif
@@ -140,8 +143,21 @@ namespace {
             Texture->UpdateResource();
         }
 
+#if UE_VERSION_NEWER_THAN(5, 5, 0)
         FGraphEventRef CompletionEvent;
-        FTexture2DRHIRef RHITexture2D = RHIAsyncCreateTexture2D(
+        FTextureRHIRef RHITexture2D = RHIAsyncCreateTexture2D(
+            Width, Height,
+            PixelFormat,
+            1,
+            TexCreate_ShaderResource,
+            ERHIAccess::CopySrc,
+            MipData.GetData(), 1,
+            TEXT("RHIAsyncCreateTexture2D"),
+            CompletionEvent
+        );
+#else
+        FGraphEventRef CompletionEvent;
+        FTextureRHIRef RHITexture2D = RHIAsyncCreateTexture2D(
             Width, Height,
             PixelFormat,
             1,
@@ -149,6 +165,7 @@ namespace {
             MipData.GetData(), 1,
             CompletionEvent
         );
+#endif
 
         for (void* NewData : MipData) {
             if (NewData) {
@@ -175,7 +192,8 @@ UTexture2D* FPLATEAUTextureLoader::Load(const FString& TexturePath_SlashOrBackSl
     if (TexturePath_SlashOrBackSlash.IsEmpty()) return nullptr;
 
     // パスに ".." が含まれる場合は、std::filesystem の機能を使って適用します。
-    fs::path TexturePathCpp = fs::u8path(TCHAR_TO_UTF8(*TexturePath_SlashOrBackSlash)).lexically_normal();
+    fs::path TexturePathCpp = fs::path(*TexturePath_SlashOrBackSlash).lexically_normal();
+
     const FString TexturePath_Normalized = TexturePathCpp.c_str();
     // 引数のパスのセパレーターはOSによって "/" か "¥" なので "/" に統一します。
     const auto TexturePath = TexturePath_Normalized.Replace(*FString("\\"), *FString("/"));

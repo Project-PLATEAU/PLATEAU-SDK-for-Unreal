@@ -75,6 +75,6 @@ public class PLATEAUEditorBPLibraries : ModuleRules {
         }
 
         //using c++17
-        CppStandard = CppStandardVersion.Cpp17;
+        CppStandard = CppStandardVersion.Default;
     }
 }

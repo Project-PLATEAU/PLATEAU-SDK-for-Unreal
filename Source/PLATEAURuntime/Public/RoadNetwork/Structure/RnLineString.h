@@ -1,3 +1,5 @@
+// Copyright 2023 Ministry of Land, Infrastructure and Transport
+
 #pragma once
 
 #include "CoreMinimal.h"
@@ -15,6 +17,10 @@ UCLASS(ClassGroup = (Custom), BlueprintType, Blueprintable, meta = (BlueprintSpa
 class URnLineString : public UObject
 {
     GENERATED_BODY()
+private:
+    inline static constexpr float DefaultDistanceEpsilon = 0.f * FPLATEAURnDef::Meter2Unit;
+    inline static constexpr float DefaultDegEpsilon = 0.5f;
+    inline static constexpr float DefaultMidPointTolerance = 0.1f * FPLATEAURnDef::Meter2Unit;
 public:
     URnLineString();
     URnLineString(int32 InitialSize);
@@ -48,8 +54,8 @@ public:
     void GetNearestPoint(const FVector& Pos, FVector& OutNearest, float& OutPointIndex, float& OutDistance) const;
     float GetDistance2D(const TRnRef_T<URnLineString> Other, EAxisPlane Plane = EAxisPlane::Xy) const;
 
-    void AddPointOrSkip(TRnRef_T<URnPoint> Point, float DistanceEpsilon = 0.0f, float DegEpsilon = 0.5f, float MidPointTolerance = 0.3f);
-    void AddPointFrontOrSkip(TRnRef_T<URnPoint> Point, float DistanceEpsilon = 0.0f, float DegEpsilon = 0.5f, float MidPointTolerance = 0.3f);
+    void AddPointOrSkip(TRnRef_T<URnPoint> Point, float DistanceEpsilon = DefaultDistanceEpsilon, float DegEpsilon = DefaultDegEpsilon, float MidPointTolerance = DefaultMidPointTolerance);
+    void AddPointFrontOrSkip(TRnRef_T<URnPoint> Point, float DistanceEpsilon = DefaultDistanceEpsilon, float DegEpsilon = DefaultDegEpsilon, float MidPointTolerance = DefaultMidPointTolerance);
 
     FVector GetVertexNormal(int32 VertexIndex) const;
     FVector GetEdgeNormal(int32 StartVertexIndex) const;
@@ -65,10 +71,6 @@ public:
 
     TArray<FLineSegment2D> GetEdges2D(EAxisPlane axis = FPLATEAURnDef::Plane) const;
     TArray<FLineSegment3D> GetEdges() const;
-
-    static TRnRef_T<URnLineString> Create(const TArray<TRnRef_T<URnPoint>>& Vertices, bool RemoveDuplicate = true);
-    static TRnRef_T<URnLineString> Create(const TArray<FVector>& Vertices, bool RemoveDuplicate = true);
-    static bool Equals(const TRnRef_T<URnLineString> X, const TRnRef_T<URnLineString> Y);
 
     FVector operator[](int32 Index) const;
 
@@ -102,8 +104,44 @@ public:
     // selfの各点に対して, otherとの距離を出して, その平均をスコアとする
     TOptional<float> CalcProximityScore(const URnLineString* Other) const;
 
+    /*
+     * Static関数
+     */
+
+
+
+     /*
+      * 頂点リストから線分を生成する
+      * RemoveDuplicate : 重複する頂点を取り除くかのフラグ
+      */
+    static TRnRef_T<URnLineString> Create(const TArray<TRnRef_T<URnPoint>>& Vertices, float DistanceEpsilon, float DegEpsilon, float MidPointTolerance);
+
+    /*
+     * 頂点リストから線分を生成する
+     * RemoveDuplicate : 重複する頂点を取り除くかのフラグ
+     */
+    static TRnRef_T<URnLineString> Create(const TArray<TRnRef_T<URnPoint>>& Vertices, bool RemoveDuplicate = true);
+
+    /*
+     * 頂点リストから線分を生成する
+     * RemoveDuplicate : 重複する頂点を取り除くかのフラグ
+     */
+    static TRnRef_T<URnLineString> Create(const TArray<FVector>& Vertices, bool RemoveDuplicate = true);
+
+    static bool Equals(const TRnRef_T<URnLineString> X, const TRnRef_T<URnLineString> Y);
+
 private:
     UPROPERTY(VisibleAnywhere, Category = "PLATEAU")
     TArray<URnPoint*> Points;
 };
 
+struct FRnLineStringEx
+{
+public:
+    static bool IsSequenceEqual(URnLineString* A, URnLineString* B, bool& OutIsReverse);
+
+    /*
+     * ポイントを共有しているかどうかを返す
+     */
+    static bool IsPointShared(const URnLineString* A, const URnLineString* B);
+};

@@ -122,6 +122,9 @@ protected:
         const FString NodeName,
         AActor& Actor, FPLATEAULandscapeParam Param);
 
+    virtual bool UseCachedMaterial() override;
+
+
 private:
 
 };

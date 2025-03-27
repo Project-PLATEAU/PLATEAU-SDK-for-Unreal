@@ -18,7 +18,7 @@ TArray<UPLATEAUCityObjectGroup*> FPLATEAUModelAlignLand::GetTargetCityObjectsFor
     for (const auto Pkg : IncludePacakges) {
         auto Comps = CityModelActor->GetComponentsByPackage(Pkg);
         for (const auto Comp : Comps) {
-            if (Comp->IsA<USceneComponent>())
+            if (Comp->IsA<USceneComponent>() && Cast<USceneComponent>(Comp)->IsVisible())
                 AlignComponents.Add((USceneComponent*)Comp);
         }
     }

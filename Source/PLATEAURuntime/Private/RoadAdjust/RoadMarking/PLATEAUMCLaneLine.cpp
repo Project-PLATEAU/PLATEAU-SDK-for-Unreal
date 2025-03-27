@@ -15,7 +15,7 @@ FPLATEAUMarkedWayList UPLATEAUMCLaneLine::ComposeFrom(const IPLATEAURrTarget* Ta
         if (!Road->IsValid())
             continue;
 
-        const auto& CarLanes = Road->GetAllLanes();
+        const auto& CarLanes = Road->GetMainLanes();
         // 車道のうち、端でない（路側帯線でない）もののLeftWayは車線境界線です。
         for (int i = 1; i < CarLanes.Num() - 1; i++) { // 端を除くループ
             const auto& Lane = CarLanes[i];
@@ -25,7 +25,7 @@ FPLATEAUMarkedWayList UPLATEAUMCLaneLine::ComposeFrom(const IPLATEAURrTarget* Ta
             Result.Add(FPLATEAUMarkedWay(
                 FPLATEAUMWLine(Lane->GetLeftWay()->GetVertices()),
                 EPLATEAUMarkedWayType::LaneLine,
-                Lane->GetIsReverse()
+                Lane->GetIsReversed()
             ));
         }
     }

@@ -64,7 +64,7 @@ void SPLATEAUExtentEditorViewport::Construct(const FArguments& InArgs) {
                 const auto DatasetSource = plateau::dataset::DatasetSource::createServer(ID, *ClientRef);
                 DatasetAccessor = DatasetSource.getAccessor();
             } catch (...) {
-                UE_LOG(LogTemp, Error, TEXT("Failed to open source ID: %s"), *ID.c_str());
+                UE_LOG(LogTemp, Error, TEXT("Failed to open source ID: %s"), *FString(ID.c_str()));
             }
         } else {
             try {

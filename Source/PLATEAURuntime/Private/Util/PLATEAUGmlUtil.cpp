@@ -4,6 +4,7 @@
 #include "Util/PLATEAUComponentUtil.h"
 #include <CityGML/citymodel.h>
 #include <plateau/dataset/i_dataset_accessor.h>
+#include "Misc/EngineVersionComparison.h"
 
 namespace {
 
@@ -54,7 +55,11 @@ FString FPLATEAUGmlUtil::GetNodePathString(const USceneComponent* Component) {
     TArray<USceneComponent*> Parents;
     Component->GetParentComponents(Parents);
     Parents.Remove(Component->GetAttachmentRoot());
+#if UE_VERSION_NEWER_THAN(5, 5, 0)
+    const auto& Op = Parents.Pop(EAllowShrinking::Yes);
+#else
     const auto& Op = Parents.Pop(true);
+#endif
     Algo::Reverse(Parents);
 
     Path = Op->GetName() + "/"; //Opはsuffixを処理しない

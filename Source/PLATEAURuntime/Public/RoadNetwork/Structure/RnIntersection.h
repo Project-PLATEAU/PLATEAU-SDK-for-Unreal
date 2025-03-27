@@ -1,8 +1,9 @@
+// Copyright 2023 Ministry of Land, Infrastructure and Transport
+
 #pragma once
 
 #include "CoreMinimal.h"
 #include "RnRoadBase.h"
-#include "RnWay.h"
 #include "RoadNetwork/PLATEAURnDef.h"
 #include "RoadNetwork/Util/PLATEAURnEx.h"
 #include "RnIntersection.generated.h"
@@ -13,7 +14,7 @@ class UPLATEAUCityObjectGroup;
 class URnRoadBase;
 class URnWay;
 class URnRoad;
-
+struct FBuildTrackOption;
 UENUM(BlueprintType)
 enum class ERnTurnType : uint8 {
     LeftBack   UMETA(DisplayName = "左後ろ"),
@@ -210,23 +211,29 @@ public:
     void RemoveEdges(const TRnRef_T<URnRoadBase>& Road);
 
     // 指定したRoadに接続されているEdgeを削除
-    void RemoveEdges(const TFunction<bool(const TRnRef_T<URnIntersectionEdge>&)>& Predicate);
+    int32 RemoveEdges(const TFunction<bool(const TRnRef_T<URnIntersectionEdge>&)>& Predicate);
+
+    /*
+     * 指定した境界線をエッジから削除する
+     */
+    int32 RemoveEdges(const TRnRef_T<URnWay>& Way);
 
     // 指定したRoadに接続されているEdgeを置き換える
-    void ReplaceEdges(const TRnRef_T<URnRoadBase>& Road, const TArray<TRnRef_T<URnWay>>& NewBorders);
+    void ReplaceEdges(const TRnRef_T<URnRoad>& Road, EPLATEAURnLaneBorderType BorderType, const TArray<TRnRef_T<URnWay>>& NewBorders);
 
     // borderを持つEdgeの隣接道路情報をafterRoadに差し替える.
     // 戻り値は差し替えが行われた数
     int32 ReplaceEdgeLink(TRnRef_T<URnWay> Border, TRnRef_T<URnRoadBase> AfterRoad);
 
-    // Edgeを追加
-    void AddEdge(const TRnRef_T<URnRoadBase>& Road, const TRnRef_T<URnWay>& Border);
+    // Edgeを追加(Border==nullptrの場合はfalseが返る)
+    bool AddEdge(const TRnRef_T<URnRoadBase>& Road, const TRnRef_T<URnWay>& Border);
 
     // 指定したRoadに接続されているかどうか
     bool HasEdge(const TRnRef_T<URnRoadBase>& Road) const;
 
     // 指定したRoadに接続されているかどうか
     bool HasEdge(const TRnRef_T<URnRoadBase>& Road, const TRnRef_T<URnWay>& Border) const;
+    bool IsAligned() const;
 
     // Edgesの順番を整列する
     // 各Edgeが連結かつ時計回りになるように整列する
@@ -266,6 +273,20 @@ public:
     virtual TRnRef_T<URnIntersection> CastToIntersection() override {
         return TRnRef_T<URnIntersection>(this);
     }
+    void SeparateContinuousBorder();
+
+    void BuildTracks();
+    void BuildTracks(const FBuildTrackOption& Option);
+    // 構造的に正しいかどうかチェック
+    virtual bool Check() override;
+    void MergeContinuousNonBorderEdge();
+
+    // ReplaceNeighbor(URnWay* borderWay, URnRoadBase* to)
+    // 指定した境界線（borderWay）に対応する隣接道路情報を to に置き換えます。
+    virtual void ReplaceNeighbor(URnWay* BorderWay, URnRoadBase* To) override;
+    // -------------------
+    // static関数
+    // -------------------
 
     // 交差点を作成する
     static TRnRef_T<URnIntersection> Create(TObjectPtr<UPLATEAUCityObjectGroup> TargetTran = nullptr);
@@ -276,9 +297,13 @@ public:
     /// </summary>
     /// <param name="edge"></param>
     static void AlignEdgeNormal(TRnRef_T<URnIntersectionEdge> edge);
-    void SeparateContinuousBorder();
 
-    void BuildTracks();
+
+private:
+    /*
+     * エッジの削除.関係するトラックも削除される
+     */
+    bool RemoveEdge(URnIntersectionEdge* Edge);
 
 private:
 

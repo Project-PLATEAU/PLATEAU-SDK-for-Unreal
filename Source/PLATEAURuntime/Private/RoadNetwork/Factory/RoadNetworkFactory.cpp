@@ -1,3 +1,5 @@
+// Copyright 2023 Ministry of Land, Infrastructure and Transport
+
 #include "RoadNetwork/Factory/RoadNetworkFactory.h"
 
 #include <plateau/dataset/i_dataset_accessor.h>
@@ -292,82 +294,15 @@ namespace
     public:
         TMap<RGraphRef_t<URFaceGroup>, TSharedPtr<FTran>> TranMap;
         TMap<RGraphRef_t<URVertex>, TRnRef_T<URnPoint>> PointMap;
-        TArray<TRnRef_T<URnLineString>> PointLineStringCache;
+        FPLATEAULineStringFactoryWork LineStringCache;
         float TerminateAllowEdgeAngle = 20.0f;
         float TerminateSkipAngleDeg = 30.0f;
 
 
-        static bool IsEqual(const TArray<RGraphRef_t<URVertex>>& A, const TArray<RGraphRef_t<URVertex>>& B, bool& IsReverse)
-        {
-            if (A.Num() != B.Num()) {
-                return false;
-            }
-
-            if (A.Num() == 0) {
-                return true;
-            }
-
-            IsReverse = A[0] != B[0];
-            for (auto i = 0; i < A.Num(); ++i) 
-            {
-                auto AIndex = i;
-                auto BIndex = i;
-                if (IsReverse)
-                    BIndex = B.Num() - 1 - i;
-                if (A[AIndex] != B[BIndex]) {
-                    return false;
-                }
-            }
-            return true;
-        }
-
-        static bool IsEqual(const TArray<TRnRef_T<URnPoint>>& A, const TArray<TRnRef_T<URnPoint>>& B, bool& IsReverse) {
-            if (A.Num() != B.Num()) {
-                return false;
-            }
-
-            if (A.Num() == 0) {
-                return true;
-            }
-
-            IsReverse = A[0] != B[0];
-            for (auto i = 0; i < A.Num(); ++i) {
-                auto AIndex = i;
-                auto BIndex = i;
-                if (IsReverse)
-                    BIndex = B.Num() - 1 - i;
-                if (A[AIndex] != B[BIndex]) {
-                    return false;
-                }
-            }
-            return true;
-        }
-
 
         TRnRef_T<URnWay> CreateWay(const TArray<TRnRef_T<URnPoint>>& Points, bool& IsCached, bool UseCache = true)
         {
-            IsCached = false;
-            if (Points.IsEmpty())
-                return nullptr;
-
-            if(UseCache == false)
-            {
-                auto LineString = URnLineString::Create(Points);
-                return RnNew<URnWay>(LineString, false);
-            }
-            else
-            {
-                for (auto& Ls : PointLineStringCache) {
-                    bool IsReverse;
-                    if (IsEqual(Ls->GetPoints(), Points, IsReverse)) {
-                        IsCached = true;
-                        return RnNew<URnWay>(Ls, IsReverse);
-                    }
-                }
-                auto LineString = URnLineString::Create(Points);
-                PointLineStringCache.Add(LineString);
-                return RnNew<URnWay>(LineString, false);
-            }
+            return LineStringCache.CreateWay(Points, IsCached, UseCache);
         }
 
         TRnRef_T<URnWay> CreateWay(const TArray<RGraphRef_t<URnPoint>>& Points) {
@@ -851,13 +786,6 @@ namespace
     }
 }
 
-void FRoadNetworkFactoryEx::CreateRnModel(const FRoadNetworkFactory& Self, APLATEAUInstancedCityModel* Actor, APLATEAURnStructureModel* DestActor)
-{
-    TArray<UPLATEAUCityObjectGroup*> CityObjectGroups;
-    Actor->GetComponents(CityObjectGroups);
-    auto res = CreateRoadNetwork(Self, Actor, DestActor, CityObjectGroups);
-}
-
 bool FRoadNetworkFactoryEx::IsConvertTarget(UPLATEAUCityObjectGroup* Target)
 {
     if (!Target)
@@ -1035,7 +963,7 @@ TRnRef_T<URnModel> FRoadNetworkFactoryEx::CreateRnModel(
             }
         }
 
-        // 交差点の
+        // 道路で境界線が直接つながっているような場合に微小な線を追加する
         if (Self.bSeparateContinuousBorder)
             Model->SeparateContinuousBorder();
 
@@ -1124,6 +1052,7 @@ TRnRef_T<URnModel> FRoadNetworkFactoryEx::CreateRnModel(
                 Inter->BuildTracks();
         }
 
+        Model->Check();
     }
     catch(std::exception e)
     {
@@ -1218,4 +1147,110 @@ void FRoadNetworkFactoryEx::CreateRGraph(const FRoadNetworkFactory& Self, APLATE
         if (RGraphObject)
             RGraphObject->DestroyComponent(false);
     }
+}
+
+bool FPLATEAULineStringFactoryWork::IsEqual(const TArray<URnPoint*>& A, const TArray<URnPoint*>& B, bool& bIsReversed) {
+    bIsReversed = false;
+    if (A.Num() != B.Num()) {
+        return false;
+    }
+
+    // 空リストの場合は等価としない（空だと全く異なる場所に接続する可能性があるため）
+    if (A.Num() == 0) {
+        return false;
+    }
+
+    // 最初の要素が違う場合、逆順である可能性をチェック
+    bIsReversed = (A[0] != B[0]);
+
+    int32 Num = A.Num();
+    for (int32 i = 0; i < Num; ++i) {
+        int32 AIndex = i;
+        int32 BIndex = bIsReversed ? Num - 1 - i : i;
+        if (A[AIndex] != B[BIndex]) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+URnLineString* FPLATEAULineStringFactoryWork::CreateLineString(const TArray<URnPoint*>& Points, bool& bIsCached,
+    bool& bIsReversed, bool bUseCache, TFunction<URnLineString* (const TArray<URnPoint*>&)> CreateLineStringFunc) {
+    bIsCached = false;
+    if (Points.Num() == 0) {
+        bIsReversed = false;
+        return nullptr;
+    }
+
+    // カスタム生成関数が指定されていなければデフォルトの関数を使用
+    if (!CreateLineStringFunc) {
+        CreateLineStringFunc = [](const TArray<URnPoint*>& InPoints) -> URnLineString* {
+            // URnLineString::Create を呼び出す (第2引数は適宜設定)
+            return URnLineString::Create(InPoints, /*bSomeFlag=*/false);
+            };
+    }
+
+    // キャッシュが無効な場合は、そのまま生成
+    if (!bUseCache) {
+        URnLineString* LS = CreateLineStringFunc(Points);
+        bIsReversed = false;
+        return LS;
+    }
+
+    // 各URnPointの ポインタ を XOR してキーを算出
+    uint64 Key = 0;
+    for (URnPoint* Point : Points) {
+        Key ^= (uint64_t)Point;
+    }
+
+    // キャッシュから該当するエントリを検索
+    TArray<FPointCache>* FoundArray = RnPointList2LineStringMap.Find(Key);
+    if (FoundArray) {
+        for (FPointCache& Entry : *FoundArray) {
+            bool bLocalIsReversed = false;
+            if (IsEqual(Entry.Points, Points, bLocalIsReversed)) {
+                bIsCached = true;
+                bIsReversed = bLocalIsReversed;
+                return Entry.LineString;
+            }
+        }
+    }
+    else {
+        // キーが未登録の場合、新たに配列を作成
+        TArray<FPointCache> NewArray;
+        RnPointList2LineStringMap.Add(Key, NewArray);
+        FoundArray = RnPointList2LineStringMap.Find(Key);
+    }
+
+    // キャッシュに存在しなかったので新規に生成
+    bIsReversed = false;
+    URnLineString* NewLineString = CreateLineStringFunc(Points);
+    FPointCache NewCacheEntry;
+    NewCacheEntry.Points = Points; // 必要に応じてディープコピーに変更してください
+    NewCacheEntry.LineString = NewLineString;
+    FoundArray->Add(NewCacheEntry);
+    return NewLineString;
+}
+
+URnWay* FPLATEAULineStringFactoryWork::CreateWay(const TArray<URnPoint*>& Points, bool& bIsCached, bool bUseCache) {
+    bIsCached = false;
+    if (Points.Num() == 0) {
+        return nullptr;
+    }
+
+    bool bIsReversed = false;
+    URnLineString* Ls = CreateLineString(Points, bIsCached, bIsReversed, bUseCache);
+    return URnWay::Create(Ls, bIsReversed, false);
+}
+
+URnWay* FPLATEAULineStringFactoryWork::CreateWay(const TArray<URnPoint*>& Points) {
+    bool bIsCachedOut = false;
+    return CreateWay(Points, bIsCachedOut, true);
+}
+
+void FRoadNetworkFactoryEx::CreateRnModel(const FRoadNetworkFactory& Self, APLATEAUInstancedCityModel* Actor, APLATEAURnStructureModel* DestActor) {
+    TArray<UPLATEAUCityObjectGroup*> CityObjectGroups;
+    Actor->GetComponents(CityObjectGroups);
+    auto res = CreateRoadNetwork(Self, Actor, DestActor, CityObjectGroups);
 }

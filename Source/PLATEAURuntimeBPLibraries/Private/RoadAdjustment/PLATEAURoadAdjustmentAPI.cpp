@@ -4,6 +4,7 @@
 #include "PLATEAURuntime/Public/PLATEAUInstancedCityModel.h"
 #include "PLATEAUImportSettings.h"
 #include "RoadNetwork/Structure/PLATEAURnStructureModel.h"
+#include "Misc/MessageDialog.h"
 
 void UPLATEAURoadAdjustmentAPI::CreateRnModel(APLATEAUInstancedCityModel* TargetCityModel,
                                               APLATEAURnStructureModel* DestActor)

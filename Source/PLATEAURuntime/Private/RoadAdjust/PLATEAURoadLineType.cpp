@@ -3,6 +3,7 @@
 #include "RoadAdjust/PLATEAURoadLineType.h"
 #include "RoadAdjust/PLATEAUReproducedRoad.h"
 #include "RoadAdjust/RoadMarking/LineGeneratorComponent.h"
+#include "Materials/MaterialInterface.h"
 
 FPLATEAURoadLineParam PLATEAURoadLineTypeExtension::ToRoadLineParam(EPLATEAURoadLineType RoadLineType, UStaticMesh* LineMesh, UStaticMesh* TileMesh) {
     FPLATEAURoadLineParam Param;

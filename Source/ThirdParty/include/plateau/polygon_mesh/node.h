@@ -55,13 +55,13 @@ namespace plateau::polygonMesh {
         const Node& getChildAt(unsigned int index) const;
 
         /// Parent Node設定
-        void setParentNode(Node* node);
-        const Node& getParentNode() const;
+        void setParentNode(Node* node);  
+        const Node& getParentNode() const; //Model.assignNodeHierarchyを呼ぶことで取得可能になります。
         const bool hasParentNode() const;
 
         /// Root Node設定
         void setRootNode(Node* node);
-        const Node& getRootNode() const;
+        const Node& getRootNode() const; //Model.assignNodeHierarchyを呼ぶことで取得可能になります。
         const bool hasRootNode() const;
 
         /**

@@ -1,3 +1,5 @@
+// Copyright 2023 Ministry of Land, Infrastructure and Transport
+
 #pragma once
 
 #include "CoreMinimal.h"
@@ -34,12 +36,12 @@ public:
 
     void SetParent(TRnRef_T<URnRoad> InParent);
 
-    bool GetIsReverse() const {
-        return bIsReverse;
+    bool GetIsReversed() const {
+        return bIsReversed;
     }
 
-    void SetIsReverse(bool bReverse) {
-        bIsReverse = bReverse;
+    void SetIsReversed(bool bReverse) {
+        bIsReversed = bReverse;
     }
 
     TRnRef_T<URnWay> GetLeftWay() const;
@@ -129,6 +131,13 @@ public:
     TArray<TRnRef_T<URnRoadBase>> GetPrevRoads();
     TRnRef_T<URnRoadBase> GetNextRoad();
     TRnRef_T<URnRoadBase> GetPrevRoad();
+
+
+    /*
+     * 不正値チェック
+     */
+    bool Check();
+
     static TRnRef_T<URnLane> CreateOneWayLane(TRnRef_T<URnWay> way);
 
     /// <summary>
@@ -169,7 +178,7 @@ private:
 
     // 親Roadと逆方向(右車線等)
     UPROPERTY(VisibleAnywhere, Category = "PLATEAU")
-    bool bIsReverse;
+    bool bIsReversed;
 
     // 内部的に持つだけ. 中心線
     UPROPERTY(VisibleAnywhere, Category = "PLATEAU")

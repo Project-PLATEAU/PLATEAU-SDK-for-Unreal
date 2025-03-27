@@ -3,6 +3,7 @@
 #include <string>
 
 namespace plateau::materialAdjust {
+    using namespace plateau::polygonMesh;
 
     /// マテリアル分けの基底クラスです。
     class MaterialAdjusterBase {

@@ -1,3 +1,5 @@
+// Copyright 2023 Ministry of Land, Infrastructure and Transport
+
 #include "RoadNetwork/Structure/RnLane.h"
 
 #include "Algo/AnyOf.h"
@@ -5,12 +7,12 @@
 #include "RoadNetwork/Util/PLATEAUVectorEx.h"
 
 URnLane::URnLane()
-    : bIsReverse(false) {
+    : bIsReversed(false) {
 }
 
 URnLane::URnLane(const TRnRef_T<URnWay>& InLeftWay, const TRnRef_T<URnWay>& InRightWay,
     const TRnRef_T<URnWay>& InPrevBorder, const TRnRef_T<URnWay>& InNextBorder)
-    : bIsReverse(false) {
+    : bIsReversed(false) {
     Init(InLeftWay, InRightWay, InPrevBorder, InNextBorder);
 
 }
@@ -186,7 +188,7 @@ float URnLane::CalcMinWidth() const
 }
 
 void URnLane::Reverse() {
-    bIsReverse = !bIsReverse;
+    bIsReversed = !bIsReversed;
     Swap(PrevBorder, NextBorder);
     Swap(LeftWay, RightWay);
     for (auto Way : GetAllWays())
@@ -279,7 +281,7 @@ TRnRef_T<URnLane> URnLane::Clone() const {
     NewLane->RightWay = RightWay ? RightWay->Clone(true) : nullptr;
     NewLane->PrevBorder = PrevBorder ? PrevBorder->Clone(true) : nullptr;
     NewLane->NextBorder = NextBorder ? NextBorder->Clone(true) : nullptr;
-    NewLane->bIsReverse = bIsReverse;
+    NewLane->bIsReversed = bIsReversed;
     if (CenterWay) NewLane->CenterWay = CenterWay->Clone(true);
     return NewLane;
 }
@@ -298,6 +300,37 @@ TRnRef_T<URnRoadBase> URnLane::GetPrevRoad()
     if (Ret.IsEmpty())
         return nullptr;
     return Ret[0];
+}
+
+bool URnLane::Check()
+{
+    // LeftWay, RightWay, PrevBorder, NextBorder が全て有効な場合のみチェック
+    if (LeftWay && RightWay && PrevBorder && NextBorder) {
+        // 左側 Way の先頭の点が PrevBorder に含まれているかチェック
+        if (!PrevBorder->GetLineString()->GetPoints().Contains(LeftWay->GetPoint(0))) {
+            UE_LOG(LogTemp, Error, TEXT("PrevBorderにLeftWay[0]が含まれていません. %s"), *Parent->GetTargetTransName());
+            return false;
+        }
+        // 右側 Way の先頭の点が PrevBorder に含まれているかチェック
+        if (!PrevBorder->GetLineString()->GetPoints().Contains(RightWay->GetPoint(0))) {
+            UE_LOG(LogTemp, Error, TEXT("PrevBorderにRightWay[0]が含まれていません. %s"), *Parent->GetTargetTransName());
+            return false;
+        }
+
+        // NextBorder には各 Way の末尾の点が含まれているはずです。
+        const int32 LeftLastIndex = LeftWay->Count() - 1;
+        const int32 RightLastIndex = RightWay->Count() - 1;
+        if (!NextBorder->GetLineString()->GetPoints().Contains(LeftWay->GetPoint(LeftLastIndex))) {
+            UE_LOG(LogTemp, Error, TEXT("NextBorderにLeftWay[最後]が含まれていません. %s"), *Parent->GetTargetTransName());
+            return false;
+        }
+        if (!NextBorder->GetLineString()->GetPoints().Contains(RightWay->GetPoint(RightLastIndex))) {
+            UE_LOG(LogTemp, Error, TEXT("NextBorderにRightWay[最後]が含まれていません. %s"), *Parent->GetTargetTransName());
+            return false;
+        }
+    }
+
+    return true;
 }
 
 TRnRef_T<URnLane> URnLane::CreateOneWayLane(TRnRef_T<URnWay> way)

@@ -5,6 +5,7 @@
 #include "Util/PLATEAUGmlUtil.h"
 #include <Misc/DefaultValueHelper.h>
 #include <CityGML/PLATEAUCityGmlProxy.h>
+#include "Misc/EngineVersionComparison.h"
 
 FPLATEAUModelFiltering::FPLATEAUModelFiltering() {
 }
@@ -27,7 +28,11 @@ void FPLATEAUModelFiltering::ApplyCollisionResponseBlockToChannel(USceneComponen
         TInlineComponentArray<USceneComponent*, NumInlinedActorComponents> ComponentStack;
         ComponentStack.Append(AttachedChildren);
         while (0 < ComponentStack.Num()) {
+#if UE_VERSION_NEWER_THAN(5, 5, 0)
+            if (const auto& CurrentComp = ComponentStack.Pop(/*bAllowShrinking=*/ EAllowShrinking::No); CurrentComp != nullptr) {
+#else
             if (const auto& CurrentComp = ComponentStack.Pop(/*bAllowShrinking=*/ false); CurrentComp != nullptr) {
+#endif
                 ComponentStack.Append(CurrentComp->GetAttachChildren());
                 if (const auto& StaticMeshComponent = Cast<UStaticMeshComponent>(CurrentComp); StaticMeshComponent != nullptr) {
                     StaticMeshComponent->SetCollisionResponseToChannel(ECC_Visibility, bCollisionResponseBlock ? ECR_Block : ECR_Ignore);

@@ -14,6 +14,11 @@
 #include "PLATEAUEditor/Public/ExtentEditor/PLATEAUExtentEditor.h"
 #include <plateau/dataset/dataset_source.h>
 #include <PLATEAURuntime.h>
+#include <FileHelpers.h>
+#include "PLATEAUAutomationTestUtil.h"
+
+/*　連続テストする際は、 Project Settings / Hardwar Ray Tracing / Support Hardwar Ray Tracing のチェックを外す必要あり
+*/
 
 class FPLATEAUAutomationTestBase : public FAutomationTestBase {
     FString MyTestName;

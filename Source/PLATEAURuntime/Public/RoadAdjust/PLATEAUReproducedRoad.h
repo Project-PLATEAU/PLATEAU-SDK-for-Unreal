@@ -5,7 +5,7 @@
 #include "Components/SplineComponent.h"
 #include "PLATEAUReproducedRoad.generated.h"
 
-enum class EPLATEAURoadLineType;
+enum class EPLATEAURoadLineType : uint8;
 /**
 * @brief 道路の両端に配置される道路標示（横断歩道）において、道路のどちら側に配置されたかを示します。
 * どちらでもない道路標示はNoneとなります。
@@ -24,6 +24,9 @@ enum class EPLATEAUReproducedRoadDirection : uint8 {
 USTRUCT(BlueprintType)
 struct PLATEAURUNTIME_API FPLATEAURoadLineParam {
     GENERATED_BODY()
+
+    FPLATEAURoadLineParam() : Type(), LineMesh(), LineMaterial(), SplinePointType(), FillEnd(), LineGap(), LineXScale(), LineLength(){
+    }
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "PLATEAU|RoadAdjust")
     EPLATEAURoadLineType Type;

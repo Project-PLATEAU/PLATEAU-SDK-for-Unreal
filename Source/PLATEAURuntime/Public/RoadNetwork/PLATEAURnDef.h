@@ -1,3 +1,5 @@
+// Copyright 2023 Ministry of Land, Infrastructure and Transport
+
 #pragma once
 #include "CoreMinimal.h"
 #include "Math/Vector2D.h"
@@ -15,7 +17,7 @@ enum class EPLATEAURnDir : uint8 {
 
 
 UENUM(BlueprintType)
-enum class EPLATEAURnLaneBorderType {
+enum class EPLATEAURnLaneBorderType : uint8 {
     Prev UMETA(DisplayName = "Prev"),
     Next UMETA(DisplayName = "Next"),
 };

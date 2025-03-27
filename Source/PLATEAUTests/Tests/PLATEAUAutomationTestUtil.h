@@ -9,7 +9,8 @@
 #include <PLATEAUMeshExporter.h>
 #include <ImageUtils.h>
 #include <CityGML/PLATEAUCityGmlProxy.h>
-#include "Component/PLATEAUSceneComponent.h"
+#include "Misc/Paths.h"
+#include "HAL/PlatformFilemanager.h"
 
 //ダイナミック生成等のテスト用共通処理
 namespace PLATEAUAutomationTestUtil {
@@ -30,7 +31,7 @@ namespace PLATEAUAutomationTestUtil {
         /// <summary>
         /// Actor と Compoenent生成
         /// </summary>
-        APLATEAUInstancedCityModel* CreateActor(UWorld& World) {
+        inline APLATEAUInstancedCityModel* CreateActor(UWorld& World) {
             APLATEAUInstancedCityModel* Actor = World.SpawnActor<APLATEAUInstancedCityModel>();
             const auto& SceneRoot = NewObject<UPLATEAUSceneComponent>(Actor,
                 USceneComponent::GetDefaultSceneRootVariableName());
@@ -69,7 +70,8 @@ namespace PLATEAUAutomationTestUtil {
         /// <summary>
         /// Mesh用のCityObjectIndexのList生成
         /// </summary>
-        void CreateCityObjectList(plateau::polygonMesh::CityObjectList& CityObj) {
+        inline void CreateCityObjectList(plateau::polygonMesh::CityObjectList& CityObj) {
+
             CityObj.add(plateau::polygonMesh::CityObjectIndex(0, -1), TCHAR_TO_UTF8(*TEST_OBJ_NAME));
             CityObj.add(plateau::polygonMesh::CityObjectIndex(0, 1), TCHAR_TO_UTF8(*TEST_CITYOBJ_WALL_NAME));
             CityObj.add(plateau::polygonMesh::CityObjectIndex(0, 2), TCHAR_TO_UTF8(*TEST_CITYOBJ_ROOF_NAME));
@@ -78,7 +80,7 @@ namespace PLATEAUAutomationTestUtil {
         /// <summary>
         /// Mesh生成
         /// </summary>
-        void CreateMesh(plateau::polygonMesh::Mesh& Mesh, const plateau::polygonMesh::CityObjectList CityObj) {
+        inline void CreateMesh(plateau::polygonMesh::Mesh& Mesh, const plateau::polygonMesh::CityObjectList CityObj) {
             std::vector<unsigned int> indices{ 0, 1, 2, 3, 2, 0 };
             std::vector<TVec3d> vertices{ TVec3d(0,0,0),TVec3d(0, 100, 10),TVec3d(100, 100, 30),TVec3d(100, 0, 10) };
             plateau::polygonMesh::UV uv1;
@@ -97,7 +99,7 @@ namespace PLATEAUAutomationTestUtil {
         /// <summary>
         /// Model / 各Node 生成
         /// </summary>
-        std::shared_ptr<plateau::polygonMesh::Model> CreateModel(plateau::polygonMesh::Mesh& Mesh) {
+        inline std::shared_ptr<plateau::polygonMesh::Model> CreateModel(plateau::polygonMesh::Mesh& Mesh) {
             std::shared_ptr<plateau::polygonMesh::Model> Model = plateau::polygonMesh::Model::createModel();
             auto& NodeOP = Model->addEmptyNode(TCHAR_TO_UTF8(*TEST_OP_NAME));
             auto& NodeLod = NodeOP.addEmptyChildNode(TCHAR_TO_UTF8(*TEST_LOD_NAME));
@@ -112,7 +114,7 @@ namespace PLATEAUAutomationTestUtil {
         /// <summary>
         /// CreateModelで生成したModelから属性情報を持つNodeの取得用  (root/lod/bldg)各単体の場合
         /// </summary>
-        const plateau::polygonMesh::Node& GetObjNode(std::shared_ptr<plateau::polygonMesh::Model> Model) {
+        inline const plateau::polygonMesh::Node& GetObjNode(std::shared_ptr<plateau::polygonMesh::Model> Model) {
             const auto& root = Model->getRootNodeAt(0);
             const auto& lod = root.getChildAt(0);
             return lod.getChildAt(0); //bldg_00000000-aaaa-0000-0000-000000000000
@@ -121,7 +123,7 @@ namespace PLATEAUAutomationTestUtil {
         /// <summary>
         /// FPLATEAUCityObject & GMLID : FPLATEAUCityObject のMap 生成
         /// </summary>
-        TMap<FString, FPLATEAUCityObject> CreateCityObjectMap() {
+        inline TMap<FString, FPLATEAUCityObject> CreateCityObjectMap() {
             TMap<FString, FPLATEAUCityObject> Map;
             FPLATEAUCityObject CityObj;
             CityObj.SetGmlID(TEST_OBJ_NAME);
@@ -132,14 +134,14 @@ namespace PLATEAUAutomationTestUtil {
         }
 
         //CityObject (Building)
-        void CreateCityObjectBuilding(FPLATEAUCityObject& InCityObj) {
+        inline void CreateCityObjectBuilding(FPLATEAUCityObject& InCityObj) {
             InCityObj.SetGmlID(TEST_OBJ_NAME);
             InCityObj.SetCityObjectsType(TEST_CITYOBJ_TYPE);
             InCityObj.SetCityObjectIndex(plateau::polygonMesh::CityObjectIndex(0, -1));
         }
 
         //CityObject Children (Wall/Roof)
-        void CreateCityObjectBuildingChildren(FPLATEAUCityObject& ParentCityObj) {
+        inline void CreateCityObjectBuildingChildren(FPLATEAUCityObject& ParentCityObj) {
             FPLATEAUCityObject Wall;
             Wall.SetGmlID(TEST_CITYOBJ_WALL_NAME);
             Wall.SetCityObjectsType(TEST_CITYOBJ_WALL_TYPE);
@@ -155,7 +157,7 @@ namespace PLATEAUAutomationTestUtil {
         /// <summary>
         /// Load用データ生成
         /// </summary>
-        FLoadInputData CreateLoadInputData(plateau::polygonMesh::MeshGranularity MeshGranularity) {
+        inline FLoadInputData CreateLoadInputData(plateau::polygonMesh::MeshGranularity MeshGranularity) {
             plateau::polygonMesh::MeshExtractOptions MeshExtractOptions{};
             MeshExtractOptions.mesh_granularity = MeshGranularity;
             return FLoadInputData
@@ -171,7 +173,7 @@ namespace PLATEAUAutomationTestUtil {
         /// <summary>
         /// StaticMesh生成
         /// </summary>
-        UStaticMesh* CreateStaticMesh(AActor* Actor, FName Name, FVector3f Offset = FVector3f::Zero()) {
+        inline UStaticMesh* CreateStaticMesh(AActor* Actor, FName Name, FVector3f Offset = FVector3f::Zero()) {
             FMeshDescription mesh_desc;
 
             FStaticMeshAttributes attributes(mesh_desc);
@@ -259,13 +261,27 @@ namespace PLATEAUAutomationTestUtil {
 
             return mesh;
         }
+        /// <summary>
+        /// マテリアルを生成
+        /// </summary>
+        inline UMaterialInterface* CreateMaterial() {
+            const auto SourceMaterialPath = TEXT("/PLATEAU-SDK-for-Unreal/Materials/PLATEAUX3DMaterial");
+            UMaterial* Mat = Cast<UMaterial>(StaticLoadObject(UMaterial::StaticClass(), nullptr, SourceMaterialPath));
+            if (!Mat) {
+                UE_LOG(LogTemp, Warning, TEXT("Failed to load material at path: %s"), SourceMaterialPath);
+            }
+            return Mat;
+        }
 
         /// <summary>
         /// StaticMeshに色付きマテリアルを設定
         /// </summary>
-        void SetMaterial(UStaticMesh* mesh, FVector3f Color = FVector3f::Zero()) {
-            const auto SourceMaterialPath = TEXT("/PLATEAU-SDK-for-Unreal/Materials/PLATEAUX3DMaterial");
-            UMaterial* Base = Cast<UMaterial>(StaticLoadObject(UMaterial::StaticClass(), nullptr, SourceMaterialPath));
+        inline void SetMaterial(UStaticMesh* mesh, FVector3f Color = FVector3f::Zero()) {
+            UMaterial* Base = Cast<UMaterial>(CreateMaterial());
+            if (!Base) {
+                UE_LOG(LogTemp, Error, TEXT("Failed to create material for mesh"));
+                return; 
+            }
             UMaterialInstanceDynamic* Mat = UMaterialInstanceDynamic::Create(Base, mesh);
             if (Color != FVector3f::Zero()) Mat->SetVectorParameterValue("BaseColor", Color);
             mesh->AddMaterial(Mat);
@@ -274,19 +290,38 @@ namespace PLATEAUAutomationTestUtil {
         /// <summary>
         /// Componentに色付きマテリアルを設定
         /// </summary>
-        void SetMaterial(UPLATEAUCityObjectGroup* Comp, FVector3f Color = FVector3f::Zero()) {
-            const auto SourceMaterialPath = TEXT("/PLATEAU-SDK-for-Unreal/Materials/PLATEAUX3DMaterial");
-            UMaterial* Base = Cast<UMaterial>(StaticLoadObject(UMaterial::StaticClass(), nullptr, SourceMaterialPath));
+        inline void SetMaterial(UPLATEAUCityObjectGroup* Comp, FVector3f Color = FVector3f::Zero()) {
+            UMaterial* Base = Cast<UMaterial>(CreateMaterial());
+            if (!Base) {
+                UE_LOG(LogTemp, Error, TEXT("Failed to create material for mesh"));
+                return;
+            }
             UMaterialInstanceDynamic* Mat = UMaterialInstanceDynamic::Create(Base, Comp);
             if (Color != FVector3f::Zero()) Mat->SetVectorParameterValue("BaseColor", Color);
             Comp->SetMaterial(0, Mat);
+        }
+
+        /// <summary>
+        /// StaticMeshにTexture付きマテリアルを設定
+        /// </summary>
+        inline void SetMaterialWithTexture(UStaticMesh* mesh, FString TextureName) {
+            UMaterial* Base = Cast<UMaterial>(CreateMaterial());
+            UMaterialInstanceDynamic* Mat = UMaterialInstanceDynamic::Create(Base, mesh);
+            if (!Base) {
+                UE_LOG(LogTemp, Error, TEXT("Failed to create material for mesh with texture"));
+                return;
+            }
+            FString Path = FPLATEAURuntimeModule::GetContentDir().Append("/TestData/texture/").Append(TextureName);
+            UTexture2D* Texture = FImageUtils::ImportFileAsTexture2D(Path);
+            if (Texture) Mat->SetTextureParameterValue("Texture", Texture);
+            mesh->AddMaterial(Mat);
         }
 
         //Atomic
         /// <summary>
         /// Actor と Compoenent生成
         /// </summary>
-        APLATEAUInstancedCityModel* CreateActorAtomic(UWorld& World) {
+        inline APLATEAUInstancedCityModel* CreateActorAtomic(UWorld& World) {
             APLATEAUInstancedCityModel* Actor = World.SpawnActor<APLATEAUInstancedCityModel>();
             const auto& SceneRoot = NewObject<UPLATEAUSceneComponent>(Actor,
                 USceneComponent::GetDefaultSceneRootVariableName());
@@ -339,7 +374,7 @@ namespace PLATEAUAutomationTestUtil {
         /// <summary>
         /// Model / 各Node 生成
         /// </summary>
-        std::shared_ptr<plateau::polygonMesh::Model> CreateModelAtomic(plateau::polygonMesh::Mesh& Mesh) {
+        inline std::shared_ptr<plateau::polygonMesh::Model> CreateModelAtomic(plateau::polygonMesh::Mesh& Mesh) {
             std::shared_ptr<plateau::polygonMesh::Model> Model = plateau::polygonMesh::Model::createModel();
             auto& NodeOP = Model->addEmptyNode(TCHAR_TO_UTF8(*TEST_OP_NAME));
             auto& NodeLod = NodeOP.addEmptyChildNode(TCHAR_TO_UTF8(*TEST_LOD_NAME));
@@ -360,7 +395,7 @@ namespace PLATEAUAutomationTestUtil {
         /// <summary>
         /// FPLATEAUCityObject & GMLID : FPLATEAUCityObject のMap 生成
         /// </summary>
-        TMap<FString, FPLATEAUCityObject> CreateCityObjectMapAtomic() {
+        inline TMap<FString, FPLATEAUCityObject> CreateCityObjectMapAtomic() {
             TMap<FString, FPLATEAUCityObject> Map;
             FPLATEAUCityObject CityObj;
             CityObj.SetGmlID(TEST_OBJ_NAME);
@@ -379,20 +414,20 @@ namespace PLATEAUAutomationTestUtil {
         }
 
         //Wall CityObject
-        void CreateCityObjectWall(FPLATEAUCityObject& CityObj) {
+        inline void CreateCityObjectWall(FPLATEAUCityObject& CityObj) {
             CityObj.SetGmlID(TEST_CITYOBJ_WALL_NAME);
             CityObj.SetCityObjectsType(TEST_CITYOBJ_WALL_TYPE);
             CityObj.SetCityObjectIndex(plateau::polygonMesh::CityObjectIndex(0, 0));
         }
         //Roof CityObject
-        void CreateCityObjectRoof(FPLATEAUCityObject& CityObj) {
+        inline void CreateCityObjectRoof(FPLATEAUCityObject& CityObj) {
             CityObj.SetGmlID(TEST_CITYOBJ_ROOF_NAME);
             CityObj.SetCityObjectsType(TEST_CITYOBJ_ROOF_TYPE);
             CityObj.SetCityObjectIndex(plateau::polygonMesh::CityObjectIndex(0, 0));
         }
 
         //Building OutsideChildren
-        TArray<FString> CreateCityObjectBuildingOutsideChildren() {
+        inline TArray<FString> CreateCityObjectBuildingOutsideChildren() {
             TArray<FString> Children;
             Children.Add(TEST_CITYOBJ_WALL_NAME);
             Children.Add(TEST_CITYOBJ_ROOF_NAME);
@@ -402,38 +437,12 @@ namespace PLATEAUAutomationTestUtil {
         /// <summary>
         /// 属性情報を持つNodeの取得用
         /// </summary>
-        const plateau::polygonMesh::Node& GetObjNodeAtomic(std::shared_ptr<plateau::polygonMesh::Model> Model, int32 index) {
+        inline const plateau::polygonMesh::Node& GetObjNodeAtomic(std::shared_ptr<plateau::polygonMesh::Model> Model, int32 index) {
             const auto& root = Model->getRootNodeAt(0);
             const auto& lod = root.getChildAt(0);
             const auto& obj = lod.getChildAt(0); //bldg_00000000-aaaa-0000-0000-000000000000
             return obj.getChildAt(index);
         }
-    }
-
-    /// <summary>
-    /// FPLATEAUModelReconstruct::ConvertModelWithGranularityの内部処理の再現Test
-    /// </summary>
-    void TestConvertModel(FPLATEAUAutomationTestBase* Test, APLATEAUInstancedCityModel* Actor, UPLATEAUCityObjectGroup* Comp, ConvertGranularity ConvGranularity) {
-
-        plateau::granularityConvert::GranularityConvertOption ConvOption(ConvGranularity, 0);
-
-        FPLATEAUMeshExportOptions ExtOptions;
-        ExtOptions.bExportHiddenObjects = false;
-        ExtOptions.bExportTexture = true;
-        ExtOptions.TransformType = EMeshTransformType::Local;
-        ExtOptions.CoordinateSystem = ECoordinateSystem::ESU;
-
-        FPLATEAUMeshExporter MeshExporter;
-        plateau::granularityConvert::GranularityConverter Converter;
-
-        std::shared_ptr<plateau::polygonMesh::Model> BaseModel = MeshExporter.CreateModelFromComponents(Actor, { Comp }, ExtOptions);
-        Test->AddInfo("MeshExporter: " + FString(BaseModel->debugString().c_str()));
-
-        std::shared_ptr<plateau::polygonMesh::Model> Converted = std::make_shared<plateau::polygonMesh::Model>(Converter.convert(*BaseModel, ConvOption));
-        Test->AddInfo("GranularityConverter: " + FString(Converted->debugString().c_str()));
-
-        Test->TestEqual("Model Root Node Name is the same", BaseModel->getRootNodeAt(0).getName(), Converted->getRootNodeAt(0).getName());
-        Test->TestEqual("Model Lod Node Name is the same", BaseModel->getRootNodeAt(0).getChildAt(0).getName(), Converted->getRootNodeAt(0).getChildAt(0).getName());
     }
 
     //Landscape/Heightmap用　ダイナミック生成等のテスト用共通処理
@@ -446,7 +455,7 @@ namespace PLATEAUAutomationTestUtil {
         /// <summary>
         /// Landscape用Param生成
         /// </summary>
-        FPLATEAULandscapeParam CreateLandscapeParam() {
+        inline FPLATEAULandscapeParam CreateLandscapeParam() {
             FPLATEAULandscapeParam Param;
             Param.TextureWidth = 505;
             Param.TextureHeight = 505;
@@ -466,14 +475,14 @@ namespace PLATEAUAutomationTestUtil {
         /// <summary>
         /// DemのCityObjectIndexのList生成
         /// </summary>
-        void CreateCityObjectList(plateau::polygonMesh::CityObjectList& CityObj) {
+        inline void CreateCityObjectList(plateau::polygonMesh::CityObjectList& CityObj) {
             CityObj.add(plateau::polygonMesh::CityObjectIndex(0, -1), TCHAR_TO_UTF8(*TEST_DEM_OBJ_NAME));
         }
 
         /// <summary>
         /// Dem Model / 各Node 生成
         /// </summary>
-        std::shared_ptr<plateau::polygonMesh::Model> CreateModel(plateau::polygonMesh::Mesh& Mesh) {
+        inline std::shared_ptr<plateau::polygonMesh::Model> CreateModel(plateau::polygonMesh::Mesh& Mesh) {
             std::shared_ptr<plateau::polygonMesh::Model> Model = plateau::polygonMesh::Model::createModel();
             auto& NodeOP = Model->addEmptyNode(TCHAR_TO_UTF8(*TEST_DEM_OP_NAME));
             auto& NodeLod = NodeOP.addEmptyChildNode(TCHAR_TO_UTF8(*PLATEAUAutomationTestUtil::Fixtures::TEST_LOD_NAME));
@@ -488,7 +497,7 @@ namespace PLATEAUAutomationTestUtil {
         /// <summary>
         /// Actor と DEM Compoenent生成
         /// </summary>
-        APLATEAUInstancedCityModel* CreateActor(UWorld& World) {
+        inline APLATEAUInstancedCityModel* CreateActor(UWorld& World) {
             APLATEAUInstancedCityModel* Actor = World.SpawnActor<APLATEAUInstancedCityModel>();
             const auto& SceneRoot = NewObject<UPLATEAUSceneComponent>(Actor,
                 USceneComponent::GetDefaultSceneRootVariableName());
@@ -527,7 +536,7 @@ namespace PLATEAUAutomationTestUtil {
         /// <summary>
         /// Dem CityObject
         /// </summary>
-        void CreateCityObjectDem(FPLATEAUCityObject& InCityObj) {
+        inline void CreateCityObjectDem(FPLATEAUCityObject& InCityObj) {
             InCityObj.SetGmlID(TEST_DEM_OBJ_NAME);
             InCityObj.SetCityObjectsType(TEST_DEM_CITYOBJ_TYPE);
             InCityObj.SetCityObjectIndex(plateau::polygonMesh::CityObjectIndex(0, -1));
@@ -538,14 +547,14 @@ namespace PLATEAUAutomationTestUtil {
     namespace Texture {
 
         //画像ロード
-        UTexture2D* LoadImage(FString TextureName) {
+        inline UTexture2D* LoadImage(FString TextureName) {
             FString Path = FPLATEAURuntimeModule::GetContentDir().Append("/TestData/texture/").Append(TextureName);
             UTexture2D* texture = FImageUtils::ImportFileAsTexture2D(Path);
             return texture;
         }
 
         //Texture2d => Uint16 Array 変換
-        TArray<uint16> ConvertTexture2dToUint16Array(UTexture2D* Texture) {
+        inline TArray<uint16> ConvertTexture2dToUint16Array(UTexture2D* Texture) {
 
             if (Texture->GetPlatformData()->PixelFormat != PF_G16R16 &&
                 Texture->GetPlatformData()->PixelFormat != PF_R16_UINT &&
@@ -566,7 +575,7 @@ namespace PLATEAUAutomationTestUtil {
         }
 
         // Pixel FormatをStringで取得 (Log用）
-        FString GetPixelFormatString(UTexture2D* Texture) {
+        inline FString GetPixelFormatString(UTexture2D* Texture) {
             //UEnum* EnumPtr = FindObject<UEnum>(ANY_PACKAGE, TEXT("EPixelFormat"), true);  //AddInfo("Name " + GetNameSafe(EnumPtr->GetOuter())); 
             UEnum* EnumPtr = FindObject<UEnum>(nullptr, TEXT("/Script/CoreUObject.EPixelFormat"), true);
             FString EnumName = EnumPtr->GetDisplayNameTextByValue(Texture->GetPlatformData()->PixelFormat).ToString();
@@ -576,7 +585,28 @@ namespace PLATEAUAutomationTestUtil {
 
     namespace CityModel {
 
-        std::shared_ptr<const citygml::CityModel> LoadCityModel() {
+        inline void CopyDirectory(const FString& SourceDirectory, const FString& DestinationDirectory) {
+            // IPlatformFileのインスタンスを取得
+            IPlatformFile& PlatformFile = FPlatformFileManager::Get().GetPlatformFile();
+
+            // ディレクトリが存在するか確認
+            if (PlatformFile.DirectoryExists(*SourceDirectory)) {
+                // コピー処理を実行
+                bool bCopySuccess = PlatformFile.CopyDirectoryTree(*DestinationDirectory, *SourceDirectory, true);
+
+                if (bCopySuccess) {
+                    UE_LOG(LogTemp, Log, TEXT("Directory successfully copied from %s to %s"), *SourceDirectory, *DestinationDirectory);
+                }
+                else {
+                    UE_LOG(LogTemp, Error, TEXT("Failed to copy directory from %s to %s"), *SourceDirectory, *DestinationDirectory);
+                }
+            }
+            else {
+                UE_LOG(LogTemp, Warning, TEXT("Source directory does not exist: %s"), *SourceDirectory);
+            }
+        }
+
+        inline std::shared_ptr<const citygml::CityModel> LoadCityModel() {
             FPLATEAUCityObjectInfo GmlInfo;
             GmlInfo.DatasetName = "data";
             GmlInfo.GmlName = "53392642_bldg_6697_op2.gml";
@@ -585,4 +615,3 @@ namespace PLATEAUAutomationTestUtil {
     }
 
 };
-

@@ -1,3 +1,5 @@
+// Copyright 2023 Ministry of Land, Infrastructure and Transport
+
 #include "RoadNetwork/RGraph/RGraphEx.h"
 
 #include <array>
@@ -1164,4 +1166,49 @@ void FRGraphEx::ModifySideWalkShape(RGraphRef_t<URFace> swFace) {
             break;
         }
     }
+}
+
+int32 FRGraphEx::FaceReduction(URGraph* Graph)
+{
+    int32 RemovedFaceCount = 0;
+
+    // キー: Face の Edge 数, 値: 該当する URFace* の配列
+    TMap<int32, TArray<URFace*>> FaceMap;
+
+    // Graph 内の全 Face を、Edge 数でグループ化する
+    for (URFace* Face : Graph->GetFaces()) {
+        int32 NumEdges = Face->GetEdges().Num();
+        FaceMap.FindOrAdd(NumEdges).Add(Face);
+    }
+
+    // グループ内の Face 同士で、同一の Edge 群かどうかをチェックする
+    for (auto& Pair : FaceMap) {
+        TArray<URFace*>& Faces = Pair.Value;
+        // インデックス i, j の組み合わせで比較
+        for (int32 i = 0; i < Faces.Num(); i++) {
+            URFace* Face1 = Faces[i];
+            for (int32 j = i + 1; j < Faces.Num(); j++) {
+                URFace* Face2 = Faces[j];
+                bool bAllContained = true;
+                // Face1 の全エッジが Face2 に含まれているかを確認する
+                for (UREdge* Edge : Face1->GetEdges()) {
+                    if (!Face2->GetEdges().Contains(Edge)) {
+                        bAllContained = false;
+                        break;
+                    }
+                }
+                // Face1 のすべての Edge が Face2 に含まれる場合、Face2 を Face1 にマージ
+                if (bAllContained) {
+                    if (Face2->TryMergeTo(Face1)) {
+                        Faces.RemoveAt(j);
+                        j--;
+                        RemovedFaceCount++;
+                    }
+                }
+            }
+        }
+    }
+
+    UE_LOG(LogTemp, Log, TEXT("MergeFaces: %d"), RemovedFaceCount);
+    return RemovedFaceCount;
 }

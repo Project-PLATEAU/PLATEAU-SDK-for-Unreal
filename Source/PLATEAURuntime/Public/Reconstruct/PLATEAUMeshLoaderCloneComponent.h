@@ -41,7 +41,7 @@ protected:
         const plateau::polygonMesh::Mesh& InMesh, const FLoadInputData& LoadInputData,
         const std::shared_ptr <const citygml::CityModel> CityModel) override;
 
-    virtual UMaterialInterface* GetMaterialForSubMesh(const FSubMeshMaterialSet& SubMeshValue, UStaticMeshComponent* Component, const FLoadInputData& LoadInputData, UTexture2D* Texture, FNodeHierarchy NodeHier) override;
+    virtual UMaterialInterface* GetMaterialForSubMesh(const FSubMeshMaterialSet& SubMeshValue, UStaticMeshComponent* Component, const FLoadInputData& LoadInputData, UTexture2D* Texture, FNodeHierarchy NodeHier, UObject* Outer) override;
 
     UPLATEAUCityObjectGroup* GetOriginalComponent(FString NodePathString);
 

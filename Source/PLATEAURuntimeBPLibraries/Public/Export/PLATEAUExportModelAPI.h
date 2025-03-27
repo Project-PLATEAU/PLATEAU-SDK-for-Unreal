@@ -1,4 +1,5 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Copyright 2023 Ministry of Land, Infrastructure and Transport
+
 
 #pragma once
 

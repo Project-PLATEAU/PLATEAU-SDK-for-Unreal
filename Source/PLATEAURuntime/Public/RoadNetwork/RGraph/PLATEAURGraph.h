@@ -1,3 +1,5 @@
+// Copyright 2023 Ministry of Land, Infrastructure and Transport
+
 #pragma once
 #include <memory>
 #include "../../Component/PLATEAUSceneComponent.h"
@@ -40,7 +42,7 @@ struct FRGraphDrawFaceOption : public FPLATEAURnDrawOption {
     bool bShowOutlineLoop = false;
 
     UPROPERTY(EditAnywhere, Category = "PLATEAU|Debug")
-    bool bShowOnlyTargets;
+    bool bShowOnlyTargets = false;
 
     UPROPERTY(EditAnywhere, Category = "PLATEAU|Debug")
     TArray<FString> ShowTargetNames;
@@ -56,7 +58,7 @@ struct FRGraphDrawEdgeOption : public FPLATEAURnDrawOption {
     UPROPERTY(EditAnywhere, Category = "PLATEAU|Debug")
     bool bShowNeighborCount = false;
 
-    UPROPERTY(EditAnywhere, Category = "PLATEAU|Debug", Meta = (Bitmask, BitmaskEnum = ERRoadTypeMask))
+    UPROPERTY(EditAnywhere, Category = "PLATEAU|Debug", Meta = (Bitmask, BitmaskEnum = "/Script/PLATEAURuntime.ERRoadTypeMask"))
     int32 ShowTypeMask = 0;
 };
 
@@ -116,13 +118,13 @@ public:
     UPROPERTY(EditAnywhere, Category = "PLATEAU|Debug")
     bool bShowNormal;
 
-    UPROPERTY(EditAnywhere, Category = "PLATEAU|Debug", Meta = (Bitmask, BitmaskEnum = ERRoadTypeMask))
+    UPROPERTY(EditAnywhere, Category = "PLATEAU|Debug", Meta = (Bitmask, BitmaskEnum = "/Script/PLATEAURuntime.ERRoadTypeMask"))
     int32 ShowFaceType;
 
-    UPROPERTY(EditAnywhere, Category = "PLATEAU|Debug", Meta = (Bitmask, BitmaskEnum= ERRoadTypeMask))
+    UPROPERTY(EditAnywhere, Category = "PLATEAU|Debug", Meta = (Bitmask, BitmaskEnum= "/Script/PLATEAURuntime.ERRoadTypeMask"))
     int32 RemoveFaceType;
 
-    UPROPERTY(EditAnywhere, Category = "PLATEAU|Debug", Meta = (Bitmask, BitmaskEnum = ERPartsFlag))
+    UPROPERTY(EditAnywhere, Category = "PLATEAU|Debug", Meta = (Bitmask, BitmaskEnum = "/Script/PLATEAURuntime.ERPartsFlag"))
     ERPartsFlag ShowId;
 
     UPROPERTY(EditAnywhere, Category = "PLATEAU|Debug")
@@ -139,6 +141,9 @@ public:
 
     UPROPERTY(EditAnywhere, Category = "PLATEAU|Debug")
     FLinearColor SideWalkColor;
+
+    UPROPERTY(EditAnywhere, Category = "PLATEAU|Debug")
+    FLinearColor MedianColor;
 
     UPROPERTY(EditAnywhere, Category = "PLATEAU|Debug")
     FLinearColor HighWayColor;

@@ -1,4 +1,7 @@
-﻿#include "PLATEAUDllLoggerUnreal.h"
+﻿// Copyright 2023 Ministry of Land, Infrastructure and Transport
+
+#include "PLATEAUDllLoggerUnreal.h"
+#include "Containers/StringConv.h"
 
 PLATEAUDllLoggerUnreal::PLATEAUDllLoggerUnreal(citygml::CityGMLLogger::LOGLEVEL LogLevelArg)
 {

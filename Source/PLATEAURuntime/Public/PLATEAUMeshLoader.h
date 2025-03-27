@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include <citygml/material.h>
 #include "MeshTypes.h"
-#include "PLATEAUCachedMaterialArray.h"
+#include "MeshDescription.h"
 #include <plateau/polygon_mesh/mesh.h>
 #include "StaticMeshAttributes.h"
 #include "Materials/MaterialInterface.h"
@@ -69,13 +69,11 @@ class PLATEAURUNTIME_API FPLATEAUMeshLoader {
 public:
     virtual ~FPLATEAUMeshLoader() = default;
 
-    FPLATEAUMeshLoader(const FPLATEAUCachedMaterialArray& BeforeConvertCachedMaterials) :
-        BeforeConvertCachedMaterials(BeforeConvertCachedMaterials)
+    FPLATEAUMeshLoader() 
     {
         bAutomationTest = false;
     }
-    FPLATEAUMeshLoader(const bool InbAutomationTest)  :
-        BeforeConvertCachedMaterials(BeforeConvertCachedMaterials)
+    FPLATEAUMeshLoader(const bool InbAutomationTest)
     {
         bAutomationTest = InbAutomationTest;
     }
@@ -93,13 +91,14 @@ public:
 
 protected:
     // SubMesh情報等に応じてMaterialを作成します。
-    virtual UMaterialInterface* GetMaterialForSubMesh(const FSubMeshMaterialSet& SubMeshValue, UStaticMeshComponent* Component, const FLoadInputData& LoadInputData, UTexture2D* Texture, FNodeHierarchy NodeHier);
+    virtual UMaterialInterface* GetMaterialForSubMesh(const FSubMeshMaterialSet& SubMeshValue, UStaticMeshComponent* Component, const FLoadInputData& LoadInputData, UTexture2D* Texture, FNodeHierarchy NodeHier, UObject* Outer);
     // Loaderのタイプに応じて異なるStaticMeshComponentを作成
     virtual UStaticMeshComponent* GetStaticMeshComponentForCondition(AActor& Actor, EName Name, FNodeHierarchy NodeHier,
         const plateau::polygonMesh::Mesh& InMesh, const FLoadInputData& LoadInputData, 
         const std::shared_ptr <const citygml::CityModel> CityModel);
 
     virtual bool UseCachedMaterial(); //マテリアルキャッシュ有効・無効
+    virtual UMaterialInterface* GetPreCachedMaterial(int32 MaterialId); //事前にキャッシュされたマテリアル使用
     virtual bool InvertMeshNormal(); //Mesh反転有無
     virtual bool MergeTriangles(); //Triangle生成時にVertexIDを結合・分割
 
@@ -144,6 +143,4 @@ protected:
         TArray<FSubMeshMaterialSet>& SubMeshMaterialSets, bool InvertNormal, bool MergeTriangles);
     virtual UStaticMesh* CreateStaticMesh(const plateau::polygonMesh::Mesh& InMesh, UObject* InOuter, FName Name);
 
-protected:
-    const FPLATEAUCachedMaterialArray& BeforeConvertCachedMaterials;
 };

@@ -14,6 +14,7 @@
 #include "RoadNetwork/Structure/RnModel.h"
 #include "RoadNetwork/Structure/PLATEAURnStructureModel.h"
 #include "Misc/ScopedSlowTask.h"
+#include "Engine/World.h"
 
 APLATEAUReproducedRoad::APLATEAUReproducedRoad() {
     CreateLineTypeMap();
@@ -42,7 +43,7 @@ void APLATEAUReproducedRoad::CreateRoadMarks(APLATEAURnStructureModel* Model, FS
     
     // すでに生成済みの道路標示があれば削除します
     TArray<AActor*> FoundActors;
-    UGameplayStatics::GetAllActorsOfClass(GetWorld(), APLATEAUReproducedRoad::StaticClass(), FoundActors);
+    UGameplayStatics::GetAllActorsOfClass(Cast<UObject>(GetWorld()), APLATEAUReproducedRoad::StaticClass(), FoundActors);
     for (AActor* Actor : FoundActors) {
         if (Actor != this) {
             Actor->Destroy();

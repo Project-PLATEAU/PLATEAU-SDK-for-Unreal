@@ -1,3 +1,5 @@
+// Copyright 2023 Ministry of Land, Infrastructure and Transport
+
 #include "RoadNetwork/Util/PLATEAUIntVector2Ex.h"
 
 FIntVector2 FPLATEAUIntVector2Ex::Abs(const FIntVector2& Vec) {

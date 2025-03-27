@@ -1,3 +1,5 @@
+// Copyright 2023 Ministry of Land, Infrastructure and Transport
+
 #pragma once
 
 #include "CoreMinimal.h"
@@ -13,7 +15,7 @@ struct PLATEAURUNTIME_API FRay2D {
     UPROPERTY()
     FVector2D Direction;
 
-    FRay2D() {}
+    FRay2D() : Origin(FVector::Zero()), Direction(FVector::Zero()) {}
     FRay2D(const FVector2D& InOrigin, const FVector2D& InDirection)
         : Origin(InOrigin), Direction(InDirection.GetSafeNormal()) {
     }

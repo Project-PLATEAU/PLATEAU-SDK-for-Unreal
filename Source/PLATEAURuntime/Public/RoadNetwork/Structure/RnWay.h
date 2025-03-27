@@ -1,3 +1,5 @@
+// Copyright 2023 Ministry of Land, Infrastructure and Transport
+
 #pragma once
 #include "CoreMinimal.h"
 #include "UObject/NoExportTypes.h"
@@ -56,6 +58,16 @@ public:
 
         PointIterator end() const {
             return PointIterator(Way,  Way ?Way->Count() : 0);
+        }
+
+        TArray<TRnRef_T<URnPoint>> ToArray() const {
+            TArray<TRnRef_T<URnPoint>> Result;
+            if (Way) {
+                for (int32 i = 0; i < Way->Count(); ++i) {
+                    Result.Add(Way->GetPoint(i));
+                }
+            }
+            return Result;
         }
 
         const URnWay* Way;
@@ -153,6 +165,11 @@ public:
 
     TRnRef_T<URnWay> Clone(bool CloneVertex) const;
 
+    /*
+     * 自身の浅いコピーを返す
+     */
+    TRnRef_T<URnWay> ShallowClone() const;
+
     TArray<FLineSegment2D> GetEdges2D() const;
 
     int32 FindPoint(const TRnRef_T<URnPoint>& Point) const;
@@ -193,6 +210,16 @@ public:
     // 自身をnum分割して返す. 分割できない(頂点空）の時は空リストを返す.
     // insertNewPoint=trueの時はselfにも新しい点を追加する
     TArray<TRnRef_T<URnWay>> Split(int32 Num, bool InsertNewPoint, TFunction<float(int32)> RateSelector = nullptr);
+
+    /*
+     * ファクトリメソッド
+     */
+    static TRnRef_T<URnWay> Create(const TRnRef_T<URnLineString>& InLineString, bool bInIsReversed = false, bool bInIsReverseNormal = false);
+
+    /*
+     * A,BをつなげたWayを作成する
+     */
+    static TRnRef_T<URnWay> CreateMergedWay(URnWay* A, URnWay* B, bool RemoveDuplicate = true);
 private:
     int32 ToRawIndex(int32 Index, bool AllowMinus = false) const;
     int32 SwitchIndex(int32 Index) const;
@@ -225,4 +252,10 @@ struct FRnWayEx
     // vn == v0'だと, srcをそのままselfの末尾に追加 (v0, v1, v2, v3...vn(v0'), v1', v2', v3'...vm')となる
     // selfとsrcの最初と最後のポイントを見て, どっちの方向に結合するかを決める
     static bool TryMergePointsToLineString(URnWay* Self, URnWay* Src, float PointDistanceTolerance);
+
+
+    /*
+     * 自身の浅いコピーを返す
+     */
+    static TRnRef_T<URnWay> ShallowCloneOrDefault(URnWay* Self);
 };

@@ -15,7 +15,7 @@ enum class EMeshTransformType : uint8 {
     PlaneRect
 };
 
-UENUM(BlueprintType)
+UENUM(BlueprintType, meta = (ScriptName = "PLATEAUCoordinateSystem"))
 enum class ECoordinateSystem : uint8 {
     //! PLATEAUでの座標系
     ENU = 0,

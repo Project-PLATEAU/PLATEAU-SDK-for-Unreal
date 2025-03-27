@@ -1,3 +1,5 @@
+// Copyright 2023 Ministry of Land, Infrastructure and Transport
+
 #include "RoadNetwork/Structure/RnLineString.h"
 
 #include <optional>
@@ -6,6 +8,7 @@
 #include "RoadNetwork/GeoGraph/GeoGraphEx.h"
 #include "RoadNetwork/Util/PLATEAUVector2DEx.h"
 #include "RoadNetwork/PLATEAURnDef.h"
+#include "RoadNetwork/Factory/RoadNetworkFactory.h"
 #include "RoadNetwork/Util/PLATEAURnLinq.h"
 
 URnLineString::URnLineString() {
@@ -42,19 +45,46 @@ int32 URnLineString::Count() const
 bool URnLineString::IsValid() const
 { return Points.Num() >= 2; }
 
+
+namespace
+{
+    bool IsNearlyEqual(URnPoint* A, URnPoint* B, float DistanceEpsilon)
+    {
+        return URnPoint::Equals(A, B, DistanceEpsilon < 0 ? -1.f : DistanceEpsilon * DistanceEpsilon);
+    }
+
+    bool IsCollinear(URnPoint* A, URnPoint* B, URnPoint* C, float DegEpsilon, float MidPointTolerance)
+    {
+        return FGeoGraphEx::IsCollinear(A->GetVertex(), B->GetVertex(), C->GetVertex(), DegEpsilon, MidPointTolerance);
+    }
+}
+
 void URnLineString::AddPointOrSkip(TRnRef_T<URnPoint> Point, float DistanceEpsilon, float DegEpsilon, float MidPointTolerance) {
     if (!Point) 
         return;
 
-    if (Points.Num() > 0) {
-        const float SqrDistanceThreshold = DistanceEpsilon < 0.0f ? -1.0f : DistanceEpsilon * DistanceEpsilon;
-        if (URnPoint::Equals(Points.Last(), Point, SqrDistanceThreshold))
-            return;
+    if (Points.Num() > 0 && ::IsNearlyEqual(Points.Last(), Point, DistanceEpsilon))
+        return;
+
+    if (Points.Num() > 1 && ::IsCollinear(Points[Points.Num() - 2], Points[Points.Num() - 1], Point, DegEpsilon, MidPointTolerance)) {
+        Points.RemoveAt(Points.Num() - 1);
     }
 
     Points.Add(Point);
 }
 
+void URnLineString::AddPointFrontOrSkip(TRnRef_T<URnPoint> Point, float DistanceEpsilon, float DegEpsilon, float MidPointTolerance) {
+    if (!Point) return;
+
+    if (Points.Num() > 0 && ::IsNearlyEqual(Points[0], Point, DistanceEpsilon))
+        return;
+
+    if (Points.Num() > 1 && ::IsCollinear(Points[0], Points[1], Point, DegEpsilon, MidPointTolerance)) {
+        Points.RemoveAt(1);
+    }
+
+    Points.Insert(Point, 0);
+}
 FVector URnLineString::GetEdgeNormal(int32 StartVertexIndex) const {
     const FVector P0 = (*this)[StartVertexIndex];
     const FVector P1 = (*this)[StartVertexIndex + 1];
@@ -205,18 +235,6 @@ void URnLineString::AddFrontPoint(TRnRef_T<URnPoint> Point) {
         Points.Insert(Point, 0);
     }
 }
-void URnLineString::AddPointFrontOrSkip(TRnRef_T<URnPoint> Point, float DistanceEpsilon, float DegEpsilon, float MidPointTolerance) {
-    if (!Point) return;
-
-    if (Points.Num() > 0) {
-        const float SqrDistanceThreshold = DistanceEpsilon < 0.0f ? -1.0f : DistanceEpsilon * DistanceEpsilon;
-        if (URnPoint::Equals(GetPoint(0), Point, SqrDistanceThreshold)) {
-            return;
-        }
-    }
-
-    Points.Insert(Point, 0);
-}
 
 float URnLineString::CalcLength(float StartPointIndex, float EndPointIndex) const
 {
@@ -302,11 +320,18 @@ void URnLineString::GetNearestPoint(const FVector& Pos, FVector& OutNearest, flo
         const FVector End = GetVertex(i+1);
         const FVector ProjectedPoint = FMath::ClosestPointOnSegment(Pos, Start, End);
 
+
+        auto Diff = (End - Start).Size();
+        if (Diff < 1e-8f)
+            continue;
+
         const float Distance = (Pos - ProjectedPoint).Size();
         if (Distance < OutDistance) {
+
             OutDistance = Distance;
             OutNearest = ProjectedPoint;
-            OutPointIndex = i + (ProjectedPoint - Start).Size() / (End - Start).Size();
+            auto Offset = (ProjectedPoint - Start);
+            OutPointIndex = i + Offset.Size() / Diff;
         }
     }
 }
@@ -357,49 +382,6 @@ int32 URnLineString::ReplacePoint(TRnRef_T<URnPoint> OldPoint, TRnRef_T<URnPoint
     return ReplaceCount;
 }
 
-
-TRnRef_T<URnLineString> URnLineString::Create(const TArray<TRnRef_T<URnPoint>>& Vertices,
-    bool RemoveDuplicate) {
-    auto LineString = RnNew<URnLineString>();
-    if (!RemoveDuplicate) 
-    {
-        for (TRnRef_T<URnPoint> Point : Vertices) {
-            LineString->Points.Add(Point);
-        }
-        return LineString;
-    }
-
-    for (TRnRef_T<URnPoint> Point : Vertices) {
-        LineString->AddPointOrSkip(Point);
-    }
-
-    return LineString;
-}
-
-TRnRef_T<URnLineString> URnLineString::Create(const TArray<FVector>& Vertices, bool RemoveDuplicate) {
-    auto Points = TArray<TRnRef_T<URnPoint>>();
-    for (const FVector& Vertex : Vertices) 
-    {
-        auto P = RnNew<URnPoint>(Vertex);        
-        Points.Add(P);
-    }
-
-    return Create(Points, RemoveDuplicate);
-}
-
-bool URnLineString::Equals(const TRnRef_T<URnLineString> X, const TRnRef_T<URnLineString> Y) {
-    if (X == Y) return true;
-    if (!X || !Y) return false;
-    if (X->Points.Num() != Y->Points.Num()) return false;
-
-    for (int32 i = 0; i < X->Points.Num(); i++) {
-        if (!URnPoint::Equals(X->GetPoint(i), Y->GetPoint(i))) {
-            return false;
-        }
-    }
-
-    return true;
-}
 
 FVector URnLineString::operator[](int32 Index) const
 { return (Points)[Index]->Vertex; }
@@ -535,6 +517,67 @@ TOptional<float> URnLineString::CalcProximityScore(const URnLineString* Other) c
         Other->GetNearestPoint(V->Vertex, Inter, Index, Distance);
         return Distance;
         });
+}
+
+TRnRef_T<URnLineString> URnLineString::Create(const TArray<TRnRef_T<URnPoint>>& Vertices, float DistanceEpsilon,
+    float DegEpsilon, float MidPointTolerance)
+{
+    auto LineString = RnNew<URnLineString>();
+    for (auto& P : Vertices)
+        LineString->AddPointOrSkip(P, DistanceEpsilon, DegEpsilon, MidPointTolerance);
+    return LineString;
+}
+
+
+TRnRef_T<URnLineString> URnLineString::Create(const TArray<TRnRef_T<URnPoint>>& Vertices,
+                                              bool RemoveDuplicate) {
+    if (RemoveDuplicate)
+        return Create(Vertices, DefaultDistanceEpsilon, DefaultDegEpsilon, DefaultMidPointTolerance);
+
+    return Create(Vertices, -1.f, -1.f, -1.f);
+}
+
+TRnRef_T<URnLineString> URnLineString::Create(const TArray<FVector>& Vertices, bool RemoveDuplicate) {
+    auto Points = TArray<TRnRef_T<URnPoint>>();
+    for (const FVector& Vertex : Vertices) {
+        auto P = RnNew<URnPoint>(Vertex);
+        Points.Add(P);
+    }
+
+    return Create(Points, RemoveDuplicate);
+}
+
+bool URnLineString::Equals(const TRnRef_T<URnLineString> X, const TRnRef_T<URnLineString> Y) {
+    if (X == Y) return true;
+    if (!X || !Y) return false;
+    if (X->Points.Num() != Y->Points.Num()) return false;
+
+    for (int32 i = 0; i < X->Points.Num(); i++) {
+        if (!URnPoint::Equals(X->GetPoint(i), Y->GetPoint(i))) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+bool FRnLineStringEx::IsSequenceEqual(URnLineString* A, URnLineString* B, bool& OutIsReverse)
+{
+    if (!A || !B)
+        return false;
+    return FPLATEAULineStringFactoryWork::IsEqual(A->GetPoints(), B->GetPoints(), OutIsReverse);
+}
+
+bool FRnLineStringEx::IsPointShared(const URnLineString* A, const URnLineString* B)
+{
+    if (!A || !B)
+        return false;
+    for(auto P :  A->GetPoints())
+    {
+        if (B->GetPoints().Contains(P))
+            return true;
+    }
+    return false;
 }
 
 

@@ -4,6 +4,7 @@
 #include "PLATEAUCityModelLoader.h"
 #include "plateau/dataset/dataset_source.h"
 #include "Engine/World.h"
+#include "Misc/MessageDialog.h"
 
 namespace {
 

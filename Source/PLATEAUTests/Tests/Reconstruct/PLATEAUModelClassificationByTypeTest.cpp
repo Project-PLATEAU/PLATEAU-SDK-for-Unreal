@@ -1,8 +1,7 @@
 // Copyright © 2023 Ministry of Land, Infrastructure and Transport
 
 #include "FileHelpers.h"
-#include "../PLATEAUAutomationTestBase.h"
-#include "../PLATEAUAutomationTestUtil.h"
+#include "PLATEAUTests/Tests/PLATEAUAutomationTestBase.h"
 #include "Reconstruct/PLATEAUModelClassificationByType.h"
 #include "PLATEAUInstancedCityModel.h"
 #include "Component/PLATEAUSceneComponent.h"
@@ -10,6 +9,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Tests/AutomationCommon.h"
 #include <PLATEAURuntime.h>
+#include "PLATEAUModelConvertUtil.h"
 
 namespace FPLATEAUTest_Reconstruct_ModelClassificationByType_Local {
 
@@ -18,7 +18,8 @@ namespace FPLATEAUTest_Reconstruct_ModelClassificationByType_Local {
         FString SourcePath = TEXT("/PLATEAU-SDK-for-Unreal/Materials/Fallback/PlateauDefaultDisasterMaterialInstance");
         UMaterialInstance* Material = Cast<UMaterialInstance>(
             StaticLoadObject(UMaterialInstance::StaticClass(), nullptr, *SourcePath));
-        Materials.Add(EPLATEAUCityObjectsType::COT_Building, Material);
+        //Materials.Add(EPLATEAUCityObjectsType::COT_Building, Material);
+        Materials.Add(EPLATEAUCityObjectsType::COT_WallSurface, Material);
         return Materials;
     }
 }
@@ -89,8 +90,7 @@ bool FPLATEAUTest_Reconstruct_ModelClassificationByType::RunTest(const FString& 
 
     //Model Creation Test
     for (const auto& Target : TargetComponents)
-        PLATEAUAutomationTestUtil::TestConvertModel(this, ModelActor, Target, ConvertGranularity::PerPrimaryFeatureObject);
-
+        ModelConvert::TestConvertModel(this, ModelActor, Target, ConvertGranularity::PerPrimaryFeatureObject);
     
     FPLATEAUModelClassificationByType ModelClassification(ModelActor, Materials);
     ModelClassification.SetConvertGranularity(ConvertGranularity::PerPrimaryFeatureObject);
@@ -121,7 +121,7 @@ bool FPLATEAUTest_Reconstruct_ModelClassificationByType::RunTest(const FString& 
             TestNotNull("Dynamic Material is not null", DynMat);
 
             //CreateMaterialMapで設定したMaterialがセットされている
-            TestEqual("Material switched", DynMat->Parent.GetName(), "PlateauDefaultDisasterMaterialInstance");
+            TestEqual("Material switched", DynMat->GetName(), "PlateauDefaultDisasterMaterialInstance");
 
             AddInfo("StaticMeshTest Finish " + CompAsCOG->GetName());
             return true;
