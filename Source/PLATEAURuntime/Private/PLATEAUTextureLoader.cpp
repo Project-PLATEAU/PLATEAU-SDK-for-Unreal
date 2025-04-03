@@ -132,7 +132,7 @@ namespace {
 
     void UpdateTextureGPUResourceAsync(
         const TArray64<uint8>& UncompressedImageData, UTexture2D* const Texture,
-        const int32 Mip0Size, const int32 Width, const int32 Height, const EPixelFormat PixelFormat) {
+        const int32 Mip0Size, const int32 Width, const int32 Height, const EPixelFormat PixelFormat, ERHIAccess InResourceState) {
 
         TArray<void*, TInlineAllocator<MAX_TEXTURE_MIP_COUNT>> MipData;
         MipData.Add(FMemory::Malloc(Mip0Size));
@@ -150,7 +150,7 @@ namespace {
             PixelFormat,
             1,
             TexCreate_ShaderResource,
-            ERHIAccess::CopySrc,
+            InResourceState,
             MipData.GetData(), 1,
             TEXT("RHIAsyncCreateTexture2D"),
             CompletionEvent
@@ -181,7 +181,24 @@ namespace {
                 Texture->RefreshSamplerStates();
             }
         );
+    }
 
+    bool SaveTexturePackage(UTexture2D* Texture, const FString TexturePath, UPackage* Package, FString PackageName) {
+
+        // 3Dファイルエクスポート用にテクスチャファイルのパスを保持
+        const auto ContentPath = IFileManager::Get().ConvertToAbsolutePathForExternalAppForRead(
+            *(FPaths::ProjectContentDir()));
+        auto TextureFilePath = TexturePath.Replace(*ContentPath, TEXT("")).Replace(*FString("\\"), *FString("/"));
+        Package->SetLoadedPath(FPackagePath::FromLocalPath(TexturePath));
+
+        FAssetRegistryModule::AssetCreated(Texture);
+        const FString PackageFileName = FPackageName::LongPackageNameToFilename(
+            PackageName, FPackageName::GetAssetPackageExtension());
+        FSavePackageArgs Args;
+        Args.SaveFlags = SAVE_NoError;
+        Args.TopLevelFlags = EObjectFlags::RF_Public | EObjectFlags::RF_Standalone;
+        Args.Error = GError;
+        return UPackage::SavePackage(Package, Texture, *PackageFileName, Args);
     }
 }
 
@@ -212,7 +229,8 @@ UTexture2D* FPLATEAUTextureLoader::Load(const FString& TexturePath_SlashOrBackSl
     UPackage* Package = CreatePackage(*PackageName);
     Package->FullyLoad();
     NewTexture = Cast<UTexture2D>(Package->FindAssetInPackage());
-    if (NewTexture == nullptr) {
+
+    if (!IsValid(NewTexture)) {
         NewTexture = NewObject<UTexture2D>(Package, NAME_None, RF_Public | RF_Standalone | RF_MarkAsRootSet);
 
         // テクスチャのアセット名設定
@@ -256,28 +274,12 @@ UTexture2D* FPLATEAUTextureLoader::Load(const FString& TexturePath_SlashOrBackSl
     // テクスチャ上書き終了
     NewTexture->PostEditChange();
 #endif
-    // TODO: 関数化(SaveTexturePackage)
     Package->MarkPackageDirty();
-
-    // 3Dファイルエクスポート用にテクスチャファイルのパスを保持
-    const auto ContentPath = IFileManager::Get().ConvertToAbsolutePathForExternalAppForRead(
-        *(FPaths::ProjectContentDir()));
-    auto TextureFilePath = TexturePath.Replace(*ContentPath, TEXT("")).Replace(*FString("\\"), *FString("/"));
-    Package->SetLoadedPath(FPackagePath::FromLocalPath(TexturePath));
-
-    FAssetRegistryModule::AssetCreated(NewTexture);
-    const FString PackageFileName = FPackageName::LongPackageNameToFilename(
-        PackageName, FPackageName::GetAssetPackageExtension());
-    FSavePackageArgs Args;
-    Args.SaveFlags = SAVE_NoError;
-    Args.TopLevelFlags = EObjectFlags::RF_Public | EObjectFlags::RF_Standalone;
-    Args.Error = GError;
-    UPackage::SavePackage(Package, NewTexture, *PackageFileName, Args);
 
     check(IsValid(NewTexture));
 
     if (GRHISupportsAsyncTextureCreation)
-        UpdateTextureGPUResourceAsync(UncompressedData, NewTexture, Mip0Size, Width, Height, PixelFormat);
+        UpdateTextureGPUResourceAsync(UncompressedData, NewTexture, Mip0Size, Width, Height, PixelFormat, ERHIAccess::SRVMask);
 
     return NewTexture;
 }
@@ -320,7 +322,16 @@ UTexture2D* FPLATEAUTextureLoader::LoadTransient(const FString& TexturePath) {
     check(IsValid(NewTexture));
 
     if (GRHISupportsAsyncTextureCreation)
-        UpdateTextureGPUResourceAsync(UncompressedData, NewTexture, Mip0Size, Width, Height, PixelFormat);
+        UpdateTextureGPUResourceAsync(UncompressedData, NewTexture, Mip0Size, Width, Height, PixelFormat, ERHIAccess::SRVMask);
 
     return NewTexture;
+}
+
+// Texture保存(5.5のクラッシュ回避のためパッケージ保存はロード後に行う
+bool FPLATEAUTextureLoader::SaveTexture(UTexture2D* Texture, const FString& TexturePath) {
+    FString PackageName = TEXT("/Game/PLATEAU/Textures/");
+    PackageName += FPaths::GetBaseFilename(TexturePath).Replace(TEXT("."), TEXT("_"));
+    UPackage* Package = CreatePackage(*PackageName);
+    Package->FullyLoad();
+    return SaveTexturePackage(Texture, TexturePath, Package, PackageName);
 }

@@ -328,10 +328,17 @@ void FPLATEAUMeshLoader::LoadModel(AActor* ModelActor, USceneComponent* ParentCo
         StaticMeshes.Reset();
     }
 
-    // 最大LOD以外の形状を非表示化
     FFunctionGraphTask::CreateAndDispatchWhenReady(
-        [ParentComponent]() {
+        [ParentComponent, PathToTexture=this->PathToTexture, OverwriteTexture=OverwriteTexture()]() {
+            // 最大LOD以外の形状を非表示化
             FPLATEAUModelFiltering().FilterLowLods(ParentComponent);
+
+            // Texture保存(5.5のクラッシュ回避のためパッケージ保存はロード後に行う
+            if (OverwriteTexture) {
+                for (const auto TexKV : PathToTexture) {
+                    FPLATEAUTextureLoader::SaveTexture(TexKV.Value, TexKV.Key);
+                }
+            }
         }, TStatId(), nullptr, ENamedThreads::GameThread)->Wait();
 }
 
