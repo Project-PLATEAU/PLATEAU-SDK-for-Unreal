@@ -7,7 +7,7 @@
 #include "Tasks/Task.h"
 
 struct FPLATEAUFeatureInfoMaterialKey;
-class FPLATEAUMeshCodeGizmo;
+class FPLATEAUGridCodeGizmo;
 
 namespace plateau::dataset {
     class MeshCode;

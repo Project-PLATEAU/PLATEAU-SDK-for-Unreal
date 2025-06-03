@@ -30,7 +30,7 @@ APLATEAUCityModelLoader* UPLATEAUImportModelBtn::GetCityModelLoader(const int Zo
         Loader->Source = ExtentEditor->GetSourcePath();
     }
 
-    Loader->MeshCodes = IPLATEAUEditorModule::Get().GetExtentEditor()->GetSelectedCodes(bImportFromServer);
+    Loader->GridCodes = IPLATEAUEditorModule::Get().GetExtentEditor()->GetSelectedCodes(bImportFromServer);
 
     Loader->GeoReference.ZoneID = ZoneID;
     Loader->GeoReference.ReferencePoint = ReferencePoint;

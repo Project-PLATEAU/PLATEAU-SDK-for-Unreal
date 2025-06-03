@@ -5,6 +5,7 @@
 
 #include <libplateau_api.h>
 #include "plateau/geometry/geo_coordinate.h"
+#include "plateau/dataset/grid_code.h"
 
 namespace plateau::dataset {
     /**
@@ -12,7 +13,7 @@ namespace plateau::dataset {
      * 
      * 2~5次メッシュの緯度経度範囲の取得、緯度経度範囲を内包する3次メッシュの取得を行う機能を提供しています。
      */
-    class LIBPLATEAU_EXPORT MeshCode {
+class LIBPLATEAU_EXPORT MeshCode : public plateau::dataset::GridCode {
     public:
         explicit MeshCode(const std::string& code);
         MeshCode() = default;
@@ -20,17 +21,17 @@ namespace plateau::dataset {
         /**
          * \brief メッシュコードを文字列として取得します。
          */
-        std::string get() const;
+        std::string get() const override;
 
         /**
          * \brief メッシュコードの次数を取得します。
          */
-        int getLevel() const;
+        int getLevel() const override;
 
         /**
          * \brief メッシュコードの緯度経度範囲を取得します。
          */
-        geometry::Extent getExtent() const;
+        geometry::Extent getExtent() const override;
 
         /**
          * \brief 座標点を含む3次メッシュを取得します。
@@ -48,11 +49,6 @@ namespace plateau::dataset {
         static std::shared_ptr<std::vector<MeshCode>> getThirdMeshes(const geometry::Extent& extent);
 
         /**
-         * \brief 地域メッシュが内包されるかどうかを計算します。
-         */
-        bool isWithin(const MeshCode& other) const;
-
-        /**
          * \brief 地域メッシュを2次メッシュとして取得します。
         */
         MeshCode asSecond() const;
@@ -60,32 +56,38 @@ namespace plateau::dataset {
         /**
          * \brief レベル2以上の範囲で１段階上のレベルの地域メッシュに変換します。
         */
-        MeshCode& upper();
+        std::shared_ptr<GridCode> upper() const override;
+        GridCode* upperRaw() const override;
 
         /**
          * \brief メッシュコードが適切な値かどうかを返します。
         */
-        bool isValid() const;
+        bool isValid() const override;
+
+        /**
+         * \brief コードのレベル（詳細度）が、PLATEAUの仕様上考えられる中でもっとも大きいものであるときにtrueを返します。
+        */
+        bool isLargestLevel() const override;
+        bool isSmallerThanNormalGml() const override;
+        bool isNormalGmlLevel() const override;
 
         bool operator==(const MeshCode& other) const;
 
-        //! setに入れるために演算子オーバーロードします。
-        bool operator<(MeshCode& other) const;
-        bool operator<(const MeshCode& other) const;
+
 
     private:
-        int first_row_;
-        int first_col_;
-        int second_row_;
-        int second_col_;
-        int third_row_;
-        int third_col_;
-        int fourth_row_;
-        int fourth_col_;
-        int fifth_row_;
-        int fifth_col_;
-        int level_;
-        bool is_valid_;
+        int first_row_ = 0;
+        int first_col_ = 0;
+        int second_row_ = 0;
+        int second_col_ = 0;
+        int third_row_ = 0;
+        int third_col_ = 0;
+        int fourth_row_ = 0;
+        int fourth_col_ = 0;
+        int fifth_row_ = 0;
+        int fifth_col_ = 0;
+        int level_ = 0;
+        bool is_valid_ = false;
 
         static void nextRow(MeshCode& mesh_code);
         static void nextCol(MeshCode& mesh_code);

@@ -88,7 +88,7 @@ public:
         FString Source;
 
     UPROPERTY(EditAnywhere, Category = "PLATEAU")
-        TArray<FString> MeshCodes;
+        TArray<FString> GridCodes;
 
     UPROPERTY(EditAnywhere, Category = "PLATEAU")
         FPLATEAUGeoReference GeoReference;

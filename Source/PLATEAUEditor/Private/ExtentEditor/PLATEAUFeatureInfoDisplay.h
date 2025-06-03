@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "PLATEAUAsyncLoadedFeatureInfoPanel.h"
 #include "PLATEAUGeometry.h"
-#include "PLATEAUMeshCodeGizmo.h"
+#include "PLATEAUGridCodeGizmo.h"
 
 namespace plateau::Feature {
     constexpr int MinLod = 0;
@@ -61,8 +61,8 @@ public:
     FPLATEAUFeatureInfoDisplay(const FPLATEAUGeoReference& InGeoReference, const TSharedPtr<class FPLATEAUExtentEditorViewportClient> InViewportClient);
     ~FPLATEAUFeatureInfoDisplay();
 
-    bool CreatePanelAsync(const FPLATEAUMeshCodeGizmo& MeshCodeGizmo, const plateau::dataset::IDatasetAccessor& InDatasetAccessor);
-    bool AddComponent(const FPLATEAUMeshCodeGizmo& MeshCodeGizmo);
+    bool CreatePanelAsync(const FPLATEAUGridCodeGizmo& MeshCodeGizmo, const plateau::dataset::IDatasetAccessor& InDatasetAccessor);
+    bool AddComponent(const FPLATEAUGridCodeGizmo& MeshCodeGizmo);
 
     int CountLoadingPanels();
 
@@ -77,7 +77,7 @@ public:
     /**
      * @brief 地物情報パネルの可視性を設定します。
      */
-    void SetVisibility(const FPLATEAUMeshCodeGizmo& MeshCodeGizmo, const EPLATEAUFeatureInfoVisibility Value);
+    void SetVisibility(const FPLATEAUGridCodeGizmo& MeshCodeGizmo, const EPLATEAUFeatureInfoVisibility Value);
 
     /**
      * @brief 範囲選択画面に表示する各パッケージリストを取得
@@ -94,18 +94,18 @@ public:
      */  
     static TArray<FString> GetIconFileNameList();
 
-    bool MeshCodeGizmoContains(const FPLATEAUMeshCodeGizmo& MeshCodeGizmo) const {
-        return AsyncLoadedPanels.Contains(MeshCodeGizmo.GetRegionMeshID());
+    bool GridCodeGizmoContains(const FPLATEAUGridCodeGizmo& MeshCodeGizmo) const {
+        return AsyncLoadedPanels.Contains(MeshCodeGizmo.GetRegionGridCodeID());
     }
     
-    int GetItemCount(const FPLATEAUMeshCodeGizmo& MeshCodeGizmo) {
-        if (MeshCodeGizmoContains(MeshCodeGizmo)) {
-            return AsyncLoadedPanels[MeshCodeGizmo.GetRegionMeshID()].Get()->GetIconCount();
+    int GetItemCount(const FPLATEAUGridCodeGizmo& MeshCodeGizmo) {
+        if (GridCodeGizmoContains(MeshCodeGizmo)) {
+            return AsyncLoadedPanels[MeshCodeGizmo.GetRegionGridCodeID()].Get()->GetIconCount();
         }
         return 0;
     }
 
-    void SwitchFeatureInfoDisplay(const TArray<FPLATEAUMeshCodeGizmo>& MeshCodeGizmos, const int Lod, const bool bCheck);
+    void SwitchFeatureInfoDisplay(const TArray<FPLATEAUGridCodeGizmo>& MeshCodeGizmos, const int Lod, const bool bCheck);
 private:
     FPLATEAUGeoReference GeoReference;
     TWeakPtr<class FPLATEAUExtentEditorViewportClient> ViewportClient;

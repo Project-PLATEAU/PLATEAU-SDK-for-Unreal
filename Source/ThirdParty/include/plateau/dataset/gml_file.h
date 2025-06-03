@@ -1,11 +1,11 @@
 #pragma once
 
 #include <libplateau_api.h>
-#include <plateau/dataset/mesh_code.h>
 #include <set>
 #include <optional>
 #include "plateau/network/client.h"
 #include "city_model_package.h"
+#include "plateau/dataset/grid_code.h"
 
 namespace plateau::dataset {
 
@@ -20,7 +20,13 @@ namespace plateau::dataset {
 
         const std::string& getPath() const;
         void setPath(const std::string& path);
-        MeshCode getMeshCode() const;
+        std::shared_ptr<GridCode> getGridCode() const;
+        /**
+         * getGridCode関数をP/Invokeで利用するための生ポインタ版です。
+         * 新しいGridCodeインスタンスを生成して返すので、DLL利用者が廃棄する必要があります。
+         */
+        GridCode* getGridCodeRaw() const;
+        double getEpsg() const;
         const std::string& getFeatureType() const;
         PredefinedCityModelPackage getPackage() const;
         std::string getAppearanceDirectoryPath() const;
@@ -61,8 +67,9 @@ namespace plateau::dataset {
 
     private:
         std::string path_;
-        std::string code_;
+        std::shared_ptr<GridCode> grid_code_;
         std::string feature_type_;
+        std::string epsg_;
         bool is_valid_;
         bool is_local_;
         int max_lod_;

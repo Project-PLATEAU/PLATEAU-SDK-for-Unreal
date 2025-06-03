@@ -20,14 +20,18 @@ namespace plateau::geometry {
         /**
          * 緯度・経度・高さで表現される座標を平面直角座標系に変換します。
          * 座標軸変換を含みます。
-         */
+         */    
         TVec3d project(const GeoCoordinate& point) const;
         TVec3d project(const TVec3d& lat_lon) const;
         /// project の座標軸変換をしない版です。座標軸は ENU → ENU であるとします。 reference_point_ は ENUに変換されます。
         TVec3d projectWithoutAxisConvert(const TVec3d& lat_lon) const;
         TVec3d convertAxisToENU(const TVec3d& vertex) const;
+        TVec3d convert(const TVec3d& lat_lon, const bool convert_axis = true, const int epsg = CoordinateReferenceFactory::default_epsg) const;
         static TVec3d convertAxisFromENUTo(CoordinateSystem axis, const TVec3d& vertex);
-        static TVec3d convertAxisToENU(CoordinateSystem axis, const TVec3d& vertex);
+        static TVec3d convertAxisToENU(CoordinateSystem axis, const TVec3d& vertex); 
+
+        static TVec3d reverseXY(const TVec3d& vertex);
+        static GeoCoordinate planeToPolar(const TVec3d& vertex, const int coordinate_zone_id);
 
         GeoCoordinate unproject(const TVec3d& point) const;
 

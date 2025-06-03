@@ -5,7 +5,7 @@
 #include "Algo/AnyOf.h"
 
 #include "PLATEAUEditor.h"
-#include "PLATEAUMeshCodeGizmo.h"
+#include "PLATEAUGridCodeGizmo.h"
 #include "PLATEAUWindow.h"
 #include "Widgets/Docking/SDockTab.h"
 #include "Widgets/PLATEAUSDKEditorUtilityWidget.h"
@@ -73,7 +73,7 @@ void FPLATEAUExtentEditor::SetAreaSourcePath(const FString& InAreaSourcePath) {
 }
 
 bool FPLATEAUExtentEditor::IsSelectedArea() const {
-    return Algo::AnyOf(GetAreaMeshCodeMap(), [](const TTuple<FString, FPLATEAUMeshCodeGizmo>& MeshCodeGizmoTuple) {
+    return Algo::AnyOf(GetGridCodeMap(), [](const TTuple<FString, FPLATEAUGridCodeGizmo>& MeshCodeGizmoTuple) {
         return MeshCodeGizmoTuple.Value.bSelectedArea();
     });
 }
@@ -84,13 +84,13 @@ TArray<FString> FPLATEAUExtentEditor::GetSelectedCodes(const bool InbImportFromS
     if (InbImportFromServer) {
         for (auto [_, Value] : ServerAreaMeshCodeMap) {
             if (Value.bSelectedArea()) {
-                Codes.Append(Value.GetSelectedMeshIds());
+                Codes.Append(Value.GetSelectedGridCodeIDs());
             }
         }
     } else {
         for (auto [_, Value] : LocalAreaMeshCodeMap) {
             if (Value.bSelectedArea()) {
-                Codes.Append(Value.GetSelectedMeshIds());
+                Codes.Append(Value.GetSelectedGridCodeIDs());
             }
         }
     }
@@ -98,11 +98,11 @@ TArray<FString> FPLATEAUExtentEditor::GetSelectedCodes(const bool InbImportFromS
     return Codes;
 }
 
-TMap<FString, FPLATEAUMeshCodeGizmo> FPLATEAUExtentEditor::GetAreaMeshCodeMap() const {
+TMap<FString, FPLATEAUGridCodeGizmo> FPLATEAUExtentEditor::GetGridCodeMap() const {
     return IsImportFromServer() ? ServerAreaMeshCodeMap : LocalAreaMeshCodeMap;
 }
 
-void FPLATEAUExtentEditor::SetAreaMeshCodeMap(const FString& MeshCode, const FPLATEAUMeshCodeGizmo& MeshCodeGizmo) {
+void FPLATEAUExtentEditor::SetGridCodeMap(const FString& MeshCode, const FPLATEAUGridCodeGizmo& MeshCodeGizmo) {
     if (IsImportFromServer()) {
         ServerAreaMeshCodeMap.Emplace(MeshCode, MeshCodeGizmo);
     } else {
@@ -110,7 +110,7 @@ void FPLATEAUExtentEditor::SetAreaMeshCodeMap(const FString& MeshCode, const FPL
     }
 }
 
-void FPLATEAUExtentEditor::ResetAreaMeshCodeMap() {
+void FPLATEAUExtentEditor::ResetGridCodeMap() {
     if (IsImportFromServer()) {
         ServerAreaMeshCodeMap.Reset();
     } else {
@@ -174,7 +174,7 @@ plateau::geometry::GeoCoordinate FPLATEAUExtentEditor::GetSelectedCenterLatLon(c
         plateau::geometry::GeoCoordinate(-180.0, -180.0, 0.0));
 
     for (const auto& Code : SelectedCodes) {
-        const auto NativePartialExtent = plateau::dataset::MeshCode(TCHAR_TO_UTF8(*Code)).getExtent();
+        const auto NativePartialExtent = plateau::dataset::GridCode::create(TCHAR_TO_UTF8(*Code))->getExtent();
         NativeExtent.min.latitude = std::min(NativeExtent.min.latitude, NativePartialExtent.min.latitude);
         NativeExtent.min.longitude = std::min(NativeExtent.min.longitude, NativePartialExtent.min.longitude);
         NativeExtent.max.latitude = std::max(NativeExtent.max.latitude, NativePartialExtent.max.latitude);

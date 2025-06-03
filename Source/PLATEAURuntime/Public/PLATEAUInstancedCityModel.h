@@ -100,7 +100,7 @@ public:
         TObjectPtr<class APLATEAUCityModelLoader> Loader;
 
     UPROPERTY(EditAnywhere, Category = "PLATEAU")
-        TArray<FString> MeshCodes;
+        TArray<FString> GridCodes;
 
     UFUNCTION(BlueprintGetter)
         double GetLatitude();

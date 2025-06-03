@@ -3,6 +3,8 @@
 #include <libplateau_api.h>
 #include <plateau/dataset/gml_file.h>
 #include <plateau/dataset/city_model_package.h>
+#include <plateau/dataset/grid_code.h>
+#include <memory>
 
 namespace plateau::geometry {
     class GeoReference;
@@ -14,7 +16,7 @@ namespace plateau::dataset {
      */
     class LIBPLATEAU_EXPORT UdxSubFolder {
     public:
-        UdxSubFolder(std::string name)
+        explicit UdxSubFolder(std::string name)
             : name_(std::move(name)) {
         }
 
@@ -25,11 +27,7 @@ namespace plateau::dataset {
             return name_;
         }
 
-        operator std::string& () {
-            return name_;
-        }
-
-        operator std::string() const {
+        explicit operator std::string() const {
             return name_;
         }
 
@@ -93,9 +91,9 @@ namespace plateau::dataset {
          * \brief GMLファイル群のうち、範囲が extent の内部であり、パッケージ種が package であるものを vector で返します。
          * なお、 package はフラグの集合と見なされるので、複数のビットを立てることで複数の指定が可能です。
          */
-         virtual std::shared_ptr<std::vector<GmlFile>> getGmlFiles(const PredefinedCityModelPackage package) = 0;
+         virtual std::shared_ptr<std::vector<GmlFile>> getGmlFiles(PredefinedCityModelPackage package) = 0;
 
-         virtual void getGmlFiles(const PredefinedCityModelPackage package,
+         virtual void getGmlFiles(PredefinedCityModelPackage package,
                                   std::vector<GmlFile>& out_vector) = 0;
 
          /**
@@ -112,24 +110,24 @@ namespace plateau::dataset {
          */
         virtual std::shared_ptr<IDatasetAccessor> filter(const geometry::Extent& extent) const = 0;
 
-        /**
-         * \brief メッシュコードで都市モデルデータをフィルタリングします。
-         * \param mesh_codes 欲しい地域IDのvector
-         * \param collection フィルタリングされた都市モデルデータの格納先
-         */
-        virtual void filterByMeshCodes(const std::vector<MeshCode>& mesh_codes, IDatasetAccessor& collection) const = 0;
 
         /**
          * \brief メッシュコードで都市モデルデータをフィルタリングします。
-         * \param mesh_codes 欲しい地域IDのvector
+         * \param grid_codes 欲しい地域IDのvector
          * \return フィルタリングされた都市モデルデータ
          */
-        virtual std::shared_ptr<IDatasetAccessor> filterByMeshCodes(const std::vector<MeshCode>& mesh_codes) const = 0;
+        virtual std::shared_ptr<IDatasetAccessor> filterByGridCodes(
+                const std::vector<std::shared_ptr<GridCode>>& grid_codes) const = 0;
+
+        /**
+         * \brief filterByGridCodes関数の、UnityでP/Invokeから呼び出す版です。引数のvector内のポインタの廃棄はDLL側で責任を持ってください。
+         */
+        virtual void filterByGridCodes(const std::vector<GridCode*>& grid_codes, IDatasetAccessor& collection) const = 0;
 
         /**
          * \brief 都市モデルデータが存在する地域メッシュのリストを取得します。
          */
-        virtual std::set<MeshCode>& getMeshCodes() = 0;
+        virtual const std::set<std::shared_ptr<GridCode>, GridCodeComparator>& getGridCodes() = 0;
 
         virtual TVec3d calculateCenterPoint(const plateau::geometry::GeoReference& geo_reference) = 0;
 

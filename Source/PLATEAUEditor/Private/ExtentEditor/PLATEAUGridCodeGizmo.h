@@ -3,27 +3,33 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include <plateau/dataset/mesh_code.h>
+#include <plateau/dataset/grid_code.h>
 
 namespace plateau {
     namespace geometry {
         class GeoReference;
         constexpr auto ShowFeatureDetailIconCameraDistance = 4000;
         constexpr auto ShowFeatureIconCameraDistance = 9000;
-        constexpr auto ShowRegionMeshIdCameraDistance = 9000;
+        constexpr auto ShowGridCodeIdCameraDistance = 9000;
     }
 }
 
+UENUM(BlueprintType)
+enum class EGridCodeGizmoType : uint8 {
+    MeshCode = 0,
+    StandardMapCode = 1,
+};
+
 /**
- * @brief 各地域メッシュのメッシュコードのギズモを表します。
+ * @brief 各グリッドコードのギズモを表します。
  */
-class PLATEAUEDITOR_API FPLATEAUMeshCodeGizmo {
+class PLATEAUEDITOR_API FPLATEAUGridCodeGizmo {
 public:
-    FPLATEAUMeshCodeGizmo();
+    FPLATEAUGridCodeGizmo();
 
     void ResetSelectedArea();
     void DrawExtent(const FSceneView* View, FPrimitiveDrawInterface* PDI) const;
-    void DrawRegionMeshID(const FViewport& InViewport, const FSceneView& View, FCanvas& Canvas, const FString& RegionMeshID, double CameraDistance, int IconCount) const;
+    void DrawRegionGridCodeID(const FViewport& InViewport, const FSceneView& View, FCanvas& Canvas, const FString& GridCodeID, double CameraDistance, int IconCount) const;
 
     /**
      * @brief 内部状態から範囲の最小値を取得します。
@@ -41,14 +47,14 @@ public:
     FVector2D GetSize() const;
 
     /**
-     * @brief メッシュコード取得
+     * @brief グリッドコード取得
      */
-    plateau::dataset::MeshCode GetMeshCode() const;
+    std::shared_ptr<plateau::dataset::GridCode> GetGridCode() const;
     
     /**
-     * @brief メッシュID取得
+     * @brief グリッドコードを文字列で取得
      */
-    FString GetRegionMeshID() const;
+    FString GetRegionGridCodeID() const;
 
     /**
      * @brief 選択状態取得 
@@ -64,11 +70,17 @@ public:
     * @brief 選択状態設定 
     */
     void SetbSelectedArray(const TArray<bool>& InbSelectedArray);
-    
+
+    /**
+     * @brief 選択範囲をBoxとして取得
+     * @param OutBoxes 選択範囲となるBoxリスト
+     */
+    void GetSelectedBoxes(TArray<FBox>& OutBoxes) const;
+
     /**
      * @brief インスタンスを初期化します。
      */
-    void Init(const plateau::dataset::MeshCode& InMeshCode, const plateau::geometry::GeoReference& InGeoReference);
+    void Init(const std::shared_ptr<plateau::dataset::GridCode>& InGridCode, const plateau::geometry::GeoReference& InGeoReference);
 
     /**
      * @brief マウス座標がエリア内であれば選択状態をトグル
@@ -94,9 +106,20 @@ public:
     void SetSelectArea(const double X, const double Y, const bool bSelect);
 
     /**
-     * @brief 選択されているメッシュID配列を取得
+     * @brief Boxと重なった範囲を選択状態に設定・重なりがなければ選択解除（国土基本図郭選択用）
+     * @param InBoxes 重なり判定用のBox
      */
-    TArray<FString> GetSelectedMeshIds();
+    void SetOverlapSelection(const TArray<FBox>& InBoxes);
+
+    /**
+     * @brief 選択されているグリッドコードの文字列の配列を取得
+     */
+    TArray<FString> GetSelectedGridCodeIDs();
+
+    /**
+     * @brief 選択されているグリッドコードのタイプを取得(MeshCode/StandardMapCode)
+     */
+    EGridCodeGizmoType GetGridCodeType() const;
     
     /**
      * @brief エリア内の描画有効化状態を設定
@@ -107,8 +130,8 @@ public:
 private:
     inline static bool bShowLevel5Mesh = false;
 
-    plateau::dataset::MeshCode MeshCode;
-    FString MeshCodeString;
+    std::shared_ptr<plateau::dataset::GridCode> GridCode;
+    FString GridCodeString;
     double Width;
     double Height;
     double MinX;
@@ -116,8 +139,31 @@ private:
     double MaxX;
     double MaxY;
     float LineThickness;
+    // メッシュコード・国土基本図郭
+    EGridCodeGizmoType GridCodeType;
+
     TArray<bool> bSelectedArray;
     TObjectPtr<UMaterialInstanceDynamic> AreaSelectedMaterial;
     TObjectPtr<UMaterialInstanceDynamic> AreaUnSelectedMaterial;
     bool IsSelectable() const;
+    bool IsStandardMapGrid() const;
+
+    /**
+     * @brief メッシュコード・国土基本図郭判定
+     */
+    EGridCodeGizmoType GetGridCodeTypeByGridCodeString(const FString& GridCodeStr) const;
+
+    /**
+     * @brief 各セルのMatrixを取得
+     * @param OutBoxes 選択範囲となるMatrixリスト
+     * @param bSelectedOnly 選択状態のセルのみ取得するか
+     */
+    void GetCellMatrices(TArray<FMatrix>& OutMatrices, const bool bSelectedOnly) const;
+
+    /**
+     * @brief 各セルのBoxを取得
+     * @param OutBoxes 選択範囲となるBoxリスト
+     * @param bSelectedOnly 選択状態のセルのみ取得するか
+     */
+    void GetCellBoxes(TArray<FBox>& OutBoxes, const bool bSelectedOnly) const;
 };

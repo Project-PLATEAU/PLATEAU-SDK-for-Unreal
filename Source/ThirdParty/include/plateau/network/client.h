@@ -1,7 +1,10 @@
 #pragma once
 #include <string>
 #include <vector>
-#include <plateau/dataset/mesh_code.h>
+#include <map>
+#include <memory>
+#include <plateau/dataset/grid_code.h>
+#include "libplateau_api.h"
 
 namespace plateau::network {
 
@@ -19,7 +22,7 @@ namespace plateau::network {
      * データセットに含まれるファイルです。
      */
     struct DatasetFileItem {
-        std::string mesh_code;
+        std::string grid_code;
         std::string url;
         int max_lod = 0;
     };

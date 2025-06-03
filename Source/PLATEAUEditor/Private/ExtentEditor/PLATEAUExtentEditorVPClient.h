@@ -44,7 +44,7 @@ public:
     virtual bool ShouldScaleCameraSpeedByDistance() const override;
 
     void SwitchFeatureInfoDisplay(const int Lod, const bool bCheck) const;
-    bool SetViewLocationByMeshCode(FString meshCode);
+    bool SetViewLocationByGridCode(FString StrGridCode);
 
 private:
     // このインスタンスを保持しているExtentEditorへのポインタ
@@ -65,11 +65,16 @@ private:
     FVector CachedWorldMousePos; 
     FVector TrackingStartedPosition;
     FVector TrackingStartedCameraPosition;
-    TArray<class FPLATEAUMeshCodeGizmo> MeshCodeGizmos;
+    TArray<class FPLATEAUGridCodeGizmo> GridCodeGizmos;
+
+    // GridCodeGizmosをMeshCodeとStandardMapに分けてindexを保持
+    TArray<int32> MeshCodeGizmoIndices;
+    TArray<int32> StandardMapCodeGizmoIndices;
     
-    bool GizmoContains(const FPLATEAUMeshCodeGizmo& Gizmo) const;
+    bool GizmoContains(const FPLATEAUGridCodeGizmo& Gizmo) const;
     FVector GetWorldPosition(uint32 X, uint32 Y);
     bool TryGetWorldPositionOfCursor(FVector& Position);
     void InitCamera();
-    FPLATEAUMeshCodeGizmo GetNearestMeshCodeGizmo();
+    FPLATEAUGridCodeGizmo GetNearestGridCodeGizmo();
+    void CreateExclusiveGridCodeGizmoIndices();
 };

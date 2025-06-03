@@ -37,7 +37,8 @@ namespace plateau::polygonMesh {
                 texture_packing_resolution(2048),
                 attach_map_tile(true),
                 map_tile_zoom_level(15),
-                map_tile_url("https://cyberjapandata.gsi.go.jp/xyz/seamlessphoto/{z}/{x}/{y}.jpg")
+                map_tile_url("https://cyberjapandata.gsi.go.jp/xyz/seamlessphoto/{z}/{x}/{y}.jpg"),
+                epsg_code(plateau::geometry::CoordinateReferenceFactory::default_epsg)
                 {}
 
     public:
@@ -111,5 +112,10 @@ namespace plateau::polygonMesh {
          * https://ctrlshift.hatenadiary.org/entry/20080119/1200719590
          */
         char map_tile_url[1000];
+
+        /**
+         * 平面直角座標系は、EPSGコードに応じて基準点を取得します。
+         */
+        int epsg_code;
     };
 }

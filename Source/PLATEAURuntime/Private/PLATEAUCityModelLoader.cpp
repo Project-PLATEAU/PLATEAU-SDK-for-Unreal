@@ -9,10 +9,9 @@
 #include "plateau/dataset/city_model_package.h"
 #include "plateau/polygon_mesh/mesh_extractor.h"
 #include "plateau/polygon_mesh/mesh_extract_options.h"
+#include "plateau/dataset/grid_code.h"
 #include "PLATEAUMeshLoader.h"
 #include "citygml/citygml.h"
-#include "Kismet/GameplayStatics.h"
-#include "Reconstruct/PLATEAUMeshLoaderForHeightmap.h"
 #include "Component/PLATEAUSceneComponent.h"
 
 
@@ -25,7 +24,7 @@ class FCityModelLoaderImpl {
 public:
     static TArray<FLoadInputData> PrepareInputData(
         const UPLATEAUImportSettings* ImportSettings, const FString& Source,
-        const TArray<FString>& MeshCodes, FPLATEAUGeoReference& GeoReference, const bool bImportFromServer, const plateau::network::Client ClientRef) {
+        const TArray<FString>& StrGridCodes, FPLATEAUGeoReference& GeoReference, const bool bImportFromServer, const plateau::network::Client ClientRef) {
         // ファイル検索
         const auto DatasetSource = LoadDataset(bImportFromServer, Source, ClientRef);
         TArray<FLoadInputData> LoadInputDataArray;
@@ -35,24 +34,23 @@ public:
             if (!Settings.bImport)
                 continue;
 
-            std::vector<plateau::dataset::MeshCode> RawMeshCodes;
-            for (const auto& MeshCode : MeshCodes) {
-                RawMeshCodes.emplace_back(TCHAR_TO_UTF8(*MeshCode));
+            std::vector<std::shared_ptr<plateau::dataset::GridCode>> NativeGridCodes;
+            for (const auto& StrGridCode : StrGridCodes) {
+                NativeGridCodes.push_back(plateau::dataset::GridCode::create(TCHAR_TO_UTF8(*StrGridCode)));
             }
 
             const auto GmlFiles =
                 DatasetSource.getAccessor()
-                ->filterByMeshCodes(RawMeshCodes)
+                ->filterByGridCodes(NativeGridCodes)
                 ->getGmlFiles(Package);
 
             for (const auto& GmlFile : *GmlFiles) {
                 auto& LoadInputData = LoadInputDataArray.AddDefaulted_GetRef();
                 LoadInputData.GmlPath = UTF8_TO_TCHAR(GmlFile.getPath().c_str());
 
-                // メッシュコードからインポート範囲に変換
-                for (const auto& MeshCode : MeshCodes) {
-                    const auto RawExtent = plateau::dataset::MeshCode(TCHAR_TO_UTF8(*MeshCode)).getExtent();
-                    LoadInputData.Extents.push_back(RawExtent);
+                // グリッドコードからインポート範囲に変換
+                for (const auto& GridCode : NativeGridCodes) {
+                    LoadInputData.Extents.push_back(GridCode->getExtent());
                 }
 
                 LoadInputData.bIncludeAttrInfo = Settings.bIncludeAttrInfo;
@@ -67,6 +65,7 @@ public:
                 ExtractOptions.export_appearance = Settings.bImportTexture;
                 ExtractOptions.enable_texture_packing = Settings.bEnableTexturePacking;
                 ExtractOptions.attach_map_tile = Settings.bAttachMapTile;
+                ExtractOptions.epsg_code = GmlFile.getEpsg();
 
                 // strcpyは非推奨という警告が出ますが、共通ライブラリを利用するために必要と思われるので警告を抑制します。
                 // なお抑制しないとマーケットプレイスの審査で弾かれる可能性が高いです。
@@ -233,14 +232,14 @@ void APLATEAUCityModelLoader::LoadAsync(const bool bAutomationTest) {
     CreateRootComponent(*ModelActor);
 
     ModelActor->GeoReference = GeoReference;
-    ModelActor->MeshCodes = MeshCodes;
+    ModelActor->GridCodes = GridCodes;
     ModelActor->Loader = this;
 
     Async(EAsyncExecution::Thread,
         [
             ModelActor,
                 Source = Source,
-                MeshCodes = MeshCodes,
+                GridCodes = GridCodes,
                 GeoReference = GeoReference,
                 ImportSettings = ImportSettings,
                 bImportFromServer = bImportFromServer,
@@ -257,7 +256,7 @@ void APLATEAUCityModelLoader::LoadAsync(const bool bAutomationTest) {
         ]() mutable {
 
                 auto LoadInputDataArray = FCityModelLoaderImpl::PrepareInputData(
-                    ImportSettings, Source, MeshCodes, GeoReference, bImportFromServer, Client);
+                    ImportSettings, Source, GridCodes, GeoReference, bImportFromServer, Client);
 
                 TArray<FString> GmlFiles;
                 for (const auto& LoadInputData : LoadInputDataArray) {

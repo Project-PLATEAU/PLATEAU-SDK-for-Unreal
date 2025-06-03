@@ -44,21 +44,21 @@ class FPLATEAUAutomationTestBase : public FAutomationTestBase {
     
         const auto DatasetSource = plateau::dataset::DatasetSource::createLocal(TCHAR_TO_UTF8(*SourcePath));
         const std::shared_ptr<plateau::dataset::IDatasetAccessor> DatasetAccessor = DatasetSource.getAccessor();
-        if (DatasetAccessor == nullptr || DatasetAccessor->getMeshCodes().size() == 0)
+        if (DatasetAccessor == nullptr || DatasetAccessor->getGridCodes().size() == 0)
             return nullptr;
     
         const plateau::geometry::GeoReference RawGeoReference(ZoneId, {}, 1, plateau::geometry::CoordinateSystem::ESU);
         ExtentEditor->SetGeoReference(RawGeoReference);
 
-        const auto& MeshCodes = DatasetAccessor->getMeshCodes();
+        const auto& GridCodes = DatasetAccessor->getGridCodes();
         auto GeoReference = ExtentEditor->GetGeoReference();
-        TArray<FPLATEAUMeshCodeGizmo> MeshCodeGizmos;
+        TArray<FPLATEAUGridCodeGizmo> MeshCodeGizmos;
         TArray<bool> bSelectedArray;
         MeshCodeGizmos.Reset();
-        for (const auto& MeshCode : MeshCodes) {
+        for (const auto& GridCode : GridCodes) {
             MeshCodeGizmos.AddDefaulted();
-            MeshCodeGizmos.Last().Init(MeshCode, GeoReference.GetData());
-            if ("53392642" != MeshCodeGizmos.Last().GetRegionMeshID())
+            MeshCodeGizmos.Last().Init(GridCode, GeoReference.GetData());
+            if ("53392642" != MeshCodeGizmos.Last().GetRegionGridCodeID())
                 continue;
             
             bSelectedArray.Reset();
@@ -66,7 +66,7 @@ class FPLATEAUAutomationTestBase : public FAutomationTestBase {
                 bSelectedArray.Emplace(true);
             }
             MeshCodeGizmos.Last().SetbSelectedArray(bSelectedArray);
-            IPLATEAUEditorModule::Get().GetExtentEditor()->SetAreaMeshCodeMap(TCHAR_TO_UTF8(MeshCode.get().c_str()), MeshCodeGizmos.Last());
+            IPLATEAUEditorModule::Get().GetExtentEditor()->SetGridCodeMap(TCHAR_TO_UTF8(GridCode->get().c_str()), MeshCodeGizmos.Last());
         }
         
         return UPLATEAUImportModelBtn::GetCityModelLoader(ZoneId, ReferencePoint, PackageInfoSettingsData, false);

@@ -42,7 +42,7 @@ private:
     // エディタースタイル
     TSharedPtr<FPLATEAUEditorStyle> Style;
     //メッシュコード入力パネル
-    TWeakPtr<SWindow> MeshCodeInputWindow;
-    TWeakPtr<SEditableTextBox> MeshCodeTextBox;
-    TWeakPtr<STextBlock> MeshCodeErrorText;
+    TWeakPtr<SWindow> GridCodeInputWindow;
+    TWeakPtr<SEditableTextBox> GridCodeTextBox;
+    TWeakPtr<STextBlock> GridCodeErrorText;
 };
